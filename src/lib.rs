@@ -8,3 +8,8 @@
 
 //! # [Ruvolt](crate)
 //! ## An API wrapper for Revolt written in Rust.
+
+#[doc(hidden)]
+pub use error::Result;
+
+pub mod error;
