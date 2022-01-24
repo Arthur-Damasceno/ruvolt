@@ -9,3 +9,7 @@ edition = "2021"
 
 [dependencies]
 async-trait = "0.1"
+tokio = { version = "1.15", features = ["time", "rt-multi-thread"] }
+
+[dev-dependencies]
+tokio = { version = "1.15", features = ["macros"] }
