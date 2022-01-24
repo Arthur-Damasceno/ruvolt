@@ -1,22 +1,42 @@
 //! Module for [Error] and [Result] types.
 
-use std::{
-    error::Error as StdError,
-    fmt::{Display, Formatter, Result as FmtResult},
-    result::Result as StdResult,
+use {
+    reqwest::Error as HttpError,
+    std::{
+        error::Error as StdError,
+        fmt::{Display, Formatter, Result as FmtResult},
+        result::Result as StdResult,
+    },
 };
 
 /// [Result](StdResult) type for [Error].
 pub type Result<T = (), E = Error> = StdResult<T, E>;
 
 /// Errors that can happen when using [ruvolt](crate).
-#[derive(Debug, Clone, Copy)]
-pub enum Error {}
+#[derive(Debug)]
+pub enum Error {
+    /// Http requests error.
+    Http(HttpError),
+}
 
 impl Display for Error {
-    fn fmt(&self, _: &mut Formatter<'_>) -> FmtResult {
-        todo!()
+    fn fmt(&self, f: &mut Formatter<'_>) -> FmtResult {
+        match *self {
+            Self::Http(ref err) => err.fmt(f),
+        }
     }
 }
 
-impl StdError for Error {}
+impl StdError for Error {
+    fn source(&self) -> Option<&(dyn StdError + 'static)> {
+        match *self {
+            Self::Http(ref err) => Some(err),
+        }
+    }
+}
+
+impl From<HttpError> for Error {
+    fn from(err: HttpError) -> Self {
+        Self::Http(err)
+    }
+}
