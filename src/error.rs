@@ -7,6 +7,7 @@ use {
         fmt::{Display, Formatter, Result as FmtResult},
         result::Result as StdResult,
     },
+    tokio_tungstenite::tungstenite::Error as WsError,
 };
 
 /// [Result](StdResult) type for [Error].
@@ -17,12 +18,15 @@ pub type Result<T = (), E = Error> = StdResult<T, E>;
 pub enum Error {
     /// Http requests error.
     Http(HttpError),
+    /// WebSocket error.
+    Ws(WsError),
 }
 
 impl Display for Error {
     fn fmt(&self, f: &mut Formatter<'_>) -> FmtResult {
         match *self {
             Self::Http(ref err) => err.fmt(f),
+            Self::Ws(ref err) => err.fmt(f),
         }
     }
 }
@@ -31,6 +35,7 @@ impl StdError for Error {
     fn source(&self) -> Option<&(dyn StdError + 'static)> {
         match *self {
             Self::Http(ref err) => Some(err),
+            Self::Ws(ref err) => Some(err),
         }
     }
 }
@@ -38,5 +43,11 @@ impl StdError for Error {
 impl From<HttpError> for Error {
     fn from(err: HttpError) -> Self {
         Self::Http(err)
+    }
+}
+
+impl From<WsError> for Error {
+    fn from(err: WsError) -> Self {
+        Self::Ws(err)
     }
 }
