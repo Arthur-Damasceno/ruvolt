@@ -1,6 +1,6 @@
 #![allow(missing_docs)]
 
-use serde::Serialize;
+use serde::{Deserialize, Serialize};
 
 /// Client originated events.
 #[derive(Debug, Serialize, Clone, PartialEq)]
@@ -22,4 +22,12 @@ pub enum ClientToServerEvent {
     Ping {
         data: usize,
     },
+}
+
+#[derive(Debug, Deserialize, Clone, PartialEq)]
+#[serde(tag = "type")]
+pub(crate) enum ServerToClientEvent {
+    Authenticated,
+    Error { error: String },
+    Pong { data: usize },
 }
