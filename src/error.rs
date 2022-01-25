@@ -20,6 +20,8 @@ pub enum Error {
     Http(HttpError),
     /// WebSocket error.
     Ws(WsError),
+    /// Unknown or unexpected error.
+    Unknown(String),
 }
 
 impl Display for Error {
@@ -27,6 +29,7 @@ impl Display for Error {
         match *self {
             Self::Http(ref err) => err.fmt(f),
             Self::Ws(ref err) => err.fmt(f),
+            Self::Unknown(ref msg) => write!(f, "Unknown error: {}", msg),
         }
     }
 }
@@ -36,6 +39,7 @@ impl StdError for Error {
         match *self {
             Self::Http(ref err) => Some(err),
             Self::Ws(ref err) => Some(err),
+            _ => None,
         }
     }
 }
