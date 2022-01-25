@@ -2,6 +2,8 @@
 
 use serde::{Deserialize, Serialize};
 
+use crate::error::AuthenticationError;
+
 /// Client originated events.
 #[derive(Debug, Serialize, Clone, PartialEq)]
 #[serde(tag = "type")]
@@ -28,6 +30,6 @@ pub enum ClientToServerEvent {
 #[serde(tag = "type")]
 pub(crate) enum ServerToClientEvent {
     Authenticated,
-    Error { error: String },
+    Error { error: AuthenticationError },
     Pong { data: usize },
 }
