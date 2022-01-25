@@ -1,9 +1,10 @@
 use {
+    futures_util::SinkExt,
     tokio::net::TcpStream,
-    tokio_tungstenite::{connect_async, MaybeTlsStream, WebSocketStream},
+    tokio_tungstenite::{connect_async, tungstenite::Message, MaybeTlsStream, WebSocketStream},
 };
 
-use crate::Result;
+use crate::{entities::ClientToServerEvent, Result};
 
 type Stream = WebSocketStream<MaybeTlsStream<TcpStream>>;
 
@@ -16,5 +17,13 @@ impl WebSocketClient {
         let (stream, _) = connect_async(url).await?;
 
         Ok(Self { stream })
+    }
+
+    pub async fn send(&mut self, event: ClientToServerEvent) -> Result {
+        let msg = Message::Text(serde_json::to_string(&event).unwrap());
+
+        self.stream.send(msg).await?;
+
+        Ok(())
     }
 }
