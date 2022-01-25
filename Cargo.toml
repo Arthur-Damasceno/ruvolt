@@ -8,7 +8,7 @@ license = "MIT"
 edition = "2021"
 
 [dependencies]
-tokio = { version = "1.15", features = ["time", "rt-multi-thread"] }
+tokio = { version = "1.15", features = ["time", "rt-multi-thread", "sync"] }
 tokio-tungstenite = { version = "0.16", features = ["rustls-tls-webpki-roots"] }
 async-trait = "0.1"
 futures-util = "0.3"
