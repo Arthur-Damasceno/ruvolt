@@ -10,10 +10,9 @@ use crate::{
     Result,
 };
 
-type Stream = WebSocketStream<MaybeTlsStream<TcpStream>>;
-
+#[derive(Debug)]
 pub struct WebSocketClient {
-    stream: Stream,
+    stream: WebSocketStream<MaybeTlsStream<TcpStream>>,
 }
 
 impl WebSocketClient {
