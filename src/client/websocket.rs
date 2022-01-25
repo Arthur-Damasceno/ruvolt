@@ -1,10 +1,14 @@
 use {
-    futures_util::SinkExt,
+    futures_util::{SinkExt, StreamExt},
     tokio::net::TcpStream,
     tokio_tungstenite::{connect_async, tungstenite::Message, MaybeTlsStream, WebSocketStream},
 };
 
-use crate::{entities::ClientToServerEvent, Result};
+use crate::{
+    entities::{ClientToServerEvent, ServerToClientEvent},
+    error::Error,
+    Result,
+};
 
 type Stream = WebSocketStream<MaybeTlsStream<TcpStream>>;
 
@@ -25,5 +29,21 @@ impl WebSocketClient {
         self.stream.send(msg).await?;
 
         Ok(())
+    }
+
+    pub async fn recv(&mut self) -> Result<ServerToClientEvent> {
+        let msg = self.stream.next().await.unwrap()?;
+
+        let event = match msg {
+            Message::Text(msg) => serde_json::from_str(&msg).map_err(|err| {
+                Error::Unknown(format!(
+                    "Cannot deserialize unexpected event from server: {}",
+                    err
+                ))
+            })?,
+            _ => unimplemented!(),
+        };
+
+        Ok(event)
     }
 }

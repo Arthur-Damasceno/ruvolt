@@ -1,1 +1,1 @@
-mod websocket;
+pub(crate) mod websocket;

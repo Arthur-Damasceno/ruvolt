@@ -26,9 +26,9 @@ pub enum ClientToServerEvent {
     },
 }
 
-#[derive(Debug, Deserialize, Clone, PartialEq)]
+#[derive(Debug, Deserialize, Clone, Copy, PartialEq)]
 #[serde(tag = "type")]
-pub(crate) enum ServerToClientEvent {
+pub enum ServerToClientEvent {
     Authenticated,
     Error { error: AuthenticationError },
     Pong { data: usize },
