@@ -12,4 +12,5 @@
 #[doc(hidden)]
 pub use error::Result;
 
+pub mod entities;
 pub mod error;
