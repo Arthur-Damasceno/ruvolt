@@ -1,8 +1,6 @@
 #![allow(missing_docs)]
 
-use serde::{Deserialize, Serialize};
-
-use crate::error::AuthenticationError;
+use serde::Serialize;
 
 /// Client originated events.
 #[derive(Debug, Serialize, Clone, PartialEq)]
@@ -24,12 +22,4 @@ pub enum ClientToServerEvent {
     Ping {
         data: usize,
     },
-}
-
-#[derive(Debug, Deserialize, Clone, Copy, PartialEq)]
-#[serde(tag = "type")]
-pub enum ServerToClientEvent {
-    Authenticated,
-    Error { error: AuthenticationError },
-    Pong { data: usize },
 }
