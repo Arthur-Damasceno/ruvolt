@@ -12,6 +12,10 @@ pub enum ServerToClientEvent {
     Pong {
         data: usize,
     },
+    MessageDelete {
+        id: String,
+        channel: String,
+    },
     ChannelDelete {
         id: String,
     },
