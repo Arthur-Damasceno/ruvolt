@@ -22,6 +22,9 @@ pub trait EventHandler: Send + Sync + 'static {
 
     /// A user has stopped typing in a channel.
     async fn channel_stop_typing(&self, _data: ChannelStopTypingEvent) {}
+
+    /// You have acknowledged new messages in the channel up to the message id.
+    async fn channel_ack(&self, _data: ChannelAckEvent) {}
 }
 
 #[async_trait]
@@ -47,6 +50,9 @@ pub(crate) trait EventHandlerExt: EventHandler {
             ServerToClientEvent::ChannelStopTyping { .. } => {
                 self.channel_stop_typing(ChannelStopTypingEvent::from(event))
                     .await;
+            }
+            ServerToClientEvent::ChannelAck { .. } => {
+                self.channel_ack(ChannelAckEvent::from(event)).await
             }
             event => {
                 let error = Error::Unknown(format!("Unexpected event from server: {:?}", event));
