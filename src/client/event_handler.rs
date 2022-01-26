@@ -34,6 +34,9 @@ pub trait EventHandler: Send + Sync + 'static {
 
     /// A user has joined the group.
     async fn server_member_join(&self, _data: ServerMemberJoinEvent) {}
+
+    /// A user has left the group.
+    async fn server_member_leave(&self, _data: ServerMemberLeaveEvent) {}
 }
 
 #[async_trait]
@@ -70,7 +73,12 @@ pub(crate) trait EventHandlerExt: EventHandler {
                 self.server_delete(ServerDeleteEvent::from(event)).await;
             }
             ServerToClientEvent::ServerMemberJoin { .. } => {
-                self.server_member_join(ServerMemberJoinEvent::from(event)).await;
+                self.server_member_join(ServerMemberJoinEvent::from(event))
+                    .await;
+            }
+            ServerToClientEvent::ServerMemberLeave { .. } => {
+                self.server_member_leave(ServerMemberLeaveEvent::from(event))
+                    .await;
             }
             event => {
                 let error = Error::Unknown(format!("Unexpected event from server: {:?}", event));

@@ -47,4 +47,8 @@ pub enum ServerToClientEvent {
         id: String,
         user: String,
     },
+    ServerMemberLeave {
+        id: String,
+        user: String,
+    },
 }
