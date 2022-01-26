@@ -28,6 +28,9 @@ pub trait EventHandler: Send + Sync + 'static {
 
     /// You have acknowledged new messages in the channel up to the message id.
     async fn channel_ack(&self, _data: ChannelAckEvent) {}
+
+    /// A server has been deleted.
+    async fn server_delete(&self, _data: ServerDeleteEvent) {}
 }
 
 #[async_trait]
@@ -59,6 +62,9 @@ pub(crate) trait EventHandlerExt: EventHandler {
             }
             ServerToClientEvent::ChannelAck { .. } => {
                 self.channel_ack(ChannelAckEvent::from(event)).await
+            }
+            ServerToClientEvent::ServerDelete { .. } => {
+                self.server_delete(ServerDeleteEvent::from(event)).await;
             }
             event => {
                 let error = Error::Unknown(format!("Unexpected event from server: {:?}", event));

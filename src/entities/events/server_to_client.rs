@@ -40,4 +40,7 @@ pub enum ServerToClientEvent {
         user: String,
         message_id: String,
     },
+    ServerDelete {
+        id: String,
+    },
 }
