@@ -9,4 +9,5 @@ pub enum ServerToClientEvent {
     Error { error: AuthenticationError },
     Pong { data: usize },
     ChannelStartTyping { id: String, user: String },
+    ChannelStopTyping { id: String, user: String },
 }

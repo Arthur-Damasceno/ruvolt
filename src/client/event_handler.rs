@@ -1,9 +1,6 @@
 use async_trait::async_trait;
 
-use crate::{
-    entities::{ChannelStartTypingEvent, ServerToClientEvent},
-    error::Error,
-};
+use crate::{entities::*, error::Error};
 
 /// Define handlers for supported events.
 #[async_trait]
@@ -13,6 +10,9 @@ pub trait EventHandler: Send + Sync + 'static {
 
     /// A user has started typing in a channel.
     async fn channel_start_typing(&self, _data: ChannelStartTypingEvent) {}
+
+    /// A user has stopped typing in a channel.
+    async fn channel_stop_typing(&self, _data: ChannelStopTypingEvent) {}
 }
 
 #[async_trait]
@@ -22,6 +22,10 @@ pub(crate) trait EventHandlerExt: EventHandler {
             ServerToClientEvent::Pong { .. } => return,
             ServerToClientEvent::ChannelStartTyping { .. } => {
                 self.channel_start_typing(ChannelStartTypingEvent::from(event))
+                    .await;
+            }
+            ServerToClientEvent::ChannelStopTyping { .. } => {
+                self.channel_stop_typing(ChannelStopTypingEvent::from(event))
                     .await;
             }
             event => {
