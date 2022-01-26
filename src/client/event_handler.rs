@@ -13,6 +13,7 @@ pub trait EventHandler: Send + Sync + 'static {
 pub(crate) trait EventHandlerExt: EventHandler {
     async fn handle(&self, event: ServerToClientEvent) {
         match event {
+            ServerToClientEvent::Pong { .. } => return,
             event => {
                 let error = Error::Unknown(format!("Unexpected event from server: {:?}", event));
                 self.error(error).await;
