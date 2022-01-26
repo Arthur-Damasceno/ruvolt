@@ -8,6 +8,9 @@ pub trait EventHandler: Send + Sync + 'static {
     /// An error has occurred.
     async fn error(&self, _error: Error) {}
 
+    /// A user has joined the group.
+    async fn channel_group_join(&self, _data: ChannelGroupJoinEvent) {}
+
     /// A user has started typing in a channel.
     async fn channel_start_typing(&self, _data: ChannelStartTypingEvent) {}
 
@@ -20,6 +23,10 @@ pub(crate) trait EventHandlerExt: EventHandler {
     async fn handle(&self, event: ServerToClientEvent) {
         match event {
             ServerToClientEvent::Pong { .. } => return,
+            ServerToClientEvent::ChannelGroupJoin { .. } => {
+                self.channel_group_join(ChannelGroupJoinEvent::from(event))
+                    .await;
+            }
             ServerToClientEvent::ChannelStartTyping { .. } => {
                 self.channel_start_typing(ChannelStartTypingEvent::from(event))
                     .await;

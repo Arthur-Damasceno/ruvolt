@@ -8,6 +8,7 @@ pub enum ServerToClientEvent {
     Authenticated,
     Error { error: AuthenticationError },
     Pong { data: usize },
+    ChannelGroupJoin { id: String, user: String },
     ChannelStartTyping { id: String, user: String },
     ChannelStopTyping { id: String, user: String },
 }
