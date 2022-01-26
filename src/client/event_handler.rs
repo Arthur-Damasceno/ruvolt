@@ -11,6 +11,9 @@ pub trait EventHandler: Send + Sync + 'static {
     /// A user has joined the group.
     async fn channel_group_join(&self, _data: ChannelGroupJoinEvent) {}
 
+    /// A user has left the group.
+    async fn channel_group_leave(&self, _data: ChannelGroupLeaveEvent) {}
+
     /// A user has started typing in a channel.
     async fn channel_start_typing(&self, _data: ChannelStartTypingEvent) {}
 
@@ -25,6 +28,10 @@ pub(crate) trait EventHandlerExt: EventHandler {
             ServerToClientEvent::Pong { .. } => return,
             ServerToClientEvent::ChannelGroupJoin { .. } => {
                 self.channel_group_join(ChannelGroupJoinEvent::from(event))
+                    .await;
+            }
+            ServerToClientEvent::ChannelGroupLeave { .. } => {
+                self.channel_group_leave(ChannelGroupLeaveEvent::from(event))
                     .await;
             }
             ServerToClientEvent::ChannelStartTyping { .. } => {
