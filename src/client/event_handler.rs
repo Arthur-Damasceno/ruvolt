@@ -8,6 +8,9 @@ pub trait EventHandler: Send + Sync + 'static {
     /// An error has occurred.
     async fn error(&self, _error: Error) {}
 
+    /// A channel has been deleted.
+    async fn channel_delete(&self, _data: ChannelDeleteEvent) {}
+
     /// A user has joined the group.
     async fn channel_group_join(&self, _data: ChannelGroupJoinEvent) {}
 
@@ -26,6 +29,9 @@ pub(crate) trait EventHandlerExt: EventHandler {
     async fn handle(&self, event: ServerToClientEvent) {
         match event {
             ServerToClientEvent::Pong { .. } => return,
+            ServerToClientEvent::ChannelDelete { .. } => {
+                self.channel_delete(ChannelDeleteEvent::from(event)).await;
+            }
             ServerToClientEvent::ChannelGroupJoin { .. } => {
                 self.channel_group_join(ChannelGroupJoinEvent::from(event))
                     .await;
