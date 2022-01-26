@@ -1,5 +1,8 @@
 use {
-    futures_util::{SinkExt, StreamExt},
+    futures_util::{
+        stream::{SplitSink, SplitStream},
+        SinkExt, StreamExt,
+    },
     tokio::net::TcpStream,
     tokio_tungstenite::{connect_async, tungstenite::Message, MaybeTlsStream, WebSocketStream},
 };
@@ -10,28 +13,54 @@ use crate::{
     Result,
 };
 
-#[derive(Debug)]
+type Stream = WebSocketStream<MaybeTlsStream<TcpStream>>;
+
 pub struct WebSocketClient {
-    stream: WebSocketStream<MaybeTlsStream<TcpStream>>,
+    tx: Sender,
+    rx: Receiver,
 }
 
 impl WebSocketClient {
     pub async fn connect(url: &str) -> Result<Self> {
         let (stream, _) = connect_async(url).await?;
+        let (tx, rx) = stream.split();
 
-        Ok(Self { stream })
+        Ok(Self {
+            tx: Sender(tx),
+            rx: Receiver(rx),
+        })
     }
 
     pub async fn send(&mut self, event: ClientToServerEvent) -> Result {
-        let msg = Message::Text(serde_json::to_string(&event).unwrap());
-
-        self.stream.send(msg).await?;
-
-        Ok(())
+        self.tx.send(event).await
     }
 
     pub async fn recv(&mut self) -> Result<ServerToClientEvent> {
-        let msg = self.stream.next().await.unwrap()?;
+        self.rx.recv().await
+    }
+
+    pub fn split(self) -> (Sender, Receiver) {
+        (self.tx, self.rx)
+    }
+}
+
+pub struct Sender(SplitSink<Stream, Message>);
+
+impl Sender {
+    pub async fn send(&mut self, event: ClientToServerEvent) -> Result {
+        let msg = Message::Text(serde_json::to_string(&event).unwrap());
+
+        self.0.send(msg).await?;
+
+        Ok(())
+    }
+}
+
+pub struct Receiver(SplitStream<Stream>);
+
+impl Receiver {
+    pub async fn recv(&mut self) -> Result<ServerToClientEvent> {
+        let msg = self.0.next().await.unwrap()?;
 
         let event = match msg {
             Message::Text(msg) => serde_json::from_str(&msg).map_err(|err| {
