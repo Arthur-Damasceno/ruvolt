@@ -31,6 +31,9 @@ pub trait EventHandler: Send + Sync + 'static {
 
     /// A server has been deleted.
     async fn server_delete(&self, _data: ServerDeleteEvent) {}
+
+    /// A user has joined the group.
+    async fn server_member_join(&self, _data: ServerMemberJoinEvent) {}
 }
 
 #[async_trait]
@@ -65,6 +68,9 @@ pub(crate) trait EventHandlerExt: EventHandler {
             }
             ServerToClientEvent::ServerDelete { .. } => {
                 self.server_delete(ServerDeleteEvent::from(event)).await;
+            }
+            ServerToClientEvent::ServerMemberJoin { .. } => {
+                self.server_member_join(ServerMemberJoinEvent::from(event)).await;
             }
             event => {
                 let error = Error::Unknown(format!("Unexpected event from server: {:?}", event));

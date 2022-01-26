@@ -43,4 +43,8 @@ pub enum ServerToClientEvent {
     ServerDelete {
         id: String,
     },
+    ServerMemberJoin {
+        id: String,
+        user: String,
+    },
 }
