@@ -1,13 +1,13 @@
-use super::ServerToClientEvent;
+use crate::entities::ServerToClientEvent;
 
-/// A user has left the group.
+/// A user has started typing in a channel.
 #[derive(Debug)]
-pub struct ChannelGroupLeaveEvent {
+pub struct ChannelStartTypingEvent {
     id: String,
     user_id: String,
 }
 
-impl ChannelGroupLeaveEvent {
+impl ChannelStartTypingEvent {
     /// Returns the channel id.
     pub fn id(&self) -> &str {
         &self.id
@@ -19,9 +19,9 @@ impl ChannelGroupLeaveEvent {
     }
 }
 
-impl From<ServerToClientEvent> for ChannelGroupLeaveEvent {
+impl From<ServerToClientEvent> for ChannelStartTypingEvent {
     fn from(event: ServerToClientEvent) -> Self {
-        if let ServerToClientEvent::ChannelGroupLeave { id, user } = event {
+        if let ServerToClientEvent::ChannelStartTyping { id, user } = event {
             Self { id, user_id: user }
         } else {
             panic!("An incorrect event was provided: {:?}", event);

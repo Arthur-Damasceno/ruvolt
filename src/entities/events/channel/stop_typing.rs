@@ -1,4 +1,4 @@
-use super::ServerToClientEvent;
+use crate::entities::ServerToClientEvent;
 
 /// A user has stopped typing in a channel.
 #[derive(Debug)]

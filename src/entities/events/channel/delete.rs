@@ -1,4 +1,4 @@
-use super::ServerToClientEvent;
+use crate::entities::ServerToClientEvent;
 
 /// A channel has been deleted.
 #[derive(Debug)]

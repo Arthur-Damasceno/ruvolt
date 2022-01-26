@@ -1,4 +1,4 @@
-use super::ServerToClientEvent;
+use crate::entities::ServerToClientEvent;
 
 /// You have acknowledged new messages in the channel up to the message id.
 #[derive(Debug)]
