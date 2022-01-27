@@ -55,6 +55,9 @@ pub trait EventHandler: Send + Sync + 'static {
 
     /// A server role has been deleted.
     async fn server_role_delete(&self, _data: ServerRoleDeleteEvent) {}
+
+    /// A user has been updated.
+    async fn user_update(&self, _data: UserUpdateEvent) {}
 }
 
 #[async_trait]
@@ -118,6 +121,9 @@ pub(crate) trait EventHandlerExt: EventHandler {
             ServerToClientEvent::ServerRoleDelete { .. } => {
                 self.server_role_delete(ServerRoleDeleteEvent::from(event))
                     .await;
+            }
+            ServerToClientEvent::UserUpdate { .. } => {
+                self.user_update(UserUpdateEvent::from(event)).await;
             }
             event => {
                 let error = Error::Unknown(format!("Unexpected event from server: {:?}", event));
