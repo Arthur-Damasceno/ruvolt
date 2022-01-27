@@ -51,4 +51,8 @@ pub enum ServerToClientEvent {
         id: String,
         user: String,
     },
+    ServerRoleDelete {
+        id: String,
+        role_id: String,
+    },
 }
