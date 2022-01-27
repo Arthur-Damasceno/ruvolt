@@ -1,4 +1,4 @@
-use serde::Deserialize;
+use {serde::Deserialize, serde_json::Value as Json};
 
 use crate::error::AuthenticationError;
 
@@ -11,6 +11,10 @@ pub enum ServerToClientEvent {
     },
     Pong {
         data: usize,
+    },
+    MessageUpdate {
+        id: String,
+        data: Json,
     },
     MessageDelete {
         id: String,
