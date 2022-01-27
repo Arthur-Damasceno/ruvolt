@@ -8,6 +8,9 @@ pub trait EventHandler: Send + Sync + 'static {
     /// An error has occurred.
     async fn error(&self, _error: Error) {}
 
+    /// A new message received.
+    async fn message(&self, _data: Message) {}
+
     /// A message has been edited or otherwise updated.
     async fn message_update(&self, _data: MessageUpdateEvent) {}
 
@@ -65,6 +68,7 @@ pub(crate) trait EventHandlerExt: EventHandler {
     async fn handle(&self, event: ServerToClientEvent) {
         match event {
             ServerToClientEvent::Pong { .. } => return,
+            ServerToClientEvent::Message(msg) => self.message(msg).await,
             ServerToClientEvent::MessageUpdate { .. } => {
                 self.message_update(MessageUpdateEvent::from(event)).await;
             }

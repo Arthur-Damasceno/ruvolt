@@ -1,12 +1,6 @@
 use {serde::Deserialize, serde_json::Value as Json};
 
-use {
-    super::{
-        RemoveChannelField, RemoveServerField, RemoveServerMemberField, RemoveServerRoleField,
-        RemoveUserField,
-    },
-    crate::error::AuthenticationError,
-};
+use crate::{entities::*, error::AuthenticationError};
 
 #[derive(Debug, Deserialize, Clone, PartialEq)]
 #[serde(tag = "type")]
@@ -18,6 +12,7 @@ pub enum ServerToClientEvent {
     Pong {
         data: usize,
     },
+    Message(Message),
     MessageUpdate {
         id: String,
         data: Json,
