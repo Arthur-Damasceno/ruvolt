@@ -1,6 +1,6 @@
 use {serde::Deserialize, serde_json::Value as Json};
 
-use crate::error::AuthenticationError;
+use {super::RemoveChannelField, crate::error::AuthenticationError};
 
 #[derive(Debug, Deserialize, Clone, PartialEq)]
 #[serde(tag = "type")]
@@ -19,6 +19,11 @@ pub enum ServerToClientEvent {
     MessageDelete {
         id: String,
         channel: String,
+    },
+    ChannelUpdate {
+        id: String,
+        data: Json,
+        clear: Option<RemoveChannelField>,
     },
     ChannelDelete {
         id: String,
