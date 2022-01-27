@@ -21,8 +21,8 @@ impl ChannelGroupJoinEvent {
 
 impl From<ServerToClientEvent> for ChannelGroupJoinEvent {
     fn from(event: ServerToClientEvent) -> Self {
-        if let ServerToClientEvent::ChannelGroupJoin { id, user } = event {
-            Self { id, user_id: user }
+        if let ServerToClientEvent::ChannelGroupJoin { id, user_id } = event {
+            Self { id, user_id }
         } else {
             panic!("An incorrect event was provided: {:?}", event);
         }

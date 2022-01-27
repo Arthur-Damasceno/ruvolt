@@ -46,8 +46,8 @@ impl From<ServerToClientEvent> for ServerMemberUpdateEvent {
     fn from(event: ServerToClientEvent) -> Self {
         if let ServerToClientEvent::ServerMemberUpdate { id, data, clear } = event {
             Self {
-                id: id.user,
-                server_id: id.server,
+                id: id.user_id,
+                server_id: id.server_id,
                 data,
                 clear,
             }

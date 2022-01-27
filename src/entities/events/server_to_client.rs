@@ -24,7 +24,8 @@ pub enum ServerToClientEvent {
     },
     MessageDelete {
         id: String,
-        channel: String,
+        #[serde(rename = "channel")]
+        channel_id: String,
     },
     ChannelUpdate {
         id: String,
@@ -36,23 +37,28 @@ pub enum ServerToClientEvent {
     },
     ChannelGroupJoin {
         id: String,
-        user: String,
+        #[serde(rename = "user")]
+        user_id: String,
     },
     ChannelGroupLeave {
         id: String,
-        user: String,
+        #[serde(rename = "user")]
+        user_id: String,
     },
     ChannelStartTyping {
         id: String,
-        user: String,
+        #[serde(rename = "user")]
+        user_id: String,
     },
     ChannelStopTyping {
         id: String,
-        user: String,
+        #[serde(rename = "user")]
+        user_id: String,
     },
     ChannelAck {
         id: String,
-        user: String,
+        #[serde(rename = "user")]
+        user_id: String,
         message_id: String,
     },
     ServerUpdate {
@@ -70,11 +76,13 @@ pub enum ServerToClientEvent {
     },
     ServerMemberJoin {
         id: String,
-        user: String,
+        #[serde(rename = "user")]
+        user_id: String,
     },
     ServerMemberLeave {
         id: String,
-        user: String,
+        #[serde(rename = "user")]
+        user_id: String,
     },
     ServerRoleUpdate {
         id: String,
@@ -95,6 +103,8 @@ pub enum ServerToClientEvent {
 
 #[derive(Debug, Deserialize, Clone, PartialEq)]
 pub struct ServerMemberUpdateId {
-    pub server: String,
-    pub user: String,
+    #[serde(rename = "server")]
+    pub server_id: String,
+    #[serde(rename = "user")]
+    pub user_id: String,
 }

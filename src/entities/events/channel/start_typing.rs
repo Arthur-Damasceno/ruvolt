@@ -21,8 +21,8 @@ impl ChannelStartTypingEvent {
 
 impl From<ServerToClientEvent> for ChannelStartTypingEvent {
     fn from(event: ServerToClientEvent) -> Self {
-        if let ServerToClientEvent::ChannelStartTyping { id, user } = event {
-            Self { id, user_id: user }
+        if let ServerToClientEvent::ChannelStartTyping { id, user_id } = event {
+            Self { id, user_id }
         } else {
             panic!("An incorrect event was provided: {:?}", event);
         }

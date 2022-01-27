@@ -21,8 +21,8 @@ impl ChannelStopTypingEvent {
 
 impl From<ServerToClientEvent> for ChannelStopTypingEvent {
     fn from(event: ServerToClientEvent) -> Self {
-        if let ServerToClientEvent::ChannelStopTyping { id, user } = event {
-            Self { id, user_id: user }
+        if let ServerToClientEvent::ChannelStopTyping { id, user_id } = event {
+            Self { id, user_id }
         } else {
             panic!("An incorrect event was provided: {:?}", event);
         }

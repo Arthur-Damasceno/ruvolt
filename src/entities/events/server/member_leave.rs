@@ -21,8 +21,8 @@ impl ServerMemberLeaveEvent {
 
 impl From<ServerToClientEvent> for ServerMemberLeaveEvent {
     fn from(event: ServerToClientEvent) -> Self {
-        if let ServerToClientEvent::ServerMemberLeave { id, user } = event {
-            Self { id, user_id: user }
+        if let ServerToClientEvent::ServerMemberLeave { id, user_id } = event {
+            Self { id, user_id }
         } else {
             panic!("An incorrect event was provided: {:?}", event);
         }

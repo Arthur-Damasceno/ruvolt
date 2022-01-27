@@ -21,8 +21,8 @@ impl ServerMemberJoinEvent {
 
 impl From<ServerToClientEvent> for ServerMemberJoinEvent {
     fn from(event: ServerToClientEvent) -> Self {
-        if let ServerToClientEvent::ServerMemberJoin { id, user } = event {
-            Self { id, user_id: user }
+        if let ServerToClientEvent::ServerMemberJoin { id, user_id } = event {
+            Self { id, user_id }
         } else {
             panic!("An incorrect event was provided: {:?}", event);
         }

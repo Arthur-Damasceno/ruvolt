@@ -29,13 +29,13 @@ impl From<ServerToClientEvent> for ChannelAckEvent {
     fn from(event: ServerToClientEvent) -> Self {
         if let ServerToClientEvent::ChannelAck {
             id,
-            user,
+            user_id,
             message_id,
         } = event
         {
             Self {
                 id,
-                user_id: user,
+                user_id,
                 message_id,
             }
         } else {

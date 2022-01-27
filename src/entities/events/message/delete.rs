@@ -21,11 +21,8 @@ impl MessageDeleteEvent {
 
 impl From<ServerToClientEvent> for MessageDeleteEvent {
     fn from(event: ServerToClientEvent) -> Self {
-        if let ServerToClientEvent::MessageDelete { id, channel } = event {
-            Self {
-                id,
-                channel_id: channel,
-            }
+        if let ServerToClientEvent::MessageDelete { id, channel_id } = event {
+            Self { id, channel_id }
         } else {
             panic!("An incorrect event was provided: {:?}", event);
         }
