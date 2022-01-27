@@ -50,6 +50,9 @@ pub trait EventHandler: Send + Sync + 'static {
     /// A user has left the group.
     async fn server_member_leave(&self, _data: ServerMemberLeaveEvent) {}
 
+    /// A server role details were updated.
+    async fn server_role_update(&self, _data: ServerRoleUpdateEvent) {}
+
     /// A server role has been deleted.
     async fn server_role_delete(&self, _data: ServerRoleDeleteEvent) {}
 }
@@ -106,6 +109,10 @@ pub(crate) trait EventHandlerExt: EventHandler {
             }
             ServerToClientEvent::ServerMemberLeave { .. } => {
                 self.server_member_leave(ServerMemberLeaveEvent::from(event))
+                    .await;
+            }
+            ServerToClientEvent::ServerRoleUpdate { .. } => {
+                self.server_role_update(ServerRoleUpdateEvent::from(event))
                     .await;
             }
             ServerToClientEvent::ServerRoleDelete { .. } => {

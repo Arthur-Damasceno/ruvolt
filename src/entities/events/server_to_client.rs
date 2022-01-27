@@ -1,7 +1,9 @@
 use {serde::Deserialize, serde_json::Value as Json};
 
 use {
-    super::{RemoveChannelField, RemoveServerField, RemoveServerMemberField},
+    super::{
+        RemoveChannelField, RemoveServerField, RemoveServerMemberField, RemoveServerRoleField,
+    },
     crate::error::AuthenticationError,
 };
 
@@ -72,6 +74,12 @@ pub enum ServerToClientEvent {
     ServerMemberLeave {
         id: String,
         user: String,
+    },
+    ServerRoleUpdate {
+        id: String,
+        role_id: String,
+        data: Json,
+        clear: Option<RemoveServerRoleField>,
     },
     ServerRoleDelete {
         id: String,
