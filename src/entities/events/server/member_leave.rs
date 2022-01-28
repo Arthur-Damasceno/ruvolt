@@ -3,20 +3,10 @@ use crate::entities::ServerToClientEvent;
 /// A user has left the group.
 #[derive(Debug)]
 pub struct ServerMemberLeaveEvent {
-    id: String,
-    user_id: String,
-}
-
-impl ServerMemberLeaveEvent {
-    /// Returns the server id.
-    pub fn id(&self) -> &str {
-        &self.id
-    }
-
-    /// Returns the user id.
-    pub fn user_id(&self) -> &str {
-        &self.user_id
-    }
+    /// Server id.
+    pub id: String,
+    /// Server member id.
+    pub user_id: String,
 }
 
 impl From<ServerToClientEvent> for ServerMemberLeaveEvent {

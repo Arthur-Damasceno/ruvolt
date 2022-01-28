@@ -1,6 +1,6 @@
 use {serde::Deserialize, serde_json::Value as Json};
 
-use crate::entities::ServerToClientEvent;
+use crate::entities::{ServerMemberUpdateId, ServerToClientEvent};
 
 /// Specifies a field to remove on server member update.
 #[derive(Debug, Deserialize, Clone, Copy, PartialEq)]
@@ -14,40 +14,24 @@ pub enum RemoveServerMemberField {
 /// A server member details were updated.
 #[derive(Debug)]
 pub struct ServerMemberUpdateEvent {
-    id: String,
-    server_id: String,
-    data: Json,
-    clear: Option<RemoveServerMemberField>,
-}
-
-impl ServerMemberUpdateEvent {
-    /// Returns the server member id.
-    pub fn id(&self) -> &str {
-        &self.id
-    }
-
-    /// Returns the server id.
-    pub fn server_id(&self) -> &str {
-        &self.server_id
-    }
-
-    /// Returns a partial server member object.
-    pub fn data(&self) -> &Json {
-        &self.data
-    }
-
-    /// Returns a specified field to remove on server member update.
-    pub fn clear(&self) -> Option<RemoveServerMemberField> {
-        self.clear
-    }
+    /// Server id.
+    pub id: String,
+    /// Server member id.
+    pub user_id: String,
+    /// A partial server member object.
+    pub data: Json,
+    /// A specified field to remove on server member update.
+    pub clear: Option<RemoveServerMemberField>,
 }
 
 impl From<ServerToClientEvent> for ServerMemberUpdateEvent {
     fn from(event: ServerToClientEvent) -> Self {
         if let ServerToClientEvent::ServerMemberUpdate { id, data, clear } = event {
+            let ServerMemberUpdateId { server_id, user_id } = id;
+
             Self {
-                id: id.user_id,
-                server_id: id.server_id,
+                id: server_id,
+                user_id,
                 data,
                 clear,
             }

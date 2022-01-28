@@ -14,26 +14,12 @@ pub enum RemoveChannelField {
 /// A channel details were updated.
 #[derive(Debug)]
 pub struct ChannelUpdateEvent {
-    id: String,
-    data: Json,
-    clear: Option<RemoveChannelField>,
-}
-
-impl ChannelUpdateEvent {
-    /// Returns the channel id.
-    pub fn id(&self) -> &str {
-        &self.id
-    }
-
-    /// Returns a partial channel object.
-    pub fn data(&self) -> &Json {
-        &self.data
-    }
-
-    /// Returns a specified field to remove on channel update.
-    pub fn clear(&self) -> Option<RemoveChannelField> {
-        self.clear
-    }
+    /// Channel id.
+    pub id: String,
+    /// A partial channel object.
+    pub data: Json,
+    /// A specified field to remove on channel update.
+    pub clear: Option<RemoveChannelField>,
 }
 
 impl From<ServerToClientEvent> for ChannelUpdateEvent {

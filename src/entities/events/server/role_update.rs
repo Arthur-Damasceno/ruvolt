@@ -13,32 +13,14 @@ pub enum RemoveServerRoleField {
 /// A server role details were updated.
 #[derive(Debug)]
 pub struct ServerRoleUpdateEvent {
-    id: String,
-    role_id: String,
-    data: Json,
-    clear: Option<RemoveServerRoleField>,
-}
-
-impl ServerRoleUpdateEvent {
-    /// Returns the server id.
-    pub fn id(&self) -> &str {
-        &self.id
-    }
-
-    /// Returns the server role id.
-    pub fn role_id(&self) -> &str {
-        &self.role_id
-    }
-
-    /// Returns a partial server role object.
-    pub fn data(&self) -> &Json {
-        &self.data
-    }
-
-    /// Returns a specified field to remove on server role update.
-    pub fn clear(&self) -> Option<RemoveServerRoleField> {
-        self.clear
-    }
+    /// Server id.
+    pub id: String,
+    /// Server role id.
+    pub role_id: String,
+    /// A partial server role object.
+    pub data: Json,
+    /// A specified field to remove on server role update.
+    pub clear: Option<RemoveServerRoleField>,
 }
 
 impl From<ServerToClientEvent> for ServerRoleUpdateEvent {

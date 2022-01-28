@@ -5,20 +5,10 @@ use crate::entities::ServerToClientEvent;
 /// A message has been edited or otherwise updated.
 #[derive(Debug)]
 pub struct MessageUpdateEvent {
-    id: String,
-    data: Json,
-}
-
-impl MessageUpdateEvent {
-    /// Returns the message id.
-    pub fn id(&self) -> &str {
-        &self.id
-    }
-
-    /// Returns a partial message object.
-    pub fn data(&self) -> &Json {
-        &self.data
-    }
+    /// Message id.
+    pub id: String,
+    /// A partial message object.
+    pub data: Json,
 }
 
 impl From<ServerToClientEvent> for MessageUpdateEvent {

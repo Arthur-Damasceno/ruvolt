@@ -3,14 +3,8 @@ use crate::entities::ServerToClientEvent;
 /// A channel has been deleted.
 #[derive(Debug)]
 pub struct ChannelDeleteEvent {
-    id: String,
-}
-
-impl ChannelDeleteEvent {
-    /// Returns the channel id.
-    pub fn id(&self) -> &str {
-        &self.id
-    }
+    /// Channel id.
+    pub id: String,
 }
 
 impl From<ServerToClientEvent> for ChannelDeleteEvent {

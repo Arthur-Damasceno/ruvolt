@@ -16,26 +16,12 @@ pub enum RemoveServerField {
 /// A server details were updated.
 #[derive(Debug)]
 pub struct ServerUpdateEvent {
-    id: String,
-    data: Json,
-    clear: Option<RemoveServerField>,
-}
-
-impl ServerUpdateEvent {
-    /// Returns the server id.
-    pub fn id(&self) -> &str {
-        &self.id
-    }
-
-    /// Returns a partial server object.
-    pub fn data(&self) -> &Json {
-        &self.data
-    }
-
-    /// Returns a specified field to remove on server update.
-    pub fn clear(&self) -> Option<RemoveServerField> {
-        self.clear
-    }
+    /// Server id.
+    pub id: String,
+    /// A partial server object.
+    pub data: Json,
+    /// A specified field to remove on server update.
+    pub clear: Option<RemoveServerField>,
 }
 
 impl From<ServerToClientEvent> for ServerUpdateEvent {

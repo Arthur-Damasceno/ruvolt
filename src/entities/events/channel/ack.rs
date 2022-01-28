@@ -3,26 +3,12 @@ use crate::entities::ServerToClientEvent;
 /// You have acknowledged new messages in the channel up to the message id.
 #[derive(Debug)]
 pub struct ChannelAckEvent {
-    id: String,
-    user_id: String,
-    message_id: String,
-}
-
-impl ChannelAckEvent {
-    /// Returns the channel id.
-    pub fn id(&self) -> &str {
-        &self.id
-    }
-
-    /// Returns the user id.
-    pub fn user_id(&self) -> &str {
-        &self.user_id
-    }
-
-    /// Returns the message id.
-    pub fn message_id(&self) -> &str {
-        &self.message_id
-    }
+    /// Channel id.
+    pub id: String,
+    /// User id.
+    pub user_id: String,
+    /// Message id.
+    pub message_id: String,
 }
 
 impl From<ServerToClientEvent> for ChannelAckEvent {

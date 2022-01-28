@@ -3,20 +3,10 @@ use crate::entities::ServerToClientEvent;
 /// A user has joined the group.
 #[derive(Debug)]
 pub struct ServerMemberJoinEvent {
-    id: String,
-    user_id: String,
-}
-
-impl ServerMemberJoinEvent {
-    /// Returns the server id.
-    pub fn id(&self) -> &str {
-        &self.id
-    }
-
-    /// Returns the user id.
-    pub fn user_id(&self) -> &str {
-        &self.user_id
-    }
+    /// Server id.
+    pub id: String,
+    /// Server member id.
+    pub user_id: String,
 }
 
 impl From<ServerToClientEvent> for ServerMemberJoinEvent {

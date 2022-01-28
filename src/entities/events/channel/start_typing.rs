@@ -3,20 +3,10 @@ use crate::entities::ServerToClientEvent;
 /// A user has started typing in a channel.
 #[derive(Debug)]
 pub struct ChannelStartTypingEvent {
-    id: String,
-    user_id: String,
-}
-
-impl ChannelStartTypingEvent {
-    /// Returns the channel id.
-    pub fn id(&self) -> &str {
-        &self.id
-    }
-
-    /// Returns the user id.
-    pub fn user_id(&self) -> &str {
-        &self.user_id
-    }
+    /// Channel id.
+    pub id: String,
+    /// User id.
+    pub user_id: String,
 }
 
 impl From<ServerToClientEvent> for ChannelStartTypingEvent {

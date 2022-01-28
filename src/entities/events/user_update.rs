@@ -18,26 +18,12 @@ pub enum RemoveUserField {
 /// A user has been updated.
 #[derive(Debug)]
 pub struct UserUpdateEvent {
-    id: String,
-    data: Json,
-    clear: Option<RemoveUserField>,
-}
-
-impl UserUpdateEvent {
-    /// Returns the user id.
-    pub fn id(&self) -> &str {
-        &self.id
-    }
-
-    /// Returns a partial user object.
-    pub fn data(&self) -> &Json {
-        &self.data
-    }
-
-    /// Returns a specified field to remove on user update.
-    pub fn clear(&self) -> Option<RemoveUserField> {
-        self.clear
-    }
+    /// User id.
+    pub id: String,
+    /// A partial user object.
+    pub data: Json,
+    /// A specified field to remove on user update.
+    pub clear: Option<RemoveUserField>,
 }
 
 impl From<ServerToClientEvent> for UserUpdateEvent {
