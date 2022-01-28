@@ -7,7 +7,7 @@ use {
 };
 
 use crate::{
-    entities::{ClientToServerEvent, ServerToClientEvent},
+    entities::events::{ClientToServerEvent, ServerToClientEvent},
     error::Error,
     websocket::WebSocketClient,
     EventHandler, EventHandlerExt, Result,

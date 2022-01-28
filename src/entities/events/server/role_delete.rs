@@ -1,22 +1,12 @@
-use crate::entities::ServerToClientEvent;
+use super::super::ServerToClientEvent;
 
 /// A server role has been deleted.
 #[derive(Debug)]
 pub struct ServerRoleDeleteEvent {
-    id: String,
-    role_id: String,
-}
-
-impl ServerRoleDeleteEvent {
-    /// Returns the server id.
-    pub fn id(&self) -> &str {
-        &self.id
-    }
-
-    /// Returns the role id.
-    pub fn role_id(&self) -> &str {
-        &self.role_id
-    }
+    /// Server id.
+    pub id: String,
+    /// Server role id.
+    pub role_id: String,
 }
 
 impl From<ServerToClientEvent> for ServerRoleDeleteEvent {

@@ -1,28 +1,18 @@
-use crate::entities::ServerToClientEvent;
+use super::super::ServerToClientEvent;
 
 /// A user has left the group.
 #[derive(Debug)]
 pub struct ChannelGroupLeaveEvent {
-    id: String,
-    user_id: String,
-}
-
-impl ChannelGroupLeaveEvent {
-    /// Returns the channel id.
-    pub fn id(&self) -> &str {
-        &self.id
-    }
-
-    /// Returns the user id.
-    pub fn user_id(&self) -> &str {
-        &self.user_id
-    }
+    /// Channel id.
+    pub id: String,
+    /// User id.
+    pub user_id: String,
 }
 
 impl From<ServerToClientEvent> for ChannelGroupLeaveEvent {
     fn from(event: ServerToClientEvent) -> Self {
-        if let ServerToClientEvent::ChannelGroupLeave { id, user } = event {
-            Self { id, user_id: user }
+        if let ServerToClientEvent::ChannelGroupLeave { id, user_id } = event {
+            Self { id, user_id }
         } else {
             panic!("An incorrect event was provided: {:?}", event);
         }
