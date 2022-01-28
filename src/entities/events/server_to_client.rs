@@ -2,7 +2,7 @@ use {serde::Deserialize, serde_json::Value as Json};
 
 use crate::{entities::*, error::AuthenticationError};
 
-#[derive(Debug, Deserialize, Clone, PartialEq)]
+#[derive(Debug, Deserialize)]
 #[serde(tag = "type")]
 pub enum ServerToClientEvent {
     Authenticated,
@@ -12,6 +12,7 @@ pub enum ServerToClientEvent {
     Pong {
         data: usize,
     },
+    Ready(ReadyEvent),
     Message(Message),
     MessageUpdate {
         id: String,
