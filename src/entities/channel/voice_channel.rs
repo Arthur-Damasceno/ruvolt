@@ -12,7 +12,6 @@ pub struct VoiceChannel {
     /// Channel name.
     pub name: String,
     /// Channel description.
-    #[serde(default)]
     pub description: Option<String>,
     /// Channel is not safe for work.
     #[serde(default)]

@@ -16,15 +16,11 @@ pub struct User {
     /// User username.
     pub username: String,
     /// User status.
-    #[serde(default)]
     pub status: Option<UserStatus>,
     /// User badges.
-    #[serde(default)]
     pub badges: Option<u32>,
     /// User flags.
-    #[serde(default)]
     pub flags: Option<u32>,
-    #[serde(default)]
     bot: Option<BotInfo>,
     /// User is online.
     #[serde(default)]

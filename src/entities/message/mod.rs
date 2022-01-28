@@ -13,7 +13,6 @@ pub struct Message {
     #[serde(rename = "_id")]
     pub id: String,
     /// Message nonce.
-    #[serde(default)]
     pub nonce: Option<String>,
     /// Message channel id.
     #[serde(rename = "channel")]
@@ -23,13 +22,10 @@ pub struct Message {
     pub author_id: String,
     /// Message content.
     pub content: Content,
-    #[serde(default)]
     edited: Option<Edited>,
     /// Message mentions.
-    #[serde(default)]
     pub mentions: Vec<String>,
     /// Message replies.
-    #[serde(default)]
     pub replies: Vec<String>,
 }
 

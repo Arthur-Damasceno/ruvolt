@@ -4,10 +4,8 @@ use serde::Deserialize;
 #[derive(Debug, Deserialize, Clone, PartialEq)]
 pub struct UserStatus {
     /// User status text.
-    #[serde(default)]
     pub text: Option<String>,
     /// User presence.
-    #[serde(default)]
     pub presence: Option<Presence>,
 }
 

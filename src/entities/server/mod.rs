@@ -12,12 +12,10 @@ pub struct Server {
     /// Server name.
     pub name: String,
     /// Server description.
-    #[serde(default)]
     pub description: Option<String>,
     /// Server channels ids.
     pub channels: Vec<String>,
     /// Server flags.
-    #[serde(default)]
     pub flags: Option<u32>,
     /// Server is not safe for work.
     #[serde(default)]

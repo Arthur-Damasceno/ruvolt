@@ -12,10 +12,8 @@ pub struct TextChannel {
     /// Channel name.
     pub name: String,
     /// Channel description.
-    #[serde(default)]
     pub description: Option<String>,
     /// Id of last message in the channel.
-    #[serde(default)]
     pub last_message_id: Option<String>,
     /// Channel is not safe for work.
     #[serde(default)]

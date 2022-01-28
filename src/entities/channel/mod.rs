@@ -19,16 +19,16 @@ impl Channel {
     /// Returns the channel id.
     pub fn id(&self) -> &str {
         match self {
-            Self::TextChannel(channel) => &channel.id,
-            Self::VoiceChannel(channel) => &channel.id,
+            Self::TextChannel(TextChannel { id, .. }) => id,
+            Self::VoiceChannel(VoiceChannel { id, .. }) => id,
         }
     }
 
     /// Returns the channel server id.
     pub fn server_id(&self) -> &str {
         match self {
-            Channel::TextChannel(channel) => &channel.server_id,
-            Channel::VoiceChannel(channel) => &channel.server_id,
+            Channel::TextChannel(TextChannel { server_id, .. }) => server_id,
+            Channel::VoiceChannel(VoiceChannel { server_id, .. }) => server_id,
         }
     }
 }
