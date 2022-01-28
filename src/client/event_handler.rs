@@ -17,6 +17,9 @@ pub trait EventHandler: Send + Sync + 'static {
     /// A message has been deleted.
     async fn message_delete(&self, _data: MessageDeleteEvent) {}
 
+    /// A channel has been created.
+    async fn channel_create(&self, _data: Channel) {}
+
     /// A channel details were updated.
     async fn channel_update(&self, _data: ChannelUpdateEvent) {}
 
@@ -75,6 +78,7 @@ pub(crate) trait EventHandlerExt: EventHandler {
             ServerToClientEvent::MessageDelete { .. } => {
                 self.message_delete(MessageDeleteEvent::from(event)).await;
             }
+            ServerToClientEvent::ChannelCreate(channel) => self.channel_create(channel).await,
             ServerToClientEvent::ChannelUpdate { .. } => {
                 self.channel_update(ChannelUpdateEvent::from(event)).await;
             }

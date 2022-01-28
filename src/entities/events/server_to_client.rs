@@ -22,6 +22,7 @@ pub enum ServerToClientEvent {
         #[serde(rename = "channel")]
         channel_id: String,
     },
+    ChannelCreate(Channel),
     ChannelUpdate {
         id: String,
         data: Json,
