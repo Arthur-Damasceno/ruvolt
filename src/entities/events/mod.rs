@@ -1,3 +1,5 @@
+//! Revolt API events.
+
 pub(crate) use server_to_client::*;
 pub use {channel::*, client_to_server::*, message::*, ready::*, server::*, user_update::*};
 

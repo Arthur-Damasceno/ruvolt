@@ -1,6 +1,6 @@
 use serde_json::Value as Json;
 
-use crate::entities::ServerToClientEvent;
+use super::super::ServerToClientEvent;
 
 /// A message has been edited or otherwise updated.
 #[derive(Debug)]

@@ -1,6 +1,6 @@
 use {serde::Deserialize, serde_json::Value as Json};
 
-use crate::entities::{ServerMemberUpdateId, ServerToClientEvent};
+use super::super::{ServerMemberUpdateId, ServerToClientEvent};
 
 /// Specifies a field to remove on server member update.
 #[derive(Debug, Deserialize, Clone, Copy, PartialEq)]

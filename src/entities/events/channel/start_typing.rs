@@ -1,4 +1,4 @@
-use crate::entities::ServerToClientEvent;
+use super::super::ServerToClientEvent;
 
 /// A user has started typing in a channel.
 #[derive(Debug)]

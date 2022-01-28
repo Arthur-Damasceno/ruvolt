@@ -1,10 +1,10 @@
-//! Module for all entities like [ClientToServerEvent], [Message], server members, etc.
+//! Revolt API entities.
 
 #[doc(inline)]
-pub use {channel::*, events::*, message::*, server::*, user::*};
+pub use {channel::*, message::*, server::*, user::*};
 
 mod channel;
-mod events;
+pub mod events;
 mod message;
 mod server;
 mod user;

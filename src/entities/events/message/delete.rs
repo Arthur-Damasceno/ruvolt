@@ -1,4 +1,4 @@
-use crate::entities::ServerToClientEvent;
+use super::super::ServerToClientEvent;
 
 /// A message has been deleted.
 #[derive(Debug)]

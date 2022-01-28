@@ -1,6 +1,9 @@
 use async_trait::async_trait;
 
-use crate::{entities::*, error::Error};
+use crate::{
+    entities::{events::*, *},
+    error::Error,
+};
 
 /// Define handlers for supported events.
 #[async_trait]
