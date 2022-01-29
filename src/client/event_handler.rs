@@ -3,6 +3,7 @@ use async_trait::async_trait;
 use crate::{
     entities::{events::*, *},
     error::Error,
+    Context,
 };
 
 /// Define handlers for supported events.
@@ -74,7 +75,7 @@ pub trait EventHandler: Send + Sync + 'static {
 
 #[async_trait]
 pub(crate) trait EventHandlerExt: EventHandler {
-    async fn handle(&self, event: ServerToClientEvent) {
+    async fn handle(&self, _cx: Context, event: ServerToClientEvent) {
         match event {
             ServerToClientEvent::Pong { .. } => return,
             ServerToClientEvent::Ready(data) => self.ready(data).await,

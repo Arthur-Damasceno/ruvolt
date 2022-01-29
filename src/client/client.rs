@@ -9,7 +9,7 @@ use crate::{
     entities::events::{ClientToServerEvent, ServerToClientEvent},
     error::Error,
     websocket::WebSocketClient,
-    EventHandler, EventHandlerExt, Result,
+    ContextBuilder, EventHandler, EventHandlerExt, Result,
 };
 
 /// API wrapper to interact with Revolt.
@@ -31,20 +31,22 @@ impl<T: EventHandler> Client<T> {
 
     /// Start listening for server events.
     pub async fn listen(mut self, token: String) -> Result {
-        self.authenticate(token).await?;
+        self.authenticate(token.clone()).await?;
 
         let (tx, mut rx) = self.ws_client.split();
         let tx = Arc::new(Mutex::new(tx));
+        let cx_builder = ContextBuilder::new(&token, Arc::clone(&tx));
 
         WebSocketClient::heartbeat(Arc::clone(&tx), Arc::clone(&self.event_handler));
 
         loop {
             let event = rx.recv().await;
             let event_handler = Arc::clone(&self.event_handler);
+            let cx = cx_builder.build();
 
             task::spawn(async move {
                 match event {
-                    Ok(event) => event_handler.handle(event).await,
+                    Ok(event) => event_handler.handle(cx, event).await,
                     Err(err) => event_handler.error(err).await,
                 }
             });
@@ -53,9 +55,7 @@ impl<T: EventHandler> Client<T> {
 
     async fn authenticate(&mut self, token: String) -> Result {
         self.ws_client
-            .send(ClientToServerEvent::Authenticate {
-                token: token.clone(),
-            })
+            .send(ClientToServerEvent::Authenticate { token })
             .await?;
 
         let event = self.ws_client.recv().await?;
