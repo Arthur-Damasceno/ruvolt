@@ -35,13 +35,13 @@ impl<T: EventHandler> Client<T> {
 
         let (tx, mut rx) = self.ws_client.split();
         let tx = Arc::new(Mutex::new(tx));
-        let cx_builder = ContextBuilder::new(&token, Arc::clone(&tx));
+        let cx_builder = ContextBuilder::new(&token, tx.clone());
 
-        WebSocketClient::heartbeat(Arc::clone(&tx), Arc::clone(&self.event_handler));
+        WebSocketClient::heartbeat(tx.clone(), self.event_handler.clone());
 
         loop {
             let event = rx.recv().await;
-            let event_handler = Arc::clone(&self.event_handler);
+            let event_handler = self.event_handler.clone();
             let cx = cx_builder.build();
 
             task::spawn(async move {

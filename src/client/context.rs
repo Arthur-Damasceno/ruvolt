@@ -39,8 +39,8 @@ impl ContextBuilder {
     }
 
     pub fn build(&self) -> Context {
-        let http_client = Arc::clone(&self.http_client);
-        let ws_tx = Arc::clone(&self.ws_tx);
+        let http_client = self.http_client.clone();
+        let ws_tx = self.ws_tx.clone();
 
         Context::new(http_client, ws_tx)
     }
