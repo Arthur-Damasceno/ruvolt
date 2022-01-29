@@ -24,8 +24,10 @@ pub struct Message {
     pub content: Content,
     edited: Option<Edited>,
     /// Message mentions.
+    #[serde(default)]
     pub mentions: Vec<String>,
     /// Message replies.
+    #[serde(default)]
     pub replies: Vec<String>,
 }
 
