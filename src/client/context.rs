@@ -7,7 +7,10 @@ use {
     tokio::sync::Mutex,
 };
 
-use super::websocket::Sender;
+use {
+    super::websocket::Sender,
+    crate::{entities::events::ClientToServerEvent, Result},
+};
 
 pub struct Context {
     pub(crate) http_client: Arc<Client>,
@@ -17,6 +20,20 @@ pub struct Context {
 impl Context {
     pub(crate) fn new(http_client: Arc<Client>, ws_tx: Arc<Mutex<Sender>>) -> Self {
         Self { http_client, ws_tx }
+    }
+
+    /// Send an event to the server.
+    ///
+    /// # Panics
+    ///
+    /// Panics if the event is [Ping](ClientToServerEvent::Ping) or [Authenticate](ClientToServerEvent::Authenticate).
+    pub async fn send(&self, event: ClientToServerEvent) -> Result {
+        match event {
+            ClientToServerEvent::Ping { .. } | ClientToServerEvent::Authenticate { .. } => {
+                panic!("{:?} event is handled by the client", event);
+            }
+            event => self.ws_tx.lock().await.send(event).await,
+        }
     }
 }
 
