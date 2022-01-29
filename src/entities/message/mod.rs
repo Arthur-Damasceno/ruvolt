@@ -6,7 +6,10 @@ mod edited;
 use serde::Deserialize;
 
 use {
-    crate::{entities::User, Context, Result, REVOLT_API},
+    crate::{
+        entities::{Channel, User},
+        Context, Result, REVOLT_API,
+    },
     edited::Edited,
 };
 
@@ -62,6 +65,11 @@ impl Message {
     /// Returns whether the message has been edited.
     pub fn is_edited(&self) -> bool {
         self.edited.is_some()
+    }
+
+    /// Get the message channel from the API.
+    pub async fn fetch_channel(&self, cx: &Context) -> Result<Channel> {
+        Channel::fetch(cx, &self.channel_id).await
     }
 
     /// Get the message author from the API.

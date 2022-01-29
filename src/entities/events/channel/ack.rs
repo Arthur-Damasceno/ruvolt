@@ -1,7 +1,7 @@
 use {
     super::super::ServerToClientEvent,
     crate::{
-        entities::{Message, User},
+        entities::{Channel, Message, User},
         Context, Result,
     },
 };
@@ -18,6 +18,11 @@ pub struct ChannelAckEvent {
 }
 
 impl ChannelAckEvent {
+    /// Get the channel from the API.
+    pub async fn fetch_channel(&self, cx: &Context) -> Result<Channel> {
+        Channel::fetch(cx, &self.id).await
+    }
+
     /// Get the user from the API.
     pub async fn fetch_user(&self, cx: &Context) -> Result<User> {
         User::fetch(cx, &self.user_id).await
