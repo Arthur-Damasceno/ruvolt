@@ -1,6 +1,9 @@
 use {
     super::super::ServerToClientEvent,
-    crate::{entities::User, Context, Result},
+    crate::{
+        entities::{Message, User},
+        Context, Result,
+    },
 };
 
 /// You have acknowledged new messages in the channel up to the message id.
@@ -18,6 +21,11 @@ impl ChannelAckEvent {
     /// Get the user from the API.
     pub async fn fetch_user(&self, cx: &Context) -> Result<User> {
         User::fetch(cx, &self.user_id).await
+    }
+
+    /// Get the message from the API.
+    pub async fn fetch_msg(&self, cx: &Context) -> Result<Message> {
+        Message::fetch(cx, &self.id, &self.message_id).await
     }
 }
 

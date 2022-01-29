@@ -6,7 +6,7 @@ mod edited;
 use serde::Deserialize;
 
 use {
-    crate::{entities::User, Context, Result},
+    crate::{entities::User, Context, Result, REVOLT_API},
     edited::Edited,
 };
 
@@ -36,6 +36,21 @@ pub struct Message {
 }
 
 impl Message {
+    /// Get a message from the API.
+    pub async fn fetch(cx: &Context, channel_id: &str, id: &str) -> Result<Self> {
+        let response = cx
+            .http_client
+            .get(format!(
+                "{}channels/{}/messages/{}",
+                REVOLT_API, channel_id, id
+            ))
+            .send()
+            .await?;
+        let msg = response.json().await?;
+
+        Ok(msg)
+    }
+
     /// Returns the message edit date.
     pub fn edited(&self) -> Option<&str> {
         match self.edited {

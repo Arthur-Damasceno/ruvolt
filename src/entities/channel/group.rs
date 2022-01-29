@@ -1,6 +1,9 @@
 use serde::Deserialize;
 
-use crate::{entities::User, Context, Result};
+use crate::{
+    entities::{Message, User},
+    Context, Result,
+};
 
 /// A group channel.
 #[derive(Debug, Deserialize, Clone, PartialEq)]
@@ -26,5 +29,17 @@ impl GroupChannel {
     /// Get the group owner from the API.
     pub async fn fetch_owner(&self, cx: &Context) -> Result<User> {
         User::fetch(cx, &self.owner_id).await
+    }
+
+    /// Get the last message in the channel from the API.
+    pub async fn fetch_last_msg(&self, cx: &Context) -> Result<Option<Message>> {
+        match self.last_message_id {
+            Some(ref msg_id) => {
+                let msg = Message::fetch(cx, &self.id, msg_id).await?;
+
+                Ok(Some(msg))
+            }
+            None => Ok(None),
+        }
     }
 }
