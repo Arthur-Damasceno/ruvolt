@@ -1,5 +1,7 @@
 use serde::Deserialize;
 
+use crate::{entities::User, Context, Result};
+
 /// A group channel.
 #[derive(Debug, Deserialize, Clone, PartialEq)]
 pub struct GroupChannel {
@@ -18,4 +20,11 @@ pub struct GroupChannel {
     /// Channel is not safe for work.
     #[serde(default)]
     pub nsfw: bool,
+}
+
+impl GroupChannel {
+    /// Get the group owner from the API.
+    pub async fn fetch_owner(&self, cx: &Context) -> Result<User> {
+        User::fetch(cx, &self.owner_id).await
+    }
 }

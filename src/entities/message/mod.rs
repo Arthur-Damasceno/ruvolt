@@ -3,8 +3,12 @@ pub use content::*;
 mod content;
 mod edited;
 
-use edited::Edited;
 use serde::Deserialize;
+
+use {
+    crate::{entities::User, Context, Result},
+    edited::Edited,
+};
 
 /// A message.
 #[derive(Debug, Deserialize, Clone, PartialEq)]
@@ -43,5 +47,10 @@ impl Message {
     /// Returns whether the message has been edited.
     pub fn is_edited(&self) -> bool {
         self.edited.is_some()
+    }
+
+    /// Get the message author from the API.
+    pub async fn fetch_author(&self, cx: &Context) -> Result<User> {
+        User::fetch(cx, &self.author_id).await
     }
 }

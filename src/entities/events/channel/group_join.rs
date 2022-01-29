@@ -1,4 +1,7 @@
-use super::super::ServerToClientEvent;
+use {
+    super::super::ServerToClientEvent,
+    crate::{entities::User, Context, Result},
+};
 
 /// A user has joined the group.
 #[derive(Debug)]
@@ -7,6 +10,13 @@ pub struct ChannelGroupJoinEvent {
     pub id: String,
     /// User id
     pub user_id: String,
+}
+
+impl ChannelGroupJoinEvent {
+    /// Get the user from the API.
+    pub async fn fetch_user(&self, cx: &Context) -> Result<User> {
+        User::fetch(cx, &self.user_id).await
+    }
 }
 
 impl From<ServerToClientEvent> for ChannelGroupJoinEvent {
