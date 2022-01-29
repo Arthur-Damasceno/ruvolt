@@ -1,9 +1,8 @@
 #![allow(missing_debug_implementations)]
 
 use {
-    futures_util::{select, FutureExt},
-    std::{sync::Arc, time::Duration},
-    tokio::{sync::Mutex, task, time},
+    std::sync::Arc,
+    tokio::{sync::Mutex, task},
 };
 
 use crate::{
@@ -36,34 +35,19 @@ impl<T: EventHandler> Client<T> {
 
         let (tx, mut rx) = self.ws_client.split();
         let tx = Arc::new(Mutex::new(tx));
-        let mut interval = time::interval(Duration::from_secs(20));
+
+        WebSocketClient::heartbeat(Arc::clone(&tx), Arc::clone(&self.event_handler));
 
         loop {
-            select! {
-                _ = interval.tick().fuse() => {
-                    let tx = Arc::clone(&tx);
-                    let event_handler = Arc::clone(&self.event_handler);
+            let event = rx.recv().await;
+            let event_handler = Arc::clone(&self.event_handler);
 
-                    task::spawn(async move {
-                        let mut tx = tx.lock().await;
-
-                        match tx.send(ClientToServerEvent::Ping { data: 0 }).await {
-                            Ok(_) => return,
-                            Err(err) => event_handler.error(err).await
-                        }
-                    });
+            task::spawn(async move {
+                match event {
+                    Ok(event) => event_handler.handle(event).await,
+                    Err(err) => event_handler.error(err).await,
                 }
-                event = rx.recv().fuse() => {
-                    let event_handler = Arc::clone(&self.event_handler);
-
-                    task::spawn(async move {
-                        match event {
-                            Ok(event) => event_handler.handle(event).await,
-                            Err(err) => event_handler.error(err).await
-                        }
-                    });
-                }
-            }
+            });
         }
     }
 

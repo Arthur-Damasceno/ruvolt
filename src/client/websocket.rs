@@ -3,14 +3,15 @@ use {
         stream::{SplitSink, SplitStream},
         SinkExt, StreamExt,
     },
-    tokio::net::TcpStream,
+    std::{sync::Arc, time::Duration},
+    tokio::{net::TcpStream, sync::Mutex, task, time},
     tokio_tungstenite::{connect_async, tungstenite::Message, MaybeTlsStream, WebSocketStream},
 };
 
 use crate::{
     entities::events::{ClientToServerEvent, ServerToClientEvent},
     error::Error,
-    Result,
+    EventHandler, Result,
 };
 
 type Stream = WebSocketStream<MaybeTlsStream<TcpStream>>;
@@ -29,6 +30,25 @@ impl WebSocketClient {
             tx: Sender(tx),
             rx: Receiver(rx),
         })
+    }
+
+    pub fn heartbeat(tx: Arc<Mutex<Sender>>, event_handler: Arc<impl EventHandler>) {
+        task::spawn(async move {
+            let mut interval = time::interval(Duration::from_secs(20));
+
+            loop {
+                interval.tick().await;
+
+                if let Err(err) = tx
+                    .lock()
+                    .await
+                    .send(ClientToServerEvent::Ping { data: 0 })
+                    .await
+                {
+                    event_handler.error(err).await;
+                }
+            }
+        });
     }
 
     pub async fn send(&mut self, event: ClientToServerEvent) -> Result {
