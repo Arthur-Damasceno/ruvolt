@@ -1,4 +1,7 @@
-use super::super::ServerToClientEvent;
+use {
+    super::super::ServerToClientEvent,
+    crate::{entities::Server, Context, Result},
+};
 
 /// A user has left the group.
 #[derive(Debug)]
@@ -7,6 +10,13 @@ pub struct ServerMemberLeaveEvent {
     pub id: String,
     /// Server member id.
     pub user_id: String,
+}
+
+impl ServerMemberLeaveEvent {
+    /// Get the server from the API.
+    pub async fn fetch_server(&self, cx: &Context) -> Result<Server> {
+        Server::fetch(cx, &self.id).await
+    }
 }
 
 impl From<ServerToClientEvent> for ServerMemberLeaveEvent {

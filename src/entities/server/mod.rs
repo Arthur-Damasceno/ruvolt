@@ -5,7 +5,7 @@ mod system_message_channels;
 
 use serde::Deserialize;
 
-use crate::{entities::User, Context, Result};
+use crate::{entities::User, Context, Result, REVOLT_API};
 
 /// A server.
 #[derive(Debug, Deserialize, Clone, PartialEq)]
@@ -36,6 +36,18 @@ pub struct Server {
 }
 
 impl Server {
+    /// Get a server from the API.
+    pub async fn fetch(cx: &Context, id: &str) -> Result<Self> {
+        let response = cx
+            .http_client
+            .get(format!("{}servers/{}", REVOLT_API, id))
+            .send()
+            .await?;
+        let server = response.json().await?;
+
+        Ok(server)
+    }
+
     /// Get the server owner from the API.
     pub async fn fetch_owner(&self, cx: &Context) -> Result<User> {
         User::fetch(cx, &self.owner_id).await

@@ -1,6 +1,9 @@
 use serde::Deserialize;
 
-use crate::{entities::Message, Context, Result};
+use crate::{
+    entities::{Message, Server},
+    Context, Result,
+};
 
 /// A text channel.
 #[derive(Debug, Deserialize, Clone, PartialEq)]
@@ -23,6 +26,11 @@ pub struct TextChannel {
 }
 
 impl TextChannel {
+    /// Get the server from the API.
+    pub async fn fetch_server(&self, cx: &Context) -> Result<Server> {
+        Server::fetch(cx, &self.server_id).await
+    }
+
     /// Get the last message in the channel from the API.
     pub async fn fetch_last_msg(&self, cx: &Context) -> Result<Option<Message>> {
         match self.last_message_id {

@@ -1,6 +1,9 @@
 use {serde::Deserialize, serde_json::Value as Json};
 
-use super::super::ServerToClientEvent;
+use {
+    super::super::ServerToClientEvent,
+    crate::{entities::Server, Context, Result},
+};
 
 /// Specifies a field to remove on server role update.
 #[derive(Debug, Deserialize, Clone, Copy, PartialEq)]
@@ -21,6 +24,13 @@ pub struct ServerRoleUpdateEvent {
     pub data: Json,
     /// A specified field to remove on server role update.
     pub clear: Option<RemoveServerRoleField>,
+}
+
+impl ServerRoleUpdateEvent {
+    /// Get the server from the API.
+    pub async fn fetch_server(&self, cx: &Context) -> Result<Server> {
+        Server::fetch(cx, &self.id).await
+    }
 }
 
 impl From<ServerToClientEvent> for ServerRoleUpdateEvent {
