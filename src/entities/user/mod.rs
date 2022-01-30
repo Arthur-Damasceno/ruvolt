@@ -5,7 +5,10 @@ mod status;
 
 use serde::Deserialize;
 
-use bot_info::BotInfo;
+use {
+    crate::{Context, Result, REVOLT_API},
+    bot_info::BotInfo,
+};
 
 /// A user.
 #[derive(Debug, Deserialize, Clone, PartialEq)]
@@ -28,6 +31,18 @@ pub struct User {
 }
 
 impl User {
+    /// Get a user from the API.
+    pub async fn fetch(cx: &Context, id: &str) -> Result<Self> {
+        let response = cx
+            .http_client
+            .get(format!("{}users/{}", REVOLT_API, id))
+            .send()
+            .await?;
+        let user = response.json().await?;
+
+        Ok(user)
+    }
+
     /// Returns the owner id of the bot.
     pub fn owner_id(&self) -> Option<&str> {
         match self.bot {

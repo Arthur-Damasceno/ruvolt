@@ -17,3 +17,5 @@ pub use error::Result;
 mod client;
 pub mod entities;
 pub mod error;
+
+const REVOLT_API: &str = "https://api.revolt.chat/";

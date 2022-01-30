@@ -1,4 +1,10 @@
-use super::super::ServerToClientEvent;
+use {
+    super::super::ServerToClientEvent,
+    crate::{
+        entities::{Channel, User},
+        Context, Result,
+    },
+};
 
 /// A user has stopped typing in a channel.
 #[derive(Debug)]
@@ -7,6 +13,18 @@ pub struct ChannelStopTypingEvent {
     pub id: String,
     /// User id.
     pub user_id: String,
+}
+
+impl ChannelStopTypingEvent {
+    /// Get the channel from the API.
+    pub async fn fetch_channel(&self, cx: &Context) -> Result<Channel> {
+        Channel::fetch(cx, &self.id).await
+    }
+
+    /// Get the user from the API.
+    pub async fn fetch_user(&self, cx: &Context) -> Result<User> {
+        User::fetch(cx, &self.user_id).await
+    }
 }
 
 impl From<ServerToClientEvent> for ChannelStopTypingEvent {

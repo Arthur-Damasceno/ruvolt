@@ -1,4 +1,7 @@
-use super::super::ServerToClientEvent;
+use {
+    super::super::ServerToClientEvent,
+    crate::{entities::Server, Context, Result},
+};
 
 /// A server role has been deleted.
 #[derive(Debug)]
@@ -7,6 +10,13 @@ pub struct ServerRoleDeleteEvent {
     pub id: String,
     /// Server role id.
     pub role_id: String,
+}
+
+impl ServerRoleDeleteEvent {
+    /// Get the server from the API.
+    pub async fn fetch_server(&self, cx: &Context) -> Result<Server> {
+        Server::fetch(cx, &self.id).await
+    }
 }
 
 impl From<ServerToClientEvent> for ServerRoleDeleteEvent {

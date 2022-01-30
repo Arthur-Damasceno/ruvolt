@@ -1,6 +1,9 @@
 use {serde::Deserialize, serde_json::Value as Json};
 
-use super::super::{ServerMemberUpdateId, ServerToClientEvent};
+use {
+    super::super::{ServerMemberUpdateId, ServerToClientEvent},
+    crate::{entities::Server, Context, Result},
+};
 
 /// Specifies a field to remove on server member update.
 #[derive(Debug, Deserialize, Clone, Copy, PartialEq)]
@@ -22,6 +25,13 @@ pub struct ServerMemberUpdateEvent {
     pub data: Json,
     /// A specified field to remove on server member update.
     pub clear: Option<RemoveServerMemberField>,
+}
+
+impl ServerMemberUpdateEvent {
+    /// Get the server from the API.
+    pub async fn fetch_server(&self, cx: &Context) -> Result<Server> {
+        Server::fetch(cx, &self.id).await
+    }
 }
 
 impl From<ServerToClientEvent> for ServerMemberUpdateEvent {

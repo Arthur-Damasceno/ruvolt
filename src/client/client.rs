@@ -1,19 +1,22 @@
 #![allow(missing_debug_implementations)]
 
 use {
-    futures_util::{select, FutureExt},
-    std::{sync::Arc, time::Duration},
-    tokio::{sync::Mutex, task, time},
+    std::sync::Arc,
+    tokio::{sync::Mutex, task},
 };
 
-use crate::{
-    entities::events::{ClientToServerEvent, ServerToClientEvent},
-    error::Error,
-    websocket::WebSocketClient,
-    EventHandler, EventHandlerExt, Result,
+use {
+    super::cx_builder_from_ready,
+    crate::{
+        entities::events::{ClientToServerEvent, ServerToClientEvent},
+        error::Error,
+        websocket::WebSocketClient,
+        EventHandler, EventHandlerExt, Result,
+    },
 };
 
 /// API wrapper to interact with Revolt.
+#[derive(Debug)]
 pub struct Client<T: EventHandler> {
     event_handler: Arc<T>,
     ws_client: WebSocketClient,
@@ -31,47 +34,33 @@ impl<T: EventHandler> Client<T> {
     }
 
     /// Start listening for server events.
-    pub async fn listen(mut self, token: String) -> Result {
-        self.authenticate(token).await?;
+    pub async fn listen(mut self, token: &str) -> Result {
+        self.authenticate(token.into()).await?;
 
         let (tx, mut rx) = self.ws_client.split();
         let tx = Arc::new(Mutex::new(tx));
-        let mut interval = time::interval(Duration::from_secs(20));
+        let cx_builder =
+            cx_builder_from_ready(&mut rx, tx.clone(), self.event_handler.clone(), token).await?;
+
+        WebSocketClient::heartbeat(tx.clone(), self.event_handler.clone());
 
         loop {
-            select! {
-                _ = interval.tick().fuse() => {
-                    let tx = Arc::clone(&tx);
-                    let event_handler = Arc::clone(&self.event_handler);
+            let event = rx.recv().await;
+            let event_handler = self.event_handler.clone();
+            let cx = cx_builder.build();
 
-                    task::spawn(async move {
-                        let mut tx = tx.lock().await;
-
-                        match tx.send(ClientToServerEvent::Ping { data: 0 }).await {
-                            Ok(_) => return,
-                            Err(err) => event_handler.error(err).await
-                        }
-                    });
+            task::spawn(async move {
+                match event {
+                    Ok(event) => event_handler.handle(cx, event).await,
+                    Err(err) => event_handler.error(err).await,
                 }
-                event = rx.recv().fuse() => {
-                    let event_handler = Arc::clone(&self.event_handler);
-
-                    task::spawn(async move {
-                        match event {
-                            Ok(event) => event_handler.handle(event).await,
-                            Err(err) => event_handler.error(err).await
-                        }
-                    });
-                }
-            }
+            });
         }
     }
 
     async fn authenticate(&mut self, token: String) -> Result {
         self.ws_client
-            .send(ClientToServerEvent::Authenticate {
-                token: token.clone(),
-            })
+            .send(ClientToServerEvent::Authenticate { token })
             .await?;
 
         let event = self.ws_client.recv().await?;

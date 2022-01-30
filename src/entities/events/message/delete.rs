@@ -1,4 +1,7 @@
-use super::super::ServerToClientEvent;
+use {
+    super::super::ServerToClientEvent,
+    crate::{entities::Channel, Context, Result},
+};
 
 /// A message has been deleted.
 #[derive(Debug)]
@@ -7,6 +10,13 @@ pub struct MessageDeleteEvent {
     pub id: String,
     /// Message channel id.
     pub channel_id: String,
+}
+
+impl MessageDeleteEvent {
+    /// Get the channel from the API.
+    pub async fn fetch_channel(&self, cx: &Context) -> Result<Channel> {
+        Channel::fetch(cx, &self.channel_id).await
+    }
 }
 
 impl From<ServerToClientEvent> for MessageDeleteEvent {
