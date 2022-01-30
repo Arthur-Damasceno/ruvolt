@@ -5,11 +5,14 @@ use {
     tokio::{sync::Mutex, task},
 };
 
-use crate::{
-    entities::events::{ClientToServerEvent, ServerToClientEvent},
-    error::Error,
-    websocket::WebSocketClient,
-    ContextBuilder, EventHandler, EventHandlerExt, Result,
+use {
+    super::cx_builder_from_ready,
+    crate::{
+        entities::events::{ClientToServerEvent, ServerToClientEvent},
+        error::Error,
+        websocket::WebSocketClient,
+        EventHandler, EventHandlerExt, Result,
+    },
 };
 
 /// API wrapper to interact with Revolt.
@@ -31,12 +34,13 @@ impl<T: EventHandler> Client<T> {
     }
 
     /// Start listening for server events.
-    pub async fn listen(mut self, token: String) -> Result {
-        self.authenticate(token.clone()).await?;
+    pub async fn listen(mut self, token: &str) -> Result {
+        self.authenticate(token.into()).await?;
 
         let (tx, mut rx) = self.ws_client.split();
         let tx = Arc::new(Mutex::new(tx));
-        let cx_builder = ContextBuilder::new(&token, tx.clone());
+        let cx_builder =
+            cx_builder_from_ready(&mut rx, tx.clone(), self.event_handler.clone(), token).await?;
 
         WebSocketClient::heartbeat(tx.clone(), self.event_handler.clone());
 

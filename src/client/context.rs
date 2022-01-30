@@ -9,7 +9,10 @@ use {
 
 use {
     super::websocket::Sender,
-    crate::{entities::events::ClientToServerEvent, Result},
+    crate::{
+        entities::{events::ClientToServerEvent, User},
+        Result,
+    },
 };
 
 /// A struct for general utilities and wrapper for the http client for fetch entities from the API.
@@ -17,11 +20,17 @@ use {
 pub struct Context {
     pub(crate) http_client: Arc<Client>,
     pub(crate) ws_tx: Arc<Mutex<Sender>>,
+    /// The current user.
+    pub user: User,
 }
 
 impl Context {
-    pub(crate) fn new(http_client: Arc<Client>, ws_tx: Arc<Mutex<Sender>>) -> Self {
-        Self { http_client, ws_tx }
+    pub(crate) fn new(http_client: Arc<Client>, ws_tx: Arc<Mutex<Sender>>, user: User) -> Self {
+        Self {
+            http_client,
+            ws_tx,
+            user,
+        }
     }
 
     /// Send an event to the server.
@@ -42,10 +51,11 @@ impl Context {
 pub struct ContextBuilder {
     http_client: Arc<Client>,
     ws_tx: Arc<Mutex<Sender>>,
+    user: User,
 }
 
 impl ContextBuilder {
-    pub fn new(token: &str, ws_tx: Arc<Mutex<Sender>>) -> Self {
+    pub fn new(token: &str, ws_tx: Arc<Mutex<Sender>>, user: User) -> Self {
         let mut headers = HeaderMap::new();
         headers.insert("x-bot-token", HeaderValue::from_str(token).unwrap());
 
@@ -54,13 +64,15 @@ impl ContextBuilder {
         Self {
             http_client: Arc::new(http_client),
             ws_tx,
+            user,
         }
     }
 
     pub fn build(&self) -> Context {
         let http_client = self.http_client.clone();
         let ws_tx = self.ws_tx.clone();
+        let user = self.user.clone();
 
-        Context::new(http_client, ws_tx)
+        Context::new(http_client, ws_tx, user)
     }
 }
