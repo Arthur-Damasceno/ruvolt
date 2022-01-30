@@ -16,6 +16,7 @@ use crate::{
 
 type Stream = WebSocketStream<MaybeTlsStream<TcpStream>>;
 
+#[derive(Debug)]
 pub struct WebSocketClient {
     tx: Sender,
     rx: Receiver,
@@ -64,6 +65,7 @@ impl WebSocketClient {
     }
 }
 
+#[derive(Debug)]
 pub struct Sender(SplitSink<Stream, Message>);
 
 impl Sender {
@@ -76,6 +78,7 @@ impl Sender {
     }
 }
 
+#[derive(Debug)]
 pub struct Receiver(SplitStream<Stream>);
 
 impl Receiver {

@@ -13,6 +13,7 @@ use crate::{
 };
 
 /// API wrapper to interact with Revolt.
+#[derive(Debug)]
 pub struct Client<T: EventHandler> {
     event_handler: Arc<T>,
     ws_client: WebSocketClient,

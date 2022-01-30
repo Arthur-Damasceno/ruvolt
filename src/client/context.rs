@@ -13,6 +13,7 @@ use {
 };
 
 /// A struct for general utilities and wrapper for the http client for fetch entities from the API.
+#[derive(Debug)]
 pub struct Context {
     pub(crate) http_client: Arc<Client>,
     pub(crate) ws_tx: Arc<Mutex<Sender>>,
