@@ -84,4 +84,15 @@ impl Message {
 
         Ok(msg)
     }
+
+    /// Edit the message.
+    pub async fn edit(&mut self, cx: &Context, content: &str) -> Result {
+        let path = format!("channels/{}/messages/{}", self.channel_id, self.id);
+        let body = json!({ "content": content });
+
+        cx.http_client.patch(&path, body).await?;
+        self.content = Content::Text(content.into());
+
+        Ok(())
+    }
 }
