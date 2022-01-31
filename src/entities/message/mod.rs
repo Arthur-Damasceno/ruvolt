@@ -72,22 +72,15 @@ impl Message {
 
     /// Reply the message.
     pub async fn reply(&self, cx: &Context, content: &str) -> Result<Self> {
-        let response = cx
-            .http_client
-            .post(format!(
-                "{}channels/{}/messages",
-                REVOLT_API, &self.channel_id
-            ))
-            .json(&json!({
-                "content": content,
-                "replies": [{
-                    "id": self.id,
-                    "mention": true,
-                }]
-            }))
-            .send()
-            .await?;
-        let msg = response.json().await?;
+        let path = format!("channels/{}/messages", self.channel_id);
+        let body = json!({
+            "content": content,
+            "replies": [{
+                "id": self.id,
+                "mention": true,
+            }]
+        });
+        let msg = cx.http_client.post(&path, body).await?;
 
         Ok(msg)
     }
