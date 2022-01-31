@@ -48,4 +48,12 @@ impl HttpClient {
 
         Ok(body)
     }
+
+    /// Make a PATCH request to the API with a json body.
+    pub async fn patch<T: Serialize>(&self, path: &str, body: T) -> Result {
+        let url = Self::make_url(path);
+        self.0.patch(url).json(&body).send().await?;
+
+        Ok(())
+    }
 }
