@@ -8,7 +8,7 @@ use {serde::Deserialize, serde_json::json};
 use {
     crate::{
         entities::{Channel, User},
-        Context, Result, REVOLT_API,
+        Context, Result,
     },
     edited::Edited,
 };
@@ -41,15 +41,8 @@ pub struct Message {
 impl Message {
     /// Get a message from the API.
     pub async fn fetch(cx: &Context, channel_id: &str, id: &str) -> Result<Self> {
-        let response = cx
-            .http_client
-            .get(format!(
-                "{}channels/{}/messages/{}",
-                REVOLT_API, channel_id, id
-            ))
-            .send()
-            .await?;
-        let msg = response.json().await?;
+        let path = format!("channels/{}/messages/{}", channel_id, id);
+        let msg = cx.http_client.get(&path).await?;
 
         Ok(msg)
     }

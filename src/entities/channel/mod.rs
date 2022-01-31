@@ -6,7 +6,7 @@ mod voice;
 
 use serde::Deserialize;
 
-use crate::{Context, Result, REVOLT_API};
+use crate::{Context, Result};
 
 /// A channel.
 #[derive(Debug, Deserialize, Clone, PartialEq)]
@@ -25,12 +25,8 @@ pub enum Channel {
 impl Channel {
     /// Get a channel from the API.
     pub async fn fetch(cx: &Context, id: &str) -> Result<Self> {
-        let response = cx
-            .http_client
-            .get(format!("{}channels/{}", REVOLT_API, id))
-            .send()
-            .await?;
-        let channel = response.json().await?;
+        let path = format!("channels/{}", id);
+        let channel = cx.http_client.get(&path).await?;
 
         Ok(channel)
     }

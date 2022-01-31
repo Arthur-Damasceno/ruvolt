@@ -5,7 +5,7 @@ mod system_message_channels;
 
 use serde::Deserialize;
 
-use crate::{entities::User, Context, Result, REVOLT_API};
+use crate::{entities::User, Context, Result};
 
 /// A server.
 #[derive(Debug, Deserialize, Clone, PartialEq)]
@@ -38,12 +38,8 @@ pub struct Server {
 impl Server {
     /// Get a server from the API.
     pub async fn fetch(cx: &Context, id: &str) -> Result<Self> {
-        let response = cx
-            .http_client
-            .get(format!("{}servers/{}", REVOLT_API, id))
-            .send()
-            .await?;
-        let server = response.json().await?;
+        let path = format!("servers/{}", id);
+        let server = cx.http_client.get(&path).await?;
 
         Ok(server)
     }

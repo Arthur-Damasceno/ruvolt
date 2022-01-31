@@ -6,7 +6,7 @@ mod status;
 use serde::Deserialize;
 
 use {
-    crate::{Context, Result, REVOLT_API},
+    crate::{Context, Result},
     bot_info::BotInfo,
 };
 
@@ -33,12 +33,8 @@ pub struct User {
 impl User {
     /// Get a user from the API.
     pub async fn fetch(cx: &Context, id: &str) -> Result<Self> {
-        let response = cx
-            .http_client
-            .get(format!("{}users/{}", REVOLT_API, id))
-            .send()
-            .await?;
-        let user = response.json().await?;
+        let path = format!("users/{}", id);
+        let user = cx.http_client.get(&path).await?;
 
         Ok(user)
     }
