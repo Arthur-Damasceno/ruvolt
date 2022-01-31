@@ -95,4 +95,12 @@ impl Message {
 
         Ok(())
     }
+
+    /// Delete the message.
+    pub async fn delete(self, cx: &Context) -> Result {
+        let path = format!("channels/{}/messages/{}", self.channel_id, self.id);
+        cx.http_client.delete(&path).await?;
+
+        Ok(())
+    }
 }
