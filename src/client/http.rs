@@ -56,4 +56,12 @@ impl HttpClient {
 
         Ok(())
     }
+
+    /// Make a DELETE request to the API.
+    pub async fn delete(&self, path: &str) -> Result {
+        let url = Self::make_url(path);
+        self.0.delete(url).send().await?;
+
+        Ok(())
+    }
 }
