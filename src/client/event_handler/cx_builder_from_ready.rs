@@ -8,7 +8,10 @@ use {
         super::websocket::{Receiver, Sender},
         EventHandler,
     },
-    crate::{entities::events::ServerToClientEvent, error::Error, ContextBuilder, Result},
+    crate::{
+        entities::events::ServerToClientEvent, error::Error, http::HttpClient, ContextBuilder,
+        Result,
+    },
 };
 
 pub async fn cx_builder_from_ready(
@@ -21,7 +24,8 @@ pub async fn cx_builder_from_ready(
 
     if let ServerToClientEvent::Ready(mut data) = event {
         let user = data.users.remove(0);
-        let cx_builder = ContextBuilder::new(token, tx, user);
+        let http_client = HttpClient::new(token);
+        let cx_builder = ContextBuilder::new(http_client, tx, user);
         let cx = cx_builder.build();
 
         task::spawn(async move {
