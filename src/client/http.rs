@@ -5,7 +5,7 @@ use {
         header::{HeaderMap, HeaderValue},
         Client,
     },
-    serde::de::DeserializeOwned,
+    serde::{de::DeserializeOwned, ser::Serialize},
 };
 
 use crate::Result;
@@ -27,10 +27,23 @@ impl HttpClient {
         Self(client)
     }
 
-    /// Make a GET request to the API and convert the body to json.
+    fn make_url(path: &str) -> String {
+        format!("{}/{}", REVOLT_API, path)
+    }
+
+    /// Make a GET request to the API and convert the response body to json.
     pub async fn get<T: DeserializeOwned>(&self, path: &str) -> Result<T> {
-        let url = format!("{}/{}", REVOLT_API, path);
+        let url = Self::make_url(path);
         let response = self.0.get(url).send().await?;
+        let body = response.json().await?;
+
+        Ok(body)
+    }
+
+    /// Make a POST request to the API with a json body and convert the response body to json.
+    pub async fn post<T: DeserializeOwned, U: Serialize>(&self, path: &str, body: U) -> Result<T> {
+        let url = Self::make_url(path);
+        let response = self.0.post(url).json(&body).send().await?;
         let body = response.json().await?;
 
         Ok(body)
