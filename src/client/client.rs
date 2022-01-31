@@ -5,14 +5,12 @@ use {
     tokio::{sync::Mutex, task},
 };
 
-use {
-    super::cx_builder_from_ready,
-    crate::{
-        entities::events::{ClientToServerEvent, ServerToClientEvent},
-        error::Error,
-        websocket::WebSocketClient,
-        EventHandler, EventHandlerExt, Result,
-    },
+use crate::{
+    entities::events::{ClientToServerEvent, ServerToClientEvent},
+    error::Error,
+    http::HttpClient,
+    websocket::WebSocketClient,
+    ContextFactory, EventHandler, EventHandlerExt, Result,
 };
 
 /// API wrapper to interact with Revolt.
@@ -39,15 +37,16 @@ impl<T: EventHandler> Client<T> {
 
         let (tx, mut rx) = self.ws_client.split();
         let tx = Arc::new(Mutex::new(tx));
-        let cx_builder =
-            cx_builder_from_ready(&mut rx, tx.clone(), self.event_handler.clone(), token).await?;
+        let http_client = HttpClient::new(token);
+        let user = http_client.get("users/@me").await?;
+        let cx_factory = ContextFactory::new(http_client, tx.clone(), user);
 
-        WebSocketClient::heartbeat(tx.clone(), self.event_handler.clone());
+        WebSocketClient::heartbeat(tx, self.event_handler.clone());
 
         loop {
             let event = rx.recv().await;
             let event_handler = self.event_handler.clone();
-            let cx = cx_builder.build();
+            let cx = cx_factory.make();
 
             task::spawn(async move {
                 match event {
