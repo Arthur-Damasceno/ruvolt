@@ -70,21 +70,6 @@ impl Message {
         User::fetch(cx, &self.author_id).await
     }
 
-    /// Reply the message.
-    pub async fn reply(&self, cx: &Context, content: &str) -> Result<Self> {
-        let path = format!("channels/{}/messages", self.channel_id);
-        let body = json!({
-            "content": content,
-            "replies": [{
-                "id": self.id,
-                "mention": true,
-            }]
-        });
-        let msg = cx.http_client.post(&path, body).await?;
-
-        Ok(msg)
-    }
-
     /// Edit the message.
     pub async fn edit(&mut self, cx: &Context, content: &str) -> Result {
         let path = format!("channels/{}/messages/{}", self.channel_id, self.id);
