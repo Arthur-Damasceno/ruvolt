@@ -10,6 +10,7 @@ pub trait EventHandlerExt: EventHandler {
     async fn handle(&self, cx: Context, event: ServerToClientEvent) {
         match event {
             ServerToClientEvent::Pong { .. } => return,
+            ServerToClientEvent::Ready(data) => self.ready(cx, data).await,
             ServerToClientEvent::Message(msg) => self.message(cx, msg).await,
             ServerToClientEvent::MessageUpdate { .. } => {
                 self.message_update(cx, MessageUpdateEvent::from(event))
