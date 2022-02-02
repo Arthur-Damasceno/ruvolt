@@ -51,4 +51,12 @@ impl GroupChannel {
 
         Ok(msg)
     }
+
+    /// Leave the group.
+    pub async fn leave(&self, cx: &Context) -> Result {
+        let path = format!("channels/{}", self.id);
+        cx.http_client.delete(&path).await?;
+
+        Ok(())
+    }
 }

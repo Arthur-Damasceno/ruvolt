@@ -51,4 +51,12 @@ impl TextChannel {
 
         Ok(msg)
     }
+
+    /// Delete the channel.
+    pub async fn delete(&self, cx: &Context) -> Result {
+        let path = format!("channels/{}", self.id);
+        cx.http_client.delete(&path).await?;
+
+        Ok(())
+    }
 }

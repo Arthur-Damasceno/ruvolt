@@ -25,4 +25,12 @@ impl VoiceChannel {
     pub async fn fetch_server(&self, cx: &Context) -> Result<Server> {
         Server::fetch(cx, &self.server_id).await
     }
+
+    /// Delete the channel.
+    pub async fn delete(&self, cx: &Context) -> Result {
+        let path = format!("channels/{}", self.id);
+        cx.http_client.delete(&path).await?;
+
+        Ok(())
+    }
 }
