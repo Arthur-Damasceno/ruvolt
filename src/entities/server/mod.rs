@@ -49,4 +49,12 @@ impl Server {
     pub async fn fetch_owner(&self, cx: &Context) -> Result<User> {
         User::fetch(cx, &self.owner_id).await
     }
+
+    /// Leave from the server.
+    pub async fn leave(&self, cx: &Context) -> Result {
+        let path = format!("servers/{}", self.id);
+        cx.http_client.delete(&path).await?;
+
+        Ok(())
+    }
 }
