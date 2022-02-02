@@ -7,7 +7,7 @@ use {serde::Deserialize, serde_json::json};
 
 use {
     crate::{
-        entities::{Channel, User},
+        entities::{Attachment, Channel, User},
         Context, Result,
     },
     edited::Edited,
@@ -29,6 +29,9 @@ pub struct Message {
     pub author_id: String,
     /// Message content.
     pub content: Content,
+    /// File attachments.
+    #[serde(default)]
+    pub attachments: Vec<Attachment>,
     edited: Option<Edited>,
     /// Message mentions.
     #[serde(default)]

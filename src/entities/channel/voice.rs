@@ -1,6 +1,9 @@
 use serde::Deserialize;
 
-use crate::{entities::Server, Context, Result};
+use crate::{
+    entities::{Attachment, Server},
+    Context, Result,
+};
 
 /// A voice channel.
 #[derive(Debug, Deserialize, Clone, PartialEq)]
@@ -15,6 +18,8 @@ pub struct VoiceChannel {
     pub name: String,
     /// Channel description.
     pub description: Option<String>,
+    /// Channel icon.
+    pub icon: Option<Attachment>,
     /// Channel is not safe for work.
     #[serde(default)]
     pub nsfw: bool,

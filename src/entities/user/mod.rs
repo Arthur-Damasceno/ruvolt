@@ -6,7 +6,7 @@ mod status;
 use serde::Deserialize;
 
 use {
-    crate::{Context, Result},
+    crate::{entities::Attachment, Context, Result},
     bot_info::BotInfo,
 };
 
@@ -18,6 +18,8 @@ pub struct User {
     pub id: String,
     /// User username.
     pub username: String,
+    /// User avatar.
+    pub avatar: Option<Attachment>,
     /// User status.
     pub status: Option<UserStatus>,
     /// User badges.

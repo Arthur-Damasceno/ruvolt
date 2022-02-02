@@ -1,6 +1,6 @@
 use serde::Deserialize;
 
-use crate::{Context, Result};
+use crate::{entities::Attachment, Context, Result};
 
 /// A server member.
 #[derive(Debug, Deserialize, Clone, PartialEq)]
@@ -10,6 +10,8 @@ pub struct Member {
     pub id: MemberId,
     /// Member nickname.
     pub nickname: Option<String>,
+    /// Member avatar.
+    pub avatar: Option<Attachment>,
     /// Member roles ids.
     #[serde(default)]
     pub roles: Vec<String>,

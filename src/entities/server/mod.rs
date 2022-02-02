@@ -6,7 +6,10 @@ mod system_message_channels;
 
 use serde::Deserialize;
 
-use crate::{entities::User, Context, Result};
+use crate::{
+    entities::{Attachment, User},
+    Context, Result,
+};
 
 /// A server.
 #[derive(Debug, Deserialize, Clone, PartialEq)]
@@ -29,6 +32,10 @@ pub struct Server {
     /// Server system message channels.
     #[serde(rename = "system_messages")]
     pub system_message_channels: Option<SystemMessageChannels>,
+    /// Server icon.
+    pub icon: Option<Attachment>,
+    /// Server banner.
+    pub banner: Option<Attachment>,
     /// Server flags.
     pub flags: Option<u32>,
     /// Server is not safe for work.
