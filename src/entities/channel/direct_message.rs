@@ -1,38 +1,27 @@
 use {serde::Deserialize, serde_json::json};
 
-use crate::{
-    entities::{Attachment, Message, User},
-    Context, Result,
-};
+use crate::{entities::Message, Context, Result};
 
-/// A group channel.
+/// A DM channel.
 #[derive(Debug, Deserialize, Clone, PartialEq)]
-pub struct GroupChannel {
+pub struct DirectMessageChannel {
     /// Channel id.
-    #[serde(rename = "_id")]
     pub id: String,
-    /// Group owner id.
-    #[serde(rename = "owner")]
-    pub owner_id: String,
-    /// Group name.
-    pub name: String,
-    /// Group description.
-    pub description: Option<String>,
-    /// Group icon.
-    pub icon: Option<Attachment>,
-    /// List of user ids who are participating in this group.
+    /// Whether this DM is active.
+    pub active: bool,
+    /// List of user ids who are participating in this DM.
     pub recipients: Vec<String>,
-    /// Id of last message in the channel.
+    /// Id of the last message in the channel.
     pub last_message_id: Option<String>,
-    /// Group is not safe for work.
-    #[serde(default)]
-    pub nsfw: bool,
 }
 
-impl GroupChannel {
-    /// Get the group owner from the API.
-    pub async fn fetch_owner(&self, cx: &Context) -> Result<User> {
-        User::fetch(cx, &self.owner_id).await
+impl DirectMessageChannel {
+    /// Open a DM with another user.
+    pub async fn open(cx: &Context, user_id: &str) -> Result<Self> {
+        let path = format!("users/{}/dm", user_id);
+        let dm = cx.http_client.get(&path).await?;
+
+        Ok(dm)
     }
 
     /// Get the last message in the channel from the API.
@@ -56,8 +45,8 @@ impl GroupChannel {
         Ok(msg)
     }
 
-    /// Leave the group.
-    pub async fn leave(&self, cx: &Context) -> Result {
+    /// Close this DM.
+    pub async fn close(&self, cx: &Context) -> Result {
         let path = format!("channels/{}", self.id);
         cx.http_client.delete(&path).await?;
 
