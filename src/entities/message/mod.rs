@@ -1,7 +1,8 @@
-pub use content::*;
+pub use {content::*, embed::*};
 
 mod content;
 mod edited;
+mod embed;
 
 use {serde::Deserialize, serde_json::json};
 
@@ -29,9 +30,12 @@ pub struct Message {
     pub author_id: String,
     /// Message content.
     pub content: Content,
-    /// File attachments.
+    /// Message attachments.
     #[serde(default)]
     pub attachments: Vec<Attachment>,
+    /// Message embeds.
+    #[serde(default)]
+    pub embeds: Vec<Embed>,
     edited: Option<Edited>,
     /// Message mentions.
     #[serde(default)]
