@@ -1,4 +1,4 @@
-use serde::Deserialize;
+use {serde::Deserialize, std::collections::HashMap};
 
 use crate::{
     entities::{Attachment, Id, Server},
@@ -22,6 +22,9 @@ pub struct VoiceChannel {
     pub icon: Option<Attachment>,
     /// Permissions given to all users.
     pub default_permissions: Option<u32>,
+    /// Permissions given to roles.
+    #[serde(default)]
+    pub role_permissions: HashMap<Id, u32>,
     /// Channel is not safe for work.
     #[serde(default)]
     pub nsfw: bool,

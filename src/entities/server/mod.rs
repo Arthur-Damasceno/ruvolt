@@ -1,10 +1,11 @@
-pub use {category::*, member::*, system_message_channels::*};
+pub use {category::*, member::*, role::*, system_message_channels::*};
 
 mod category;
 mod member;
+mod role;
 mod system_message_channels;
 
-use serde::Deserialize;
+use {serde::Deserialize, std::collections::HashMap};
 
 use crate::{
     entities::{Attachment, Id, User},
@@ -33,8 +34,10 @@ pub struct Server {
     #[serde(default)]
     pub categories: Vec<Category>,
     /// Server system message channels.
-    #[serde(rename = "system_messages")]
-    pub system_message_channels: Option<SystemMessageChannels>,
+    pub system_messages: Option<SystemMessageChannels>,
+    /// Server roles.
+    #[serde(default)]
+    pub roles: HashMap<Id, Role>,
     /// Default permissions for all members
     pub default_permissions: PermissionTuple,
     /// Server icon.
