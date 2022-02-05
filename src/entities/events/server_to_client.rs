@@ -18,56 +18,56 @@ pub enum ServerToClientEvent {
     Ready(ReadyEvent),
     Message(Message),
     MessageUpdate {
-        id: String,
+        id: Id,
         data: Json,
     },
     MessageDelete {
-        id: String,
+        id: Id,
         #[serde(rename = "channel")]
-        channel_id: String,
+        channel_id: Id,
     },
     ChannelCreate(Channel),
     ChannelUpdate {
-        id: String,
+        id: Id,
         data: Json,
         clear: Option<RemoveChannelField>,
     },
     ChannelDelete {
-        id: String,
+        id: Id,
     },
     ChannelGroupJoin {
-        id: String,
+        id: Id,
         #[serde(rename = "user")]
-        user_id: String,
+        user_id: Id,
     },
     ChannelGroupLeave {
-        id: String,
+        id: Id,
         #[serde(rename = "user")]
-        user_id: String,
+        user_id: Id,
     },
     ChannelStartTyping {
-        id: String,
+        id: Id,
         #[serde(rename = "user")]
-        user_id: String,
+        user_id: Id,
     },
     ChannelStopTyping {
-        id: String,
+        id: Id,
         #[serde(rename = "user")]
-        user_id: String,
+        user_id: Id,
     },
     ChannelAck {
-        id: String,
+        id: Id,
         #[serde(rename = "user")]
-        user_id: String,
-        message_id: String,
+        user_id: Id,
+        message_id: Id,
     },
     ServerUpdate {
-        id: String,
+        id: Id,
         data: Json,
         clear: Option<RemoveServerField>,
     },
     ServerDelete {
-        id: String,
+        id: Id,
     },
     ServerMemberUpdate {
         id: ServerMemberUpdateId,
@@ -75,27 +75,27 @@ pub enum ServerToClientEvent {
         clear: Option<RemoveServerMemberField>,
     },
     ServerMemberJoin {
-        id: String,
+        id: Id,
         #[serde(rename = "user")]
-        user_id: String,
+        user_id: Id,
     },
     ServerMemberLeave {
-        id: String,
+        id: Id,
         #[serde(rename = "user")]
-        user_id: String,
+        user_id: Id,
     },
     ServerRoleUpdate {
-        id: String,
-        role_id: String,
+        id: Id,
+        role_id: Id,
         data: Json,
         clear: Option<RemoveServerRoleField>,
     },
     ServerRoleDelete {
-        id: String,
-        role_id: String,
+        id: Id,
+        role_id: Id,
     },
     UserUpdate {
-        id: String,
+        id: Id,
         data: Json,
         clear: Option<RemoveUserField>,
     },
@@ -104,7 +104,7 @@ pub enum ServerToClientEvent {
 #[derive(Debug, Deserialize, Clone, PartialEq)]
 pub struct ServerMemberUpdateId {
     #[serde(rename = "server")]
-    pub server_id: String,
+    pub server_id: Id,
     #[serde(rename = "user")]
-    pub user_id: String,
+    pub user_id: Id,
 }

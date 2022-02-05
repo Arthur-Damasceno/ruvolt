@@ -1,6 +1,9 @@
 use serde::Deserialize;
 
-use crate::{entities::Attachment, Context, Result};
+use crate::{
+    entities::{Attachment, Id},
+    Context, Result,
+};
 
 /// A server member.
 #[derive(Debug, Deserialize, Clone, PartialEq)]
@@ -14,13 +17,13 @@ pub struct Member {
     pub avatar: Option<Attachment>,
     /// Member roles ids.
     #[serde(default)]
-    pub roles: Vec<String>,
+    pub roles: Vec<Id>,
 }
 
 impl Member {
     /// Get a server member from the API.
-    pub async fn fetch(cx: &Context, server_id: &str, member_id: &str) -> Result<Self> {
-        let path = format!("servers/{}/members/{}", server_id, member_id);
+    pub async fn fetch(cx: &Context, server_id: &Id, user_id: &Id) -> Result<Self> {
+        let path = format!("servers/{}/members/{}", server_id, user_id);
         let member = cx.http_client.get(&path).await?;
 
         Ok(member)
@@ -32,8 +35,8 @@ impl Member {
 pub struct MemberId {
     /// Server id.
     #[serde(rename = "server")]
-    pub server_id: String,
+    pub server_id: Id,
     /// User id.
     #[serde(rename = "user")]
-    pub user_id: String,
+    pub user_id: Id,
 }

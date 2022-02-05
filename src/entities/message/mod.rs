@@ -8,7 +8,7 @@ use {serde::Deserialize, serde_json::json};
 
 use {
     crate::{
-        entities::{Attachment, Channel, User},
+        entities::{Attachment, Channel, Id, User},
         Context, Result,
     },
     edited::Edited,
@@ -19,15 +19,15 @@ use {
 pub struct Message {
     /// Message id.
     #[serde(rename = "_id")]
-    pub id: String,
+    pub id: Id,
     /// Message nonce.
     pub nonce: Option<String>,
     /// Message channel id.
     #[serde(rename = "channel")]
-    pub channel_id: String,
+    pub channel_id: Id,
     /// Message author id.
     #[serde(rename = "author")]
-    pub author_id: String,
+    pub author_id: Id,
     /// Message content.
     pub content: Content,
     /// Message attachments.
@@ -39,15 +39,15 @@ pub struct Message {
     edited: Option<Edited>,
     /// Message mentions.
     #[serde(default)]
-    pub mentions: Vec<String>,
+    pub mentions: Vec<Id>,
     /// Message replies.
     #[serde(default)]
-    pub replies: Vec<String>,
+    pub replies: Vec<Id>,
 }
 
 impl Message {
     /// Get a message from the API.
-    pub async fn fetch(cx: &Context, channel_id: &str, id: &str) -> Result<Self> {
+    pub async fn fetch(cx: &Context, channel_id: &Id, id: &Id) -> Result<Self> {
         let path = format!("channels/{}/messages/{}", channel_id, id);
         let msg = cx.http_client.get(&path).await?;
 
@@ -98,7 +98,7 @@ impl Message {
     }
 
     /// Delete the message.
-    pub async fn delete(self, cx: &Context) -> Result {
+    pub async fn delete(&self, cx: &Context) -> Result {
         let path = format!("channels/{}/messages/{}", self.channel_id, self.id);
         cx.http_client.delete(&path).await?;
 

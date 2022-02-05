@@ -1,23 +1,26 @@
 use {serde::Deserialize, serde_json::json};
 
-use crate::{entities::Message, Context, Result};
+use crate::{
+    entities::{Id, Message},
+    Context, Result,
+};
 
 /// A DM channel.
 #[derive(Debug, Deserialize, Clone, PartialEq)]
 pub struct DirectMessageChannel {
     /// Channel id.
-    pub id: String,
+    pub id: Id,
     /// Whether this DM is active.
     pub active: bool,
     /// List of user ids who are participating in this DM.
-    pub recipients: Vec<String>,
+    pub recipients: Vec<Id>,
     /// Id of the last message in the channel.
-    pub last_message_id: Option<String>,
+    pub last_message_id: Option<Id>,
 }
 
 impl DirectMessageChannel {
     /// Open a DM with another user.
-    pub async fn open(cx: &Context, user_id: &str) -> Result<Self> {
+    pub async fn open(cx: &Context, user_id: &Id) -> Result<Self> {
         let path = format!("users/{}/dm", user_id);
         let dm = cx.http_client.get(&path).await?;
 

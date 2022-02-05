@@ -1,15 +1,18 @@
 use {
     super::super::ServerToClientEvent,
-    crate::{entities::Server, Context, Result},
+    crate::{
+        entities::{Id, Server},
+        Context, Result,
+    },
 };
 
 /// A user has joined the group.
 #[derive(Debug)]
 pub struct ServerMemberJoinEvent {
     /// Server id.
-    pub id: String,
+    pub id: Id,
     /// Server member id.
-    pub user_id: String,
+    pub user_id: Id,
 }
 
 impl ServerMemberJoinEvent {

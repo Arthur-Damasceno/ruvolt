@@ -1,7 +1,7 @@
 use {serde::Deserialize, serde_json::json};
 
 use crate::{
-    entities::{Attachment, Message, User},
+    entities::{Attachment, Id, Message, User},
     Context, Result,
 };
 
@@ -10,10 +10,10 @@ use crate::{
 pub struct GroupChannel {
     /// Channel id.
     #[serde(rename = "_id")]
-    pub id: String,
+    pub id: Id,
     /// Group owner id.
     #[serde(rename = "owner")]
-    pub owner_id: String,
+    pub owner_id: Id,
     /// Group name.
     pub name: String,
     /// Group description.
@@ -21,9 +21,9 @@ pub struct GroupChannel {
     /// Group icon.
     pub icon: Option<Attachment>,
     /// List of user ids who are participating in this group.
-    pub recipients: Vec<String>,
-    /// Id of last message in the channel.
-    pub last_message_id: Option<String>,
+    pub recipients: Vec<Id>,
+    /// Id of the last message in the channel.
+    pub last_message_id: Option<Id>,
     /// Group is not safe for work.
     #[serde(default)]
     pub nsfw: bool,

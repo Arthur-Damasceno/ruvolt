@@ -5,12 +5,14 @@ mod tag;
 
 use serde::Deserialize;
 
+use crate::entities::Id;
+
 /// An attachment like icons, avatars, banners or message attachments.
 #[derive(Debug, Deserialize, Clone, PartialEq)]
 pub struct Attachment {
     /// Attachment id.
     #[serde(rename = "_id")]
-    pub id: String,
+    pub id: Id,
     /// Attachment tag.
     pub tag: AttachmentTag,
     /// Attachment file name.

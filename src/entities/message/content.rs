@@ -3,6 +3,8 @@ use {
     std::fmt::{self, Display, Formatter},
 };
 
+use crate::entities::Id;
+
 /// Message content type.
 #[derive(Debug, Deserialize, Clone, PartialEq)]
 #[serde(untagged)]
@@ -43,21 +45,21 @@ pub enum SystemMessage {
     #[serde(rename = "text")]
     Text { content: String },
     #[serde(rename = "user_added")]
-    UserAdded { id: String, by: String },
+    UserAdded { id: Id, by: Id },
     #[serde(rename = "user_remove")]
-    UserRemove { id: String, by: String },
+    UserRemove { id: Id, by: Id },
     #[serde(rename = "user_joined")]
-    UserJoined { id: String },
+    UserJoined { id: Id },
     #[serde(rename = "user_left")]
-    UserLeft { id: String },
+    UserLeft { id: Id },
     #[serde(rename = "user_kicked")]
-    UserKicked { id: String },
+    UserKicked { id: Id },
     #[serde(rename = "user_banned")]
-    UserBanned { id: String },
+    UserBanned { id: Id },
     #[serde(rename = "channel_renamed")]
-    ChannelRenamed { name: String, by: String },
+    ChannelRenamed { name: String, by: Id },
     #[serde(rename = "channel_description_changed")]
-    ChannelDescriptionChanged { by: String },
+    ChannelDescriptionChanged { by: Id },
     #[serde(rename = "channel_icon_changed")]
-    ChannelIconChanged { by: String },
+    ChannelIconChanged { by: Id },
 }

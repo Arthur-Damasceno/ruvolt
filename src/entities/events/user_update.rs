@@ -1,6 +1,6 @@
 use {serde::Deserialize, serde_json::Value as Json};
 
-use super::ServerToClientEvent;
+use {super::ServerToClientEvent, crate::entities::Id};
 
 /// Specifies a field to remove on user update.
 #[derive(Debug, Deserialize, Clone, Copy, PartialEq)]
@@ -19,7 +19,7 @@ pub enum RemoveUserField {
 #[derive(Debug)]
 pub struct UserUpdateEvent {
     /// User id.
-    pub id: String,
+    pub id: Id,
     /// A partial user object.
     pub data: Json,
     /// A specified field to remove on user update.

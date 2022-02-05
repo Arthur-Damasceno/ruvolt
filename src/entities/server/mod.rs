@@ -7,7 +7,7 @@ mod system_message_channels;
 use serde::Deserialize;
 
 use crate::{
-    entities::{Attachment, User},
+    entities::{Attachment, Id, User},
     Context, Result,
 };
 
@@ -16,16 +16,16 @@ use crate::{
 pub struct Server {
     /// Server id.
     #[serde(rename = "_id")]
-    pub id: String,
+    pub id: Id,
     /// Server owner id.
     #[serde(rename = "owner")]
-    pub owner_id: String,
+    pub owner_id: Id,
     /// Server name.
     pub name: String,
     /// Server description.
     pub description: Option<String>,
     /// Server channels ids.
-    pub channels: Vec<String>,
+    pub channels: Vec<Id>,
     /// Server categories.
     #[serde(default)]
     pub categories: Vec<Category>,
@@ -45,7 +45,7 @@ pub struct Server {
 
 impl Server {
     /// Get a server from the API.
-    pub async fn fetch(cx: &Context, id: &str) -> Result<Self> {
+    pub async fn fetch(cx: &Context, id: &Id) -> Result<Self> {
         let path = format!("servers/{}", id);
         let server = cx.http_client.get(&path).await?;
 

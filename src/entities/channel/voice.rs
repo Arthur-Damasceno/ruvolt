@@ -1,7 +1,7 @@
 use serde::Deserialize;
 
 use crate::{
-    entities::{Attachment, Server},
+    entities::{Attachment, Id, Server},
     Context, Result,
 };
 
@@ -10,10 +10,10 @@ use crate::{
 pub struct VoiceChannel {
     /// Channel id.
     #[serde(rename = "_id")]
-    pub id: String,
+    pub id: Id,
     /// Channel server id.
     #[serde(rename = "server")]
-    pub server_id: String,
+    pub server_id: Id,
     /// Channel name.
     pub name: String,
     /// Channel description.

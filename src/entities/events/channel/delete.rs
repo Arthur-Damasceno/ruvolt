@@ -1,10 +1,10 @@
-use super::super::ServerToClientEvent;
+use {super::super::ServerToClientEvent, crate::entities::Id};
 
 /// A channel has been deleted.
 #[derive(Debug)]
 pub struct ChannelDeleteEvent {
     /// Channel id.
-    pub id: String,
+    pub id: Id,
 }
 
 impl From<ServerToClientEvent> for ChannelDeleteEvent {

@@ -1,12 +1,12 @@
 use serde_json::Value as Json;
 
-use super::super::ServerToClientEvent;
+use {super::super::ServerToClientEvent, crate::entities::Id};
 
 /// A message has been edited or otherwise updated.
 #[derive(Debug)]
 pub struct MessageUpdateEvent {
     /// Message id.
-    pub id: String,
+    pub id: Id,
     /// A partial message object.
     pub data: Json,
 }

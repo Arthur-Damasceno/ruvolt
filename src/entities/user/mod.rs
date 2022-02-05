@@ -6,7 +6,10 @@ mod status;
 use serde::Deserialize;
 
 use {
-    crate::{entities::Attachment, Context, Result},
+    crate::{
+        entities::{Attachment, Id},
+        Context, Result,
+    },
     bot_info::BotInfo,
 };
 
@@ -15,7 +18,7 @@ use {
 pub struct User {
     /// User id.
     #[serde(rename = "_id")]
-    pub id: String,
+    pub id: Id,
     /// User username.
     pub username: String,
     /// User avatar.
@@ -34,7 +37,7 @@ pub struct User {
 
 impl User {
     /// Get a user from the API.
-    pub async fn fetch(cx: &Context, id: &str) -> Result<Self> {
+    pub async fn fetch(cx: &Context, id: &Id) -> Result<Self> {
         let path = format!("users/{}", id);
         let user = cx.http_client.get(&path).await?;
 
@@ -42,7 +45,7 @@ impl User {
     }
 
     /// Returns the owner id of the bot.
-    pub fn owner_id(&self) -> Option<&str> {
+    pub fn owner_id(&self) -> Option<&Id> {
         match self.bot {
             Some(BotInfo { ref owner_id }) => Some(owner_id),
             None => None,

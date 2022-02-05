@@ -1,7 +1,7 @@
 use {
     super::super::ServerToClientEvent,
     crate::{
-        entities::{Channel, Message, User},
+        entities::{Channel, Id, Message, User},
         Context, Result,
     },
 };
@@ -10,11 +10,11 @@ use {
 #[derive(Debug)]
 pub struct ChannelAckEvent {
     /// Channel id.
-    pub id: String,
+    pub id: Id,
     /// User id.
-    pub user_id: String,
+    pub user_id: Id,
     /// Message id.
-    pub message_id: String,
+    pub message_id: Id,
 }
 
 impl ChannelAckEvent {

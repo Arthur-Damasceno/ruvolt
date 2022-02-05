@@ -1,7 +1,7 @@
 use {
     super::super::ServerToClientEvent,
     crate::{
-        entities::{Channel, User},
+        entities::{Channel, Id, User},
         Context, Result,
     },
 };
@@ -10,9 +10,9 @@ use {
 #[derive(Debug)]
 pub struct ChannelStopTypingEvent {
     /// Channel id.
-    pub id: String,
+    pub id: Id,
     /// User id.
-    pub user_id: String,
+    pub user_id: Id,
 }
 
 impl ChannelStopTypingEvent {
