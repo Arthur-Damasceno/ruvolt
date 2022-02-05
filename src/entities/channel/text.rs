@@ -22,6 +22,8 @@ pub struct TextChannel {
     pub icon: Option<Attachment>,
     /// Id of the last message in the channel.
     pub last_message_id: Option<Id>,
+    /// Permissions given to all users.
+    pub default_permissions: Option<u32>,
     /// Channel is not safe for work.
     #[serde(default)]
     pub nsfw: bool,

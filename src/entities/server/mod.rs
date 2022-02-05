@@ -11,6 +11,9 @@ use crate::{
     Context, Result,
 };
 
+/// Tuple consisting of server and channel permissions in that order.
+pub type PermissionTuple = (u32, u32);
+
 /// A server.
 #[derive(Debug, Deserialize, Clone, PartialEq)]
 pub struct Server {
@@ -32,6 +35,8 @@ pub struct Server {
     /// Server system message channels.
     #[serde(rename = "system_messages")]
     pub system_message_channels: Option<SystemMessageChannels>,
+    /// Default permissions for all members
+    pub default_permissions: PermissionTuple,
     /// Server icon.
     pub icon: Option<Attachment>,
     /// Server banner.

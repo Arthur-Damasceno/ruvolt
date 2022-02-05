@@ -24,6 +24,8 @@ pub struct GroupChannel {
     pub recipients: Vec<Id>,
     /// Id of the last message in the channel.
     pub last_message_id: Option<Id>,
+    /// Permissions given to group members.
+    pub permissions: Option<u32>,
     /// Group is not safe for work.
     #[serde(default)]
     pub nsfw: bool,

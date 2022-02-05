@@ -20,6 +20,8 @@ pub struct VoiceChannel {
     pub description: Option<String>,
     /// Channel icon.
     pub icon: Option<Attachment>,
+    /// Permissions given to all users.
+    pub default_permissions: Option<u32>,
     /// Channel is not safe for work.
     #[serde(default)]
     pub nsfw: bool,
