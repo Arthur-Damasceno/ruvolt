@@ -1,5 +1,6 @@
-pub use status::*;
+pub use {badges::*, status::*};
 
+mod badges;
 mod bot_info;
 mod status;
 
@@ -26,7 +27,8 @@ pub struct User {
     /// User status.
     pub status: Option<UserStatus>,
     /// User badges.
-    pub badges: Option<u32>,
+    #[serde(default)]
+    pub badges: Badges,
     /// User flags.
     pub flags: Option<u32>,
     bot: Option<BotInfo>,
