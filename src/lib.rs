@@ -15,5 +15,5 @@ pub use client::*;
 pub use error::Result;
 
 mod client;
-pub mod entities;
 pub mod error;
+pub mod models;

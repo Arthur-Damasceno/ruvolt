@@ -3,8 +3,8 @@ use {std::sync::Arc, tokio::sync::Mutex};
 use {
     super::websocket::Sender,
     crate::{
-        entities::{events::ClientToServerEvent, User},
         http::HttpClient,
+        models::{events::ClientToServerEvent, User},
         Result,
     },
 };

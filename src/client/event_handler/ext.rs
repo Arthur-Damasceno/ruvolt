@@ -2,7 +2,7 @@ use async_trait::async_trait;
 
 use {
     super::EventHandler,
-    crate::{entities::events::*, error::Error, Context},
+    crate::{error::Error, models::events::*, Context},
 };
 
 #[async_trait]

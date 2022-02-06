@@ -6,9 +6,9 @@ use {
 };
 
 use crate::{
-    entities::events::{ClientToServerEvent, ServerToClientEvent},
     error::Error,
     http::HttpClient,
+    models::events::{ClientToServerEvent, ServerToClientEvent},
     websocket::WebSocketClient,
     ContextFactory, EventHandler, EventHandlerExt, Result,
 };
