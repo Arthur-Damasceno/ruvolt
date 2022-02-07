@@ -1,6 +1,7 @@
-pub use {category::*, member::*, role::*, system_message_channels::*};
+pub use {category::*, flags::*, member::*, role::*, system_message_channels::*};
 
 mod category;
+mod flags;
 mod member;
 mod role;
 mod system_message_channels;
