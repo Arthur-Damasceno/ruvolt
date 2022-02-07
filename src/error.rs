@@ -21,6 +21,8 @@ pub enum Error {
     Http(HttpError),
     /// WebSocket error.
     Ws(WsError),
+    /// An unexpected http response.
+    ResponseNotOk(String),
     /// Could not authenticate due to an error.
     Authentication(AuthenticationError),
     /// Unknown or unexpected error.
@@ -42,20 +44,21 @@ pub enum AuthenticationError {
 
 impl Display for Error {
     fn fmt(&self, f: &mut Formatter<'_>) -> FmtResult {
-        match *self {
-            Self::Http(ref err) => err.fmt(f),
-            Self::Ws(ref err) => err.fmt(f),
-            Self::Authentication(ref err) => write!(f, "Authentication error: {:?}", err),
-            Self::Unknown(ref msg) => write!(f, "Unknown error: {}", msg),
+        match self {
+            Self::Http(err) => err.fmt(f),
+            Self::Ws(err) => err.fmt(f),
+            Self::ResponseNotOk(body) => write!(f, "An unexpected http response: {}", body),
+            Self::Authentication(err) => write!(f, "Authentication error: {:?}", err),
+            Self::Unknown(msg) => write!(f, "Unknown error: {}", msg),
         }
     }
 }
 
 impl StdError for Error {
     fn source(&self) -> Option<&(dyn StdError + 'static)> {
-        match *self {
-            Self::Http(ref err) => Some(err),
-            Self::Ws(ref err) => Some(err),
+        match self {
+            Self::Http(err) => Some(err),
+            Self::Ws(err) => Some(err),
             _ => None,
         }
     }

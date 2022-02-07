@@ -3,12 +3,12 @@
 use {
     reqwest::{
         header::{HeaderMap, HeaderValue},
-        Client,
+        Client, StatusCode,
     },
     serde::{de::DeserializeOwned, ser::Serialize},
 };
 
-use crate::Result;
+use crate::error::{Error, Result};
 
 /// The url of the Revolt REST API.
 pub const REVOLT_API: &str = "https://api.revolt.chat";
@@ -35,6 +35,11 @@ impl HttpClient {
     pub async fn get<T: DeserializeOwned>(&self, path: &str) -> Result<T> {
         let url = Self::make_url(path);
         let response = self.0.get(url).send().await?;
+
+        if response.status() != StatusCode::OK {
+            return Err(Error::ResponseNotOk(response.text().await?));
+        }
+
         let body = response.json().await?;
 
         Ok(body)
@@ -44,6 +49,11 @@ impl HttpClient {
     pub async fn post<T: DeserializeOwned, U: Serialize>(&self, path: &str, body: U) -> Result<T> {
         let url = Self::make_url(path);
         let response = self.0.post(url).json(&body).send().await?;
+
+        if response.status() != StatusCode::OK {
+            return Err(Error::ResponseNotOk(response.text().await?));
+        }
+
         let body = response.json().await?;
 
         Ok(body)
@@ -52,7 +62,11 @@ impl HttpClient {
     /// Make a PATCH request to the API with a json body.
     pub async fn patch<T: Serialize>(&self, path: &str, body: T) -> Result {
         let url = Self::make_url(path);
-        self.0.patch(url).json(&body).send().await?;
+        let response = self.0.patch(url).json(&body).send().await?;
+
+        if response.status() != StatusCode::NO_CONTENT {
+            return Err(Error::ResponseNotOk(response.text().await?));
+        }
 
         Ok(())
     }
@@ -60,7 +74,11 @@ impl HttpClient {
     /// Make a DELETE request to the API.
     pub async fn delete(&self, path: &str) -> Result {
         let url = Self::make_url(path);
-        self.0.delete(url).send().await?;
+        let response = self.0.delete(url).send().await?;
+
+        if response.status() != StatusCode::NO_CONTENT {
+            return Err(Error::ResponseNotOk(response.text().await?));
+        }
 
         Ok(())
     }
