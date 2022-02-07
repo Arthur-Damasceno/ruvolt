@@ -1,8 +1,11 @@
 use {serde::Deserialize, serde_json::json, std::collections::HashMap};
 
-use crate::{
-    models::{Attachment, Id, Message, Server},
-    Context, Result,
+use {
+    super::ChannelPermissions,
+    crate::{
+        models::{Attachment, Id, Message, Server},
+        Context, Result,
+    },
 };
 
 /// A text channel.
@@ -23,10 +26,11 @@ pub struct TextChannel {
     /// Id of the last message in the channel.
     pub last_message_id: Option<Id>,
     /// Permissions given to all users.
-    pub default_permissions: Option<u32>,
+    #[serde(default)]
+    pub default_permissions: ChannelPermissions,
     /// Permissions given to roles.
     #[serde(default)]
-    pub role_permissions: HashMap<Id, u32>,
+    pub role_permissions: HashMap<Id, ChannelPermissions>,
     /// Channel is not safe for work.
     #[serde(default)]
     pub nsfw: bool,

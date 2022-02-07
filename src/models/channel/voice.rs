@@ -1,8 +1,11 @@
 use {serde::Deserialize, std::collections::HashMap};
 
-use crate::{
-    models::{Attachment, Id, Server},
-    Context, Result,
+use {
+    super::ChannelPermissions,
+    crate::{
+        models::{Attachment, Id, Server},
+        Context, Result,
+    },
 };
 
 /// A voice channel.
@@ -21,10 +24,11 @@ pub struct VoiceChannel {
     /// Channel icon.
     pub icon: Option<Attachment>,
     /// Permissions given to all users.
-    pub default_permissions: Option<u32>,
+    #[serde(default)]
+    pub default_permissions: ChannelPermissions,
     /// Permissions given to roles.
     #[serde(default)]
-    pub role_permissions: HashMap<Id, u32>,
+    pub role_permissions: HashMap<Id, ChannelPermissions>,
     /// Channel is not safe for work.
     #[serde(default)]
     pub nsfw: bool,

@@ -1,7 +1,8 @@
-pub use {direct_message::*, group::*, text::*, voice::*};
+pub use {direct_message::*, group::*, permissions::*, text::*, voice::*};
 
 mod direct_message;
 mod group;
+mod permissions;
 mod text;
 mod voice;
 

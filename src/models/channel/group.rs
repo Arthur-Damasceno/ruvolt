@@ -1,8 +1,11 @@
 use {serde::Deserialize, serde_json::json};
 
-use crate::{
-    models::{Attachment, Id, Message, User},
-    Context, Result,
+use {
+    super::ChannelPermissions,
+    crate::{
+        models::{Attachment, Id, Message, User},
+        Context, Result,
+    },
 };
 
 /// A group channel.
@@ -25,7 +28,8 @@ pub struct GroupChannel {
     /// Id of the last message in the channel.
     pub last_message_id: Option<Id>,
     /// Permissions given to group members.
-    pub permissions: Option<u32>,
+    #[serde(default)]
+    pub permissions: ChannelPermissions,
     /// Group is not safe for work.
     #[serde(default)]
     pub nsfw: bool,
