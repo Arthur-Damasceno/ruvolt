@@ -2,6 +2,7 @@ use {serde::Deserialize, std::iter::Iterator};
 
 /// Server flags count.
 #[derive(Debug, Deserialize, Default, Clone, Copy, PartialEq)]
+#[serde(transparent)]
 pub struct ServerFlags(pub u32);
 
 impl ServerFlags {

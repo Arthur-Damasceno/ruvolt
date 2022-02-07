@@ -1,20 +1,21 @@
-pub use {category::*, flags::*, member::*, role::*, system_message_channels::*};
+pub use {category::*, flags::*, member::*, permissions::*, role::*, system_message_channels::*};
 
 mod category;
 mod flags;
 mod member;
+mod permissions;
 mod role;
 mod system_message_channels;
 
 use {serde::Deserialize, std::collections::HashMap};
 
 use crate::{
-    models::{Attachment, Id, User},
+    models::{Attachment, ChannelPermissions, Id, User},
     Context, Result,
 };
 
 /// Tuple consisting of server and channel permissions in that order.
-pub type PermissionTuple = (u32, u32);
+pub type PermissionTuple = (ServerPermissions, ChannelPermissions);
 
 /// A server.
 #[derive(Debug, Deserialize, Clone, PartialEq)]
