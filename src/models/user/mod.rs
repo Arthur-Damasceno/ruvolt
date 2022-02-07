@@ -1,7 +1,8 @@
-pub use {badges::*, status::*};
+pub use {badges::*, flags::*, status::*};
 
 mod badges;
 mod bot_info;
+mod flags;
 mod status;
 
 use serde::Deserialize;
@@ -30,11 +31,12 @@ pub struct User {
     #[serde(default)]
     pub badges: Badges,
     /// User flags.
-    pub flags: Option<u32>,
-    bot: Option<BotInfo>,
+    #[serde(default)]
+    pub flags: UserFlags,
     /// User is online.
     #[serde(default)]
     pub online: bool,
+    bot: Option<BotInfo>,
 }
 
 impl User {
