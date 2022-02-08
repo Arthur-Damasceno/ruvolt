@@ -1,7 +1,7 @@
-use {serde::Deserialize, serde_json::json};
+use serde::Deserialize;
 
 use crate::{
-    models::{Id, Message},
+    models::{Channel, Id, Message},
     Context, Result,
 };
 
@@ -39,20 +39,13 @@ impl DirectMessageChannel {
         }
     }
 
-    /// Send a message in this channel.
+    /// Send a message in the channel.
     pub async fn send(&self, cx: &Context, content: &str) -> Result<Message> {
-        let path = format!("channels/{}/messages", self.id);
-        let body = json!({ "content": content });
-        let msg = cx.http_client.post(&path, body).await?;
-
-        Ok(msg)
+        Channel::send(cx, &self.id, content).await
     }
 
     /// Close this DM.
     pub async fn close(&self, cx: &Context) -> Result {
-        let path = format!("channels/{}", self.id);
-        cx.http_client.delete(&path).await?;
-
-        Ok(())
+        Channel::delete(cx, &self.id).await
     }
 }

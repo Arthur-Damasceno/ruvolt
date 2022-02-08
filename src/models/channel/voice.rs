@@ -1,11 +1,8 @@
 use {serde::Deserialize, std::collections::HashMap};
 
-use {
-    super::ChannelPermissionsRaw,
-    crate::{
-        models::{Attachment, Id, Server},
-        Context, Result,
-    },
+use crate::{
+    models::{Attachment, Channel, ChannelPermissionsRaw, Id, Server},
+    Context, Result,
 };
 
 /// A voice channel.
@@ -42,9 +39,6 @@ impl VoiceChannel {
 
     /// Delete the channel.
     pub async fn delete(&self, cx: &Context) -> Result {
-        let path = format!("channels/{}", self.id);
-        cx.http_client.delete(&path).await?;
-
-        Ok(())
+        Channel::delete(cx, &self.id).await
     }
 }

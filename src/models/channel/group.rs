@@ -1,11 +1,8 @@
-use {serde::Deserialize, serde_json::json};
+use serde::Deserialize;
 
-use {
-    super::ChannelPermissionsRaw,
-    crate::{
-        models::{Attachment, Id, Message, User},
-        Context, Result,
-    },
+use crate::{
+    models::{Attachment, Channel, ChannelPermissionsRaw, Id, Message, User},
+    Context, Result,
 };
 
 /// A group channel.
@@ -53,20 +50,13 @@ impl GroupChannel {
         }
     }
 
-    /// Send a message in this channel.
+    /// Send a message in the channel.
     pub async fn send(&self, cx: &Context, content: &str) -> Result<Message> {
-        let path = format!("channels/{}/messages", self.id);
-        let body = json!({ "content": content });
-        let msg = cx.http_client.post(&path, body).await?;
-
-        Ok(msg)
+        Channel::send(cx, &self.id, content).await
     }
 
     /// Leave the group.
     pub async fn leave(&self, cx: &Context) -> Result {
-        let path = format!("channels/{}", self.id);
-        cx.http_client.delete(&path).await?;
-
-        Ok(())
+        Channel::delete(cx, &self.id).await
     }
 }

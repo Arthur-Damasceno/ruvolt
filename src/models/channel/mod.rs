@@ -6,9 +6,12 @@ mod permissions;
 mod text;
 mod voice;
 
-use serde::Deserialize;
+use {serde::Deserialize, serde_json::json};
 
-use crate::{models::Id, Context, Result};
+use crate::{
+    models::{Id, Message},
+    Context, Result,
+};
 
 /// A channel.
 #[derive(Debug, Deserialize, Clone, PartialEq)]
@@ -38,10 +41,27 @@ impl Channel {
     /// Returns the channel id.
     pub fn id(&self) -> &Id {
         match self {
-            Self::Text(TextChannel { id, .. }) => id,
-            Self::Voice(VoiceChannel { id, .. }) => id,
-            Self::Group(GroupChannel { id, .. }) => id,
-            Self::DirectMessage(DirectMessageChannel { id, .. }) => id,
+            Self::Text(TextChannel { id, .. })
+            | Self::Voice(VoiceChannel { id, .. })
+            | Self::Group(GroupChannel { id, .. })
+            | Self::DirectMessage(DirectMessageChannel { id, .. }) => id,
         }
+    }
+
+    /// Send a message in a channel.
+    pub async fn send(cx: &Context, id: &Id, content: &str) -> Result<Message> {
+        let path = format!("channels/{}/messages", id);
+        let body = json!({ "content": content });
+        let msg = cx.http_client.post(&path, body).await?;
+
+        Ok(msg)
+    }
+
+    /// Delete the channel.
+    pub async fn delete(cx: &Context, id: &Id) -> Result {
+        let path = format!("channels/{}", id);
+        cx.http_client.delete(&path).await?;
+
+        Ok(())
     }
 }
