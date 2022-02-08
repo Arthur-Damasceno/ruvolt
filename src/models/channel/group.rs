@@ -1,7 +1,7 @@
 use {serde::Deserialize, serde_json::json};
 
 use {
-    super::ChannelPermissions,
+    super::ChannelPermissionsRaw,
     crate::{
         models::{Attachment, Id, Message, User},
         Context, Result,
@@ -29,7 +29,7 @@ pub struct GroupChannel {
     pub last_message_id: Option<Id>,
     /// Permissions given to group members.
     #[serde(default)]
-    pub permissions: ChannelPermissions,
+    pub permissions: ChannelPermissionsRaw,
     /// Group is not safe for work.
     #[serde(default)]
     pub nsfw: bool,

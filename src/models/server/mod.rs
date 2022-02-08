@@ -10,12 +10,12 @@ mod system_message_channels;
 use {serde::Deserialize, std::collections::HashMap};
 
 use crate::{
-    models::{Attachment, ChannelPermissions, Id, User},
+    models::{Attachment, ChannelPermissionsRaw, Id, User},
     Context, Result,
 };
 
 /// Tuple consisting of server and channel permissions in that order.
-pub type PermissionTuple = (ServerPermissions, ChannelPermissions);
+pub type PermissionTuple = (ServerPermissionsRaw, ChannelPermissionsRaw);
 
 /// A server.
 #[derive(Debug, Deserialize, Clone, PartialEq)]

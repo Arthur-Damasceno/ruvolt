@@ -3,16 +3,16 @@ use {serde::Deserialize, std::iter::Iterator};
 /// User flags count.
 #[derive(Debug, Deserialize, Default, Clone, Copy, PartialEq)]
 #[serde(transparent)]
-pub struct UserFlags(pub u32);
+pub struct UserFlagsRaw(pub u32);
 
-impl UserFlags {
+impl UserFlagsRaw {
     /// Check if has a [flag](UserFlag).
     ///
     /// # Examples
     ///
     /// ```rust
-    /// # use ruvolt::models::{UserFlags, UserFlag};
-    /// let flags = UserFlags(2);
+    /// # use ruvolt::models::{UserFlagsRaw, UserFlag};
+    /// let flags = UserFlagsRaw(2);
     ///
     /// assert!(flags.has(UserFlag::Deleted));
     /// ```
@@ -25,10 +25,10 @@ impl UserFlags {
     /// # Examples
     ///
     /// ```rust
-    /// # use ruvolt::models::{UserFlags, UserFlag};
-    /// let flags = UserFlags(6);
+    /// # use ruvolt::models::{UserFlagsRaw, UserFlag};
+    /// let flags = UserFlagsRaw(6);
     ///
-    /// assert!(flags.has_all(&vec![UserFlag::Deleted, UserFlag::Banned]));
+    /// assert!(flags.has_all(&[UserFlag::Deleted, UserFlag::Banned]));
     /// ```
     pub fn has_all(&self, flags: &[UserFlag]) -> bool {
         let all = self.all();
@@ -42,13 +42,13 @@ impl UserFlags {
         true
     }
 
-    /// All flags.
+    /// All [flags](UserFlag).
     ///
     /// # Examples
     ///
     /// ```rust
-    /// # use ruvolt::models::{UserFlags, UserFlag};
-    /// let flags = UserFlags(1);
+    /// # use ruvolt::models::{UserFlagsRaw, UserFlag};
+    /// let flags = UserFlagsRaw(1);
     ///
     /// assert_eq!(flags.all(), vec![UserFlag::Suspended])
     /// ```

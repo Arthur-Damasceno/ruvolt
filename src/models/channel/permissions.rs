@@ -3,16 +3,16 @@ use {serde::Deserialize, std::iter::Iterator};
 /// Channel permissions count.
 #[derive(Debug, Deserialize, Default, Clone, Copy, PartialEq)]
 #[serde(transparent)]
-pub struct ChannelPermissions(pub u32);
+pub struct ChannelPermissionsRaw(pub u32);
 
-impl ChannelPermissions {
+impl ChannelPermissionsRaw {
     /// Check if has [permission](ChannelPermission).
     ///
     /// # Examples
     ///
     /// ```rust
-    /// # use ruvolt::models::{ChannelPermissions, ChannelPermission};
-    /// let permissions = ChannelPermissions(511);
+    /// # use ruvolt::models::{ChannelPermissionsRaw, ChannelPermission};
+    /// let permissions = ChannelPermissionsRaw(511);
     ///
     /// assert!(permissions.has(ChannelPermission::ManageChannel));
     /// ```
@@ -25,10 +25,10 @@ impl ChannelPermissions {
     /// # Examples
     ///
     /// ```rust
-    /// # use ruvolt::models::{ChannelPermissions, ChannelPermission};
-    /// let permissions = ChannelPermissions(259);
+    /// # use ruvolt::models::{ChannelPermissionsRaw, ChannelPermission};
+    /// let permissions = ChannelPermissionsRaw(259);
     ///
-    /// assert!(permissions.has_all(&vec![
+    /// assert!(permissions.has_all(&[
     ///     ChannelPermission::SendMessage,
     ///     ChannelPermission::Masquerade
     /// ]));
@@ -50,8 +50,8 @@ impl ChannelPermissions {
     /// # Examples
     ///
     /// ```rust
-    /// # use ruvolt::models::{ChannelPermissions, ChannelPermission};
-    /// let permissions = ChannelPermissions(3);
+    /// # use ruvolt::models::{ChannelPermissionsRaw, ChannelPermission};
+    /// let permissions = ChannelPermissionsRaw(3);
     ///
     /// assert_eq!(permissions.all(), vec![ChannelPermission::SendMessage, ChannelPermission::View]);
     /// ```

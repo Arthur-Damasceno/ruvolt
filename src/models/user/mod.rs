@@ -29,10 +29,10 @@ pub struct User {
     pub status: Option<UserStatus>,
     /// User badges.
     #[serde(default)]
-    pub badges: Badges,
+    pub badges: BadgesRaw,
     /// User flags.
     #[serde(default)]
-    pub flags: UserFlags,
+    pub flags: UserFlagsRaw,
     /// User is online.
     #[serde(default)]
     pub online: bool,

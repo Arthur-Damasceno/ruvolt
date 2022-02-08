@@ -3,16 +3,16 @@ use {serde::Deserialize, std::iter::Iterator};
 /// Server permissions count.
 #[derive(Debug, Deserialize, Default, Clone, Copy, PartialEq)]
 #[serde(transparent)]
-pub struct ServerPermissions(pub u32);
+pub struct ServerPermissionsRaw(pub u32);
 
-impl ServerPermissions {
+impl ServerPermissionsRaw {
     /// Check if has [permission](ServerPermission).
     ///
     /// # Examples
     ///
     /// ```rust
-    /// # use ruvolt::models::{ServerPermissions, ServerPermission};
-    /// let permissions = ServerPermissions(55);
+    /// # use ruvolt::models::{ServerPermissionsRaw, ServerPermission};
+    /// let permissions = ServerPermissionsRaw(55);
     ///
     /// assert!(permissions.has(ServerPermission::BanMembers));
     /// ```
@@ -25,10 +25,10 @@ impl ServerPermissions {
     /// # Examples
     ///
     /// ```rust
-    /// # use ruvolt::models::{ServerPermissions, ServerPermission};
-    /// let permissions = ServerPermissions(61501);
+    /// # use ruvolt::models::{ServerPermissionsRaw, ServerPermission};
+    /// let permissions = ServerPermissionsRaw(61501);
     ///
-    /// assert!(permissions.has_all(&vec![ServerPermission::KickMembers, ServerPermission::BanMembers]));
+    /// assert!(permissions.has_all(&[ServerPermission::KickMembers, ServerPermission::BanMembers]));
     /// ```
     pub fn has_all(&self, permissions: &[ServerPermission]) -> bool {
         let all = self.all();
@@ -42,15 +42,15 @@ impl ServerPermissions {
         true
     }
 
-    /// All permissions.
+    /// All [permissions](ServerPermission).
     ///
     /// # Examples
     ///
     /// ```rust
-    /// # use ruvolt::models::{ServerPermissions, ServerPermission};
-    /// let permissions = ServerPermissions(5);
+    /// # use ruvolt::models::{ServerPermissionsRaw, ServerPermission};
+    /// let permissions = ServerPermissionsRaw(5);
     ///
-    /// assert_eq!(permissions.all(), vec![ServerPermission::View, ServerPermission::ManageChannels]);
+    /// assert_eq!(permissions.all(), vec![ServerPermission::ManageChannels, ServerPermission::View]);
     /// ```
     pub fn all(&self) -> Vec<ServerPermission> {
         let mut count = self.0;

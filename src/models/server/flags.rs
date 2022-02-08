@@ -3,16 +3,16 @@ use {serde::Deserialize, std::iter::Iterator};
 /// Server flags count.
 #[derive(Debug, Deserialize, Default, Clone, Copy, PartialEq)]
 #[serde(transparent)]
-pub struct ServerFlags(pub u32);
+pub struct ServerFlagsRaw(pub u32);
 
-impl ServerFlags {
+impl ServerFlagsRaw {
     /// Check if has a [flag](ServerFlag).
     ///
     /// # Examples
     ///
     /// ```rust
-    /// # use ruvolt::models::{ServerFlags, ServerFlag};
-    /// let flags = ServerFlags(1);
+    /// # use ruvolt::models::{ServerFlagsRaw, ServerFlag};
+    /// let flags = ServerFlagsRaw(1);
     ///
     /// assert!(flags.has(ServerFlag::OfficialRevoltServer));
     /// ```
@@ -25,10 +25,10 @@ impl ServerFlags {
     /// # Examples
     ///
     /// ```rust
-    /// # use ruvolt::models::{ServerFlags, ServerFlag};
-    /// let flags = ServerFlags(2);
+    /// # use ruvolt::models::{ServerFlagsRaw, ServerFlag};
+    /// let flags = ServerFlagsRaw(2);
     ///
-    /// assert!(!flags.has_all(&vec![
+    /// assert!(!flags.has_all(&[
     ///     ServerFlag::OfficialRevoltServer,
     ///     ServerFlag::VerifiedCommunityServer
     /// ]));
@@ -45,15 +45,15 @@ impl ServerFlags {
         true
     }
 
-    /// All flags.
+    /// All [flags](ServerFlag).
     ///
     /// # Examples
     ///
     /// ```rust
-    /// # use ruvolt::models::ServerFlags;
-    /// let flags = ServerFlags(0);
+    /// # use ruvolt::models::ServerFlagsRaw;
+    /// let flags = ServerFlagsRaw(0);
     ///
-    /// assert_eq!(flags.all(), vec![])
+    /// assert_eq!(flags.all(), vec![]);
     /// ```
     pub fn all(&self) -> Vec<ServerFlag> {
         let mut count = self.0;

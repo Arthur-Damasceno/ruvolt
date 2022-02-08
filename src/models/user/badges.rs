@@ -3,16 +3,16 @@ use {serde::Deserialize, std::iter::Iterator};
 /// User badges count.
 #[derive(Debug, Deserialize, Default, Clone, Copy, PartialEq)]
 #[serde(transparent)]
-pub struct Badges(pub u32);
+pub struct BadgesRaw(pub u32);
 
-impl Badges {
-    /// Check if has a [Badge].
+impl BadgesRaw {
+    /// Check if has a [badge](Badge).
     ///
     /// # Examples
     ///
     /// ```rust
-    /// # use ruvolt::models::{Badges, Badge};
-    /// let badges = Badges(19);
+    /// # use ruvolt::models::{BadgesRaw, Badge};
+    /// let badges = BadgesRaw(19);
     ///
     /// assert!(badges.has(Badge::Founder));
     /// ```
@@ -25,10 +25,10 @@ impl Badges {
     /// # Examples
     ///
     /// ```rust
-    /// # use ruvolt::models::{Badges, Badge};
-    /// let badges = Badges(530);
+    /// # use ruvolt::models::{BadgesRaw, Badge};
+    /// let badges = BadgesRaw(530);
     ///
-    /// assert!(badges.has_all(&vec![Badge::ReservedRelevantJokeBadge1, Badge::Translator]));
+    /// assert!(badges.has_all(&[Badge::ReservedRelevantJokeBadge1, Badge::Translator]));
     /// ```
     pub fn has_all(&self, badges: &[Badge]) -> bool {
         let all = self.all();
@@ -42,13 +42,13 @@ impl Badges {
         true
     }
 
-    /// All badges.
+    /// All [badges](Badge).
     ///
     /// # Examples
     ///
     /// ```rust
-    /// # use ruvolt::models::{Badges, Badge};
-    /// let badges = Badges(3);
+    /// # use ruvolt::models::{BadgesRaw, Badge};
+    /// let badges = BadgesRaw(3);
     ///
     /// assert_eq!(badges.all(), vec![Badge::Translator, Badge::Developer])
     /// ```
