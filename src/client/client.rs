@@ -23,7 +23,7 @@ pub struct Client<T: EventHandler> {
 impl<T: EventHandler> Client<T> {
     /// Create a new client and connect to the server.
     pub async fn new(event_handler: T) -> Result<Self> {
-        let ws_client = WebSocketClient::connect("wss://ws.revolt.chat").await?;
+        let ws_client = WebSocketClient::connect().await?;
 
         Ok(Self {
             event_handler: Arc::new(event_handler),
