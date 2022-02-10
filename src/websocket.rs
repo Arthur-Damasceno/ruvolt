@@ -77,6 +77,12 @@ impl WebSocketClient {
             Err(err) => Some(Err(Error::from(err))),
         }
     }
+
+    pub async fn close(&self) -> Result {
+        self.0.lock().await.close(None).await?;
+
+        Ok(())
+    }
 }
 
 pub fn heartbeat(ws_client: Arc<WebSocketClient>) {

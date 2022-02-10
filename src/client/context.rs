@@ -10,7 +10,7 @@ use crate::{
 /// A struct for general utilities and wrapper for the http client for fetch entities from the API.
 #[derive(Debug, Clone)]
 pub struct Context {
-    pub(crate) ws_client: Arc<WebSocketClient>,
+    ws_client: Arc<WebSocketClient>,
     /// A http client.
     pub http_client: Arc<HttpClient>,
     /// The current user.
@@ -42,5 +42,12 @@ impl Context {
             }
             event => self.ws_client.publish(event).await,
         }
+    }
+
+    /// Close the websocket connection.
+    pub async fn close(&self) -> Result {
+        self.ws_client.close().await?;
+
+        Ok(())
     }
 }
