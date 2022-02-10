@@ -4,7 +4,7 @@ use crate::{
     error::Error,
     http::HttpClient,
     models::events::{ClientToServerEvent, ServerToClientEvent},
-    websocket::WebSocketClient,
+    websocket::{self, WebSocketClient},
     Context, EventHandler, EventHandlerExt, Result,
 };
 
@@ -34,6 +34,8 @@ impl<T: EventHandler> Client<T> {
         let user = http_client.get("users/@me").await?;
         let cx = Context::new(self.ws_client.clone(), http_client, user);
 
+        websocket::heartbeat(self.ws_client.clone());
+
         while let Some(event) = self.ws_client.accept().await {
             let event_handler = self.event_handler.clone();
             let cx = cx.clone();
@@ -49,7 +51,7 @@ impl<T: EventHandler> Client<T> {
         Ok(())
     }
 
-    pub async fn authenticate(&self, token: &str) -> Result {
+    async fn authenticate(&self, token: &str) -> Result {
         self.ws_client
             .publish(ClientToServerEvent::auth(token))
             .await?;

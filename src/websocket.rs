@@ -1,7 +1,13 @@
 use {
     futures_util::{SinkExt, StreamExt},
-    tokio::{net::TcpStream, sync::Mutex},
-    tokio_tungstenite::{connect_async, tungstenite::Message, MaybeTlsStream, WebSocketStream},
+    std::{sync::Arc, time::Duration},
+    tokio::{net::TcpStream, sync::Mutex, task, time::sleep},
+    tokio_tungstenite::{
+        connect_async,
+        tungstenite::error::{Error as WsError, ProtocolError},
+        tungstenite::Message,
+        MaybeTlsStream, WebSocketStream,
+    },
 };
 
 use crate::{
@@ -71,4 +77,20 @@ impl WebSocketClient {
             Err(err) => Some(Err(Error::from(err))),
         }
     }
+}
+
+pub fn heartbeat(ws_client: Arc<WebSocketClient>) {
+    task::spawn(async move {
+        let dur = Duration::from_secs(20);
+
+        loop {
+            if let Err(Error::Ws(WsError::Protocol(ProtocolError::SendAfterClosing))) =
+                ws_client.publish(ClientToServerEvent::ping(0)).await
+            {
+                break;
+            }
+
+            sleep(dur).await;
+        }
+    });
 }
