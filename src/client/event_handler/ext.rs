@@ -12,71 +12,34 @@ pub trait EventHandlerExt: EventHandler {
             ServerToClientEvent::Pong { .. } => return,
             ServerToClientEvent::Ready(data) => self.ready(cx, data).await,
             ServerToClientEvent::Message(msg) => self.message(cx, msg).await,
-            ServerToClientEvent::MessageUpdate { .. } => {
-                self.message_update(cx, MessageUpdateEvent::from(event))
-                    .await;
-            }
-            ServerToClientEvent::MessageDelete { .. } => {
-                self.message_delete(cx, MessageDeleteEvent::from(event))
-                    .await;
-            }
+            ServerToClientEvent::MessageUpdate(data) => self.message_update(cx, data).await,
+            ServerToClientEvent::MessageDelete(data) => self.message_delete(cx, data).await,
             ServerToClientEvent::ChannelCreate(channel) => self.channel_create(cx, channel).await,
-            ServerToClientEvent::ChannelUpdate { .. } => {
-                self.channel_update(cx, ChannelUpdateEvent::from(event))
-                    .await;
+            ServerToClientEvent::ChannelUpdate(data) => self.channel_update(cx, data).await,
+            ServerToClientEvent::ChannelDelete(data) => self.channel_delete(cx, data).await,
+            ServerToClientEvent::ChannelGroupJoin(data) => self.channel_group_join(cx, data).await,
+            ServerToClientEvent::ChannelGroupLeave(data) => {
+                self.channel_group_leave(cx, data).await
             }
-            ServerToClientEvent::ChannelDelete { .. } => {
-                self.channel_delete(cx, ChannelDeleteEvent::from(event))
-                    .await;
+            ServerToClientEvent::ChannelStartTyping(data) => {
+                self.channel_start_typing(cx, data).await
             }
-            ServerToClientEvent::ChannelGroupJoin { .. } => {
-                self.channel_group_join(cx, ChannelGroupJoinEvent::from(event))
-                    .await;
+            ServerToClientEvent::ChannelStopTyping(data) => {
+                self.channel_stop_typing(cx, data).await
             }
-            ServerToClientEvent::ChannelGroupLeave { .. } => {
-                self.channel_group_leave(cx, ChannelGroupLeaveEvent::from(event))
-                    .await;
+            ServerToClientEvent::ChannelAck(data) => self.channel_ack(cx, data).await,
+            ServerToClientEvent::ServerUpdate(data) => self.server_update(cx, data).await,
+            ServerToClientEvent::ServerDelete(data) => self.server_delete(cx, data).await,
+            ServerToClientEvent::ServerMemberUpdate(data) => {
+                self.server_member_update(cx, data).await
             }
-            ServerToClientEvent::ChannelStartTyping { .. } => {
-                self.channel_start_typing(cx, ChannelStartTypingEvent::from(event))
-                    .await;
+            ServerToClientEvent::ServerMemberJoin(data) => self.server_member_join(cx, data).await,
+            ServerToClientEvent::ServerMemberLeave(data) => {
+                self.server_member_leave(cx, data).await
             }
-            ServerToClientEvent::ChannelStopTyping { .. } => {
-                self.channel_stop_typing(cx, ChannelStopTypingEvent::from(event))
-                    .await;
-            }
-            ServerToClientEvent::ChannelAck { .. } => {
-                self.channel_ack(cx, ChannelAckEvent::from(event)).await
-            }
-            ServerToClientEvent::ServerUpdate { .. } => {
-                self.server_update(cx, ServerUpdateEvent::from(event)).await;
-            }
-            ServerToClientEvent::ServerDelete { .. } => {
-                self.server_delete(cx, ServerDeleteEvent::from(event)).await;
-            }
-            ServerToClientEvent::ServerMemberUpdate { .. } => {
-                self.server_member_update(cx, ServerMemberUpdateEvent::from(event))
-                    .await;
-            }
-            ServerToClientEvent::ServerMemberJoin { .. } => {
-                self.server_member_join(cx, ServerMemberJoinEvent::from(event))
-                    .await;
-            }
-            ServerToClientEvent::ServerMemberLeave { .. } => {
-                self.server_member_leave(cx, ServerMemberLeaveEvent::from(event))
-                    .await;
-            }
-            ServerToClientEvent::ServerRoleUpdate { .. } => {
-                self.server_role_update(cx, ServerRoleUpdateEvent::from(event))
-                    .await;
-            }
-            ServerToClientEvent::ServerRoleDelete { .. } => {
-                self.server_role_delete(cx, ServerRoleDeleteEvent::from(event))
-                    .await;
-            }
-            ServerToClientEvent::UserUpdate { .. } => {
-                self.user_update(cx, UserUpdateEvent::from(event)).await;
-            }
+            ServerToClientEvent::ServerRoleUpdate(data) => self.server_role_update(cx, data).await,
+            ServerToClientEvent::ServerRoleDelete(data) => self.server_role_delete(cx, data).await,
+            ServerToClientEvent::UserUpdate(data) => self.user_update(cx, data).await,
             event => {
                 let error = Error::Unknown(format!("Unexpected event from server: {:?}", event));
                 self.error(error).await;

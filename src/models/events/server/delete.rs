@@ -1,18 +1,11 @@
-use crate::models::{events::ServerToClientEvent, Id};
+use serde::Deserialize;
+
+use crate::models::Id;
 
 /// A server has been deleted.
-#[derive(Debug)]
+#[derive(Debug, Deserialize, Clone, PartialEq)]
 pub struct ServerDeleteEvent {
     /// Server id.
-    pub id: Id,
-}
-
-impl From<ServerToClientEvent> for ServerDeleteEvent {
-    fn from(event: ServerToClientEvent) -> Self {
-        if let ServerToClientEvent::ServerDelete { id } = event {
-            Self { id }
-        } else {
-            panic!("An incorrect event was provided: {:?}", event);
-        }
-    }
+    #[serde(rename = "id")]
+    pub server_id: Id,
 }

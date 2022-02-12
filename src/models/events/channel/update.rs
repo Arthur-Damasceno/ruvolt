@@ -1,6 +1,6 @@
 use {serde::Deserialize, serde_json::Value as Json};
 
-use crate::models::{events::ServerToClientEvent, Id};
+use crate::models::Id;
 
 /// Specifies a field to remove on channel update.
 #[derive(Debug, Deserialize, Clone, Copy, PartialEq)]
@@ -12,22 +12,13 @@ pub enum RemoveChannelField {
 }
 
 /// A channel details were updated.
-#[derive(Debug)]
+#[derive(Debug, Deserialize, Clone, PartialEq)]
 pub struct ChannelUpdateEvent {
     /// Channel id.
-    pub id: Id,
+    #[serde(rename = "id")]
+    pub channel_id: Id,
     /// A partial channel object.
     pub data: Json,
     /// A specified field to remove on channel update.
     pub clear: Option<RemoveChannelField>,
-}
-
-impl From<ServerToClientEvent> for ChannelUpdateEvent {
-    fn from(event: ServerToClientEvent) -> Self {
-        if let ServerToClientEvent::ChannelUpdate { id, data, clear } = event {
-            Self { id, data, clear }
-        } else {
-            panic!("An incorrect event was provided: {:?}", event);
-        }
-    }
 }

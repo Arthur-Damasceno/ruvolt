@@ -1,10 +1,7 @@
 use {serde::Deserialize, serde_json::Value as Json};
 
 use crate::{
-    models::{
-        events::{ServerMemberUpdateId, ServerToClientEvent},
-        Id, Server,
-    },
+    models::{MemberId, Server},
     Context, Result,
 };
 
@@ -18,12 +15,11 @@ pub enum RemoveServerMemberField {
 }
 
 /// A server member details were updated.
-#[derive(Debug)]
+#[derive(Debug, Deserialize, Clone, PartialEq)]
 pub struct ServerMemberUpdateEvent {
-    /// Server id.
-    pub id: Id,
-    /// Server member id.
-    pub user_id: Id,
+    /// Member id.
+    #[serde(rename = "id")]
+    pub member_id: MemberId,
     /// A partial server member object.
     pub data: Json,
     /// A specified field to remove on server member update.
@@ -33,23 +29,6 @@ pub struct ServerMemberUpdateEvent {
 impl ServerMemberUpdateEvent {
     /// Get the server from the API.
     pub async fn fetch_server(&self, cx: &Context) -> Result<Server> {
-        Server::fetch(cx, &self.id).await
-    }
-}
-
-impl From<ServerToClientEvent> for ServerMemberUpdateEvent {
-    fn from(event: ServerToClientEvent) -> Self {
-        if let ServerToClientEvent::ServerMemberUpdate { id, data, clear } = event {
-            let ServerMemberUpdateId { server_id, user_id } = id;
-
-            Self {
-                id: server_id,
-                user_id,
-                data,
-                clear,
-            }
-        } else {
-            panic!("An incorrect event was provided: {:?}", event);
-        }
+        Server::fetch(cx, &self.member_id.server_id).await
     }
 }

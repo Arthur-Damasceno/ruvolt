@@ -1,30 +1,24 @@
+use serde::Deserialize;
+
 use crate::{
-    models::{events::ServerToClientEvent, Id, Server},
+    models::{Id, Server},
     Context, Result,
 };
 
-/// A user has left the group.
-#[derive(Debug)]
+/// A user has left the server.
+#[derive(Debug, Deserialize, Clone, PartialEq)]
 pub struct ServerMemberLeaveEvent {
     /// Server id.
-    pub id: Id,
-    /// Server member id.
+    #[serde(rename = "id")]
+    pub server_id: Id,
+    /// User id.
+    #[serde(rename = "user")]
     pub user_id: Id,
 }
 
 impl ServerMemberLeaveEvent {
     /// Get the server from the API.
     pub async fn fetch_server(&self, cx: &Context) -> Result<Server> {
-        Server::fetch(cx, &self.id).await
-    }
-}
-
-impl From<ServerToClientEvent> for ServerMemberLeaveEvent {
-    fn from(event: ServerToClientEvent) -> Self {
-        if let ServerToClientEvent::ServerMemberLeave { id, user_id } = event {
-            Self { id, user_id }
-        } else {
-            panic!("An incorrect event was provided: {:?}", event);
-        }
+        Server::fetch(cx, &self.server_id).await
     }
 }

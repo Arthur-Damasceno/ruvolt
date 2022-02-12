@@ -1,22 +1,16 @@
-use serde_json::Value as Json;
+use {serde::Deserialize, serde_json::Value as Json};
 
-use crate::models::{events::ServerToClientEvent, Id};
+use crate::models::Id;
 
 /// A message has been edited or otherwise updated.
-#[derive(Debug)]
+#[derive(Debug, Deserialize, Clone, PartialEq)]
 pub struct MessageUpdateEvent {
     /// Message id.
-    pub id: Id,
+    #[serde(rename = "id")]
+    pub message_id: Id,
+    /// Message channel id.
+    #[serde(rename = "channel")]
+    pub channel_id: Id,
     /// A partial message object.
     pub data: Json,
-}
-
-impl From<ServerToClientEvent> for MessageUpdateEvent {
-    fn from(event: ServerToClientEvent) -> Self {
-        if let ServerToClientEvent::MessageUpdate { id, data } = event {
-            Self { id, data }
-        } else {
-            panic!("An incorrect event was provided: {:?}", event);
-        }
-    }
 }

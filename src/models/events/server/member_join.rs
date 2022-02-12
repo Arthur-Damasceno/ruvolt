@@ -1,30 +1,24 @@
+use serde::Deserialize;
+
 use crate::{
-    models::{events::ServerToClientEvent, Id, Server},
+    models::{Id, Server},
     Context, Result,
 };
 
-/// A user has joined the group.
-#[derive(Debug)]
+/// A user has joined the server.
+#[derive(Debug, Deserialize, Clone, PartialEq)]
 pub struct ServerMemberJoinEvent {
     /// Server id.
-    pub id: Id,
-    /// Server member id.
+    #[serde(rename = "id")]
+    pub server_id: Id,
+    /// User id.
+    #[serde(rename = "user")]
     pub user_id: Id,
 }
 
 impl ServerMemberJoinEvent {
     /// Get the server from the API.
     pub async fn fetch_server(&self, cx: &Context) -> Result<Server> {
-        Server::fetch(cx, &self.id).await
-    }
-}
-
-impl From<ServerToClientEvent> for ServerMemberJoinEvent {
-    fn from(event: ServerToClientEvent) -> Self {
-        if let ServerToClientEvent::ServerMemberJoin { id, user_id } = event {
-            Self { id, user_id }
-        } else {
-            panic!("An incorrect event was provided: {:?}", event);
-        }
+        Server::fetch(cx, &self.server_id).await
     }
 }

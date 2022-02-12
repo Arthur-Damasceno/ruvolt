@@ -1,14 +1,18 @@
+use serde::Deserialize;
+
 use crate::{
-    models::{events::ServerToClientEvent, Channel, Id, Message, User},
+    models::{Channel, Id, Message, User},
     Context, Result,
 };
 
 /// You have acknowledged new messages in the channel up to the message id.
-#[derive(Debug)]
+#[derive(Debug, Deserialize, Clone, PartialEq)]
 pub struct ChannelAckEvent {
     /// Channel id.
-    pub id: Id,
+    #[serde(rename = "id")]
+    pub channel_id: Id,
     /// User id.
+    #[serde(rename = "user")]
     pub user_id: Id,
     /// Message id.
     pub message_id: Id,
@@ -17,7 +21,7 @@ pub struct ChannelAckEvent {
 impl ChannelAckEvent {
     /// Get the channel from the API.
     pub async fn fetch_channel(&self, cx: &Context) -> Result<Channel> {
-        Channel::fetch(cx, &self.id).await
+        Channel::fetch(cx, &self.channel_id).await
     }
 
     /// Get the user from the API.
@@ -27,25 +31,6 @@ impl ChannelAckEvent {
 
     /// Get the message from the API.
     pub async fn fetch_msg(&self, cx: &Context) -> Result<Message> {
-        Message::fetch(cx, &self.id, &self.message_id).await
-    }
-}
-
-impl From<ServerToClientEvent> for ChannelAckEvent {
-    fn from(event: ServerToClientEvent) -> Self {
-        if let ServerToClientEvent::ChannelAck {
-            id,
-            user_id,
-            message_id,
-        } = event
-        {
-            Self {
-                id,
-                user_id,
-                message_id,
-            }
-        } else {
-            panic!("An incorrect event was provided: {:?}", event);
-        }
+        Message::fetch(cx, &self.channel_id, &self.message_id).await
     }
 }
