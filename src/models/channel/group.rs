@@ -1,7 +1,7 @@
 use {serde::Deserialize, serde_json::json};
 
 use crate::{
-    models::{Id, Message},
+    models::{Attachment, Id, Message},
     Context, Result,
 };
 
@@ -18,6 +18,8 @@ pub struct GroupChannel {
     pub name: String,
     /// Channel description.
     pub description: Option<String>,
+    /// Channel icon.
+    pub icon: Option<Attachment>,
     /// Id of last message in the channel.
     pub last_message_id: Option<Id>,
     /// Channel is not safe for work.

@@ -6,7 +6,10 @@ mod status;
 use serde::Deserialize;
 
 use {
-    crate::{models::Id, Context, Result},
+    crate::{
+        models::{Attachment, Id},
+        Context, Result,
+    },
     bot_info::BotInfo,
 };
 
@@ -18,16 +21,18 @@ pub struct User {
     pub id: Id,
     /// User username.
     pub username: String,
+    /// User avatar.
+    pub avatar: Option<Attachment>,
     /// User status.
     pub status: Option<UserStatus>,
     /// User badges.
     pub badges: Option<u32>,
     /// User flags.
     pub flags: Option<u32>,
-    bot: Option<BotInfo>,
     /// User is online.
     #[serde(default)]
     pub online: bool,
+    bot: Option<BotInfo>,
 }
 
 impl User {

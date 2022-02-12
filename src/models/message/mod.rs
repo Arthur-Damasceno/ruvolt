@@ -6,7 +6,10 @@ mod edited;
 use {serde::Deserialize, serde_json::json};
 
 use {
-    crate::{models::Id, Context, Result},
+    crate::{
+        models::{Attachment, Id},
+        Context, Result,
+    },
     edited::Edited,
 };
 
@@ -26,13 +29,16 @@ pub struct Message {
     pub author_id: Id,
     /// Message content.
     pub content: Content,
-    edited: Option<Edited>,
+    /// Message attachments.
+    #[serde(default)]
+    pub attachments: Vec<Attachment>,
     /// Message mentions.
     #[serde(default)]
     pub mentions: Vec<Id>,
     /// Message replies.
     #[serde(default)]
     pub replies: Vec<Id>,
+    edited: Option<Edited>,
 }
 
 impl Message {
