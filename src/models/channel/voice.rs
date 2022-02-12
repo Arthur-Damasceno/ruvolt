@@ -1,16 +1,19 @@
 use serde::Deserialize;
 
-use crate::{models::Server, Context, Result};
+use crate::{
+    models::{Id, Server},
+    Context, Result,
+};
 
 /// A voice channel.
 #[derive(Debug, Deserialize, Clone, PartialEq)]
 pub struct VoiceChannel {
     /// Channel id.
     #[serde(rename = "_id")]
-    pub id: String,
+    pub id: Id,
     /// Channel server id.
     #[serde(rename = "server")]
-    pub server_id: String,
+    pub server_id: Id,
     /// Channel name.
     pub name: String,
     /// Channel description.

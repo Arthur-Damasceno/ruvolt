@@ -1,8 +1,8 @@
 use {serde::Deserialize, serde_json::Value as Json};
 
-use {
-    super::super::ServerToClientEvent,
-    crate::{models::Server, Context, Result},
+use crate::{
+    models::{events::ServerToClientEvent, Id, Server},
+    Context, Result,
 };
 
 /// Specifies a field to remove on server role update.
@@ -17,9 +17,9 @@ pub enum RemoveServerRoleField {
 #[derive(Debug)]
 pub struct ServerRoleUpdateEvent {
     /// Server id.
-    pub id: String,
+    pub id: Id,
     /// Server role id.
-    pub role_id: String,
+    pub role_id: Id,
     /// A partial server role object.
     pub data: Json,
     /// A specified field to remove on server role update.

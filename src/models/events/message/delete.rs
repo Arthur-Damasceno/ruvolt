@@ -1,15 +1,15 @@
-use {
-    super::super::ServerToClientEvent,
-    crate::{models::Channel, Context, Result},
+use crate::{
+    models::{events::ServerToClientEvent, Channel, Id},
+    Context, Result,
 };
 
 /// A message has been deleted.
 #[derive(Debug)]
 pub struct MessageDeleteEvent {
     /// Message id.
-    pub id: String,
+    pub id: Id,
     /// Message channel id.
-    pub channel_id: String,
+    pub channel_id: Id,
 }
 
 impl MessageDeleteEvent {

@@ -1,8 +1,11 @@
 use {serde::Deserialize, serde_json::Value as Json};
 
-use {
-    super::super::{ServerMemberUpdateId, ServerToClientEvent},
-    crate::{models::Server, Context, Result},
+use crate::{
+    models::{
+        events::{ServerMemberUpdateId, ServerToClientEvent},
+        Id, Server,
+    },
+    Context, Result,
 };
 
 /// Specifies a field to remove on server member update.
@@ -18,9 +21,9 @@ pub enum RemoveServerMemberField {
 #[derive(Debug)]
 pub struct ServerMemberUpdateEvent {
     /// Server id.
-    pub id: String,
+    pub id: Id,
     /// Server member id.
-    pub user_id: String,
+    pub user_id: Id,
     /// A partial server member object.
     pub data: Json,
     /// A specified field to remove on server member update.

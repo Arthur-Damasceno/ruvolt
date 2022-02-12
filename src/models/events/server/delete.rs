@@ -1,10 +1,10 @@
-use super::super::ServerToClientEvent;
+use crate::models::{events::ServerToClientEvent, Id};
 
 /// A server has been deleted.
 #[derive(Debug)]
 pub struct ServerDeleteEvent {
     /// Server id.
-    pub id: String,
+    pub id: Id,
 }
 
 impl From<ServerToClientEvent> for ServerDeleteEvent {

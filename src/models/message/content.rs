@@ -3,6 +3,8 @@ use {
     std::fmt::{self, Display, Formatter},
 };
 
+use crate::models::Id;
+
 /// Message content type.
 #[derive(Debug, Deserialize, Clone, PartialEq)]
 #[serde(untagged)]
@@ -15,49 +17,42 @@ pub enum Content {
 
 impl Display for Content {
     fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
-        match self {
-            Self::Text(text) => write!(f, "{}", text),
-            Self::SystemMessage(msg) => match msg {
-                SystemMessage::Text { content } => write!(f, "{}", content),
-                SystemMessage::UserAdded { .. } => write!(f, "User added to the channel."),
-                SystemMessage::UserRemove { .. } => write!(f, "User removed from the channel."),
-                SystemMessage::UserJoined { .. } => write!(f, "User joined the channel."),
-                SystemMessage::UserLeft { .. } => write!(f, "User left the channel."),
-                SystemMessage::UserKicked { .. } => write!(f, "User kicked from the channel."),
-                SystemMessage::UserBanned { .. } => write!(f, "User banned from the channel."),
-                SystemMessage::ChannelRenamed { .. } => write!(f, "Channel renamed."),
-                SystemMessage::ChannelDescriptionChanged { .. } => {
-                    write!(f, "Channel description changed.")
-                }
-                SystemMessage::ChannelIconChanged { .. } => write!(f, "Channel icon changed."),
-            },
-        }
+        write!(
+            f,
+            "{}",
+            match self {
+                Self::Text(text) => text,
+                Self::SystemMessage(msg) => match msg {
+                    SystemMessage::Text { content } => content,
+                    SystemMessage::UserAdded { .. } => "User added to the channel.",
+                    SystemMessage::UserRemove { .. } => "User removed from the channel.",
+                    SystemMessage::UserJoined { .. } => "User joined the channel.",
+                    SystemMessage::UserLeft { .. } => "User left the channel.",
+                    SystemMessage::UserKicked { .. } => "User kicked from the channel.",
+                    SystemMessage::UserBanned { .. } => "User banned from the channel.",
+                    SystemMessage::ChannelRenamed { .. } => "Channel renamed.",
+                    SystemMessage::ChannelDescriptionChanged { .. } =>
+                        "Channel description changed.",
+                    SystemMessage::ChannelIconChanged { .. } => "Channel icon changed.",
+                },
+            }
+        )
     }
 }
 
 /// A system message.
 #[allow(missing_docs)]
 #[derive(Debug, Deserialize, Clone, PartialEq)]
-#[serde(tag = "type")]
+#[serde(tag = "type", rename_all = "snake_case")]
 pub enum SystemMessage {
-    #[serde(rename = "text")]
     Text { content: String },
-    #[serde(rename = "user_added")]
-    UserAdded { id: String, by: String },
-    #[serde(rename = "user_remove")]
-    UserRemove { id: String, by: String },
-    #[serde(rename = "user_joined")]
-    UserJoined { id: String },
-    #[serde(rename = "user_left")]
-    UserLeft { id: String },
-    #[serde(rename = "user_kicked")]
-    UserKicked { id: String },
-    #[serde(rename = "user_banned")]
-    UserBanned { id: String },
-    #[serde(rename = "channel_renamed")]
-    ChannelRenamed { name: String, by: String },
-    #[serde(rename = "channel_description_changed")]
-    ChannelDescriptionChanged { by: String },
-    #[serde(rename = "channel_icon_changed")]
-    ChannelIconChanged { by: String },
+    UserAdded { id: Id, by: Id },
+    UserRemove { id: Id, by: Id },
+    UserJoined { id: Id },
+    UserLeft { id: Id },
+    UserKicked { id: Id },
+    UserBanned { id: Id },
+    ChannelRenamed { name: String, by: Id },
+    ChannelDescriptionChanged { by: Id },
+    ChannelIconChanged { by: Id },
 }

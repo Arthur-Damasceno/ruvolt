@@ -1,7 +1,7 @@
 use {serde::Deserialize, serde_json::json};
 
 use crate::{
-    models::{Message, Server},
+    models::{Id, Message, Server},
     Context, Result,
 };
 
@@ -10,16 +10,16 @@ use crate::{
 pub struct TextChannel {
     /// Channel id.
     #[serde(rename = "_id")]
-    pub id: String,
+    pub id: Id,
     /// Channel server id.
     #[serde(rename = "server")]
-    pub server_id: String,
+    pub server_id: Id,
     /// Channel name.
     pub name: String,
     /// Channel description.
     pub description: Option<String>,
     /// Id of last message in the channel.
-    pub last_message_id: Option<String>,
+    pub last_message_id: Option<Id>,
     /// Channel is not safe for work.
     #[serde(default)]
     pub nsfw: bool,

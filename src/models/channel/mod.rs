@@ -6,7 +6,7 @@ mod voice;
 
 use serde::Deserialize;
 
-use crate::{Context, Result};
+use crate::{models::Id, Context, Result};
 
 /// A channel.
 #[derive(Debug, Deserialize, Clone, PartialEq)]
@@ -24,7 +24,7 @@ pub enum Channel {
 
 impl Channel {
     /// Get a channel from the API.
-    pub async fn fetch(cx: &Context, id: &str) -> Result<Self> {
+    pub async fn fetch(cx: &Context, id: &Id) -> Result<Self> {
         let path = format!("channels/{}", id);
         let channel = cx.http_client.get(&path).await?;
 
@@ -32,11 +32,11 @@ impl Channel {
     }
 
     /// Returns the channel id.
-    pub fn id(&self) -> &str {
+    pub fn id(&self) -> &Id {
         match self {
-            Self::Text(TextChannel { id, .. }) => id,
-            Self::Voice(VoiceChannel { id, .. }) => id,
-            Self::Group(GroupChannel { id, .. }) => id,
+            Self::Text(TextChannel { id, .. })
+            | Self::Voice(VoiceChannel { id, .. })
+            | Self::Group(GroupChannel { id, .. }) => id,
         }
     }
 }

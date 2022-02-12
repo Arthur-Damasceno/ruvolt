@@ -2,6 +2,8 @@
 
 use serde::Serialize;
 
+use crate::models::Id;
+
 /// Client originated events.
 #[derive(Debug, Serialize, Clone, PartialEq)]
 #[serde(tag = "type")]
@@ -12,12 +14,14 @@ pub enum ClientToServerEvent {
     /// Tell other users that you have begin typing in a channel.
     BeginTyping {
         /// Channel Id.
-        channel: String,
+        #[serde(rename = "channel")]
+        channel_id: Id,
     },
     /// Tell other users that you have stopped typing in a channel.
     EndTyping {
         /// Channel Id.
-        channel: String,
+        #[serde(rename = "channel")]
+        channel_id: Id,
     },
     Ping {
         data: usize,

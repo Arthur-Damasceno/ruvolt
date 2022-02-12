@@ -1,15 +1,15 @@
-use {
-    super::super::ServerToClientEvent,
-    crate::{models::Server, Context, Result},
+use crate::{
+    models::{events::ServerToClientEvent, Id, Server},
+    Context, Result,
 };
 
 /// A server role has been deleted.
 #[derive(Debug)]
 pub struct ServerRoleDeleteEvent {
     /// Server id.
-    pub id: String,
+    pub id: Id,
     /// Server role id.
-    pub role_id: String,
+    pub role_id: Id,
 }
 
 impl ServerRoleDeleteEvent {

@@ -7,7 +7,7 @@ use {serde::Deserialize, serde_json::json};
 
 use {
     crate::{
-        models::{Channel, User},
+        models::{Channel, Id, User},
         Context, Result,
     },
     edited::Edited,
@@ -18,29 +18,29 @@ use {
 pub struct Message {
     /// Message id.
     #[serde(rename = "_id")]
-    pub id: String,
+    pub id: Id,
     /// Message nonce.
     pub nonce: Option<String>,
     /// Message channel id.
     #[serde(rename = "channel")]
-    pub channel_id: String,
+    pub channel_id: Id,
     /// Message author id.
     #[serde(rename = "author")]
-    pub author_id: String,
+    pub author_id: Id,
     /// Message content.
     pub content: Content,
     edited: Option<Edited>,
     /// Message mentions.
     #[serde(default)]
-    pub mentions: Vec<String>,
+    pub mentions: Vec<Id>,
     /// Message replies.
     #[serde(default)]
-    pub replies: Vec<String>,
+    pub replies: Vec<Id>,
 }
 
 impl Message {
     /// Get a message from the API.
-    pub async fn fetch(cx: &Context, channel_id: &str, id: &str) -> Result<Self> {
+    pub async fn fetch(cx: &Context, channel_id: &Id, id: &Id) -> Result<Self> {
         let path = format!("channels/{}/messages/{}", channel_id, id);
         let msg = cx.http_client.get(&path).await?;
 
@@ -48,7 +48,7 @@ impl Message {
     }
 
     /// Returns the message edit date.
-    pub fn edited(&self) -> Option<&str> {
+    pub fn edited(&self) -> Option<&String> {
         match self.edited {
             Some(Edited { ref date }) => Some(date),
             None => None,

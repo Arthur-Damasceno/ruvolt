@@ -1,18 +1,15 @@
-use {
-    super::super::ServerToClientEvent,
-    crate::{
-        models::{Channel, User},
-        Context, Result,
-    },
+use crate::{
+    models::{events::ServerToClientEvent, Channel, Id, User},
+    Context, Result,
 };
 
 /// A user has left the group.
 #[derive(Debug)]
 pub struct ChannelGroupLeaveEvent {
     /// Channel id.
-    pub id: String,
+    pub id: Id,
     /// User id.
-    pub user_id: String,
+    pub user_id: Id,
 }
 
 impl ChannelGroupLeaveEvent {
