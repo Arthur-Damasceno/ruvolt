@@ -1,6 +1,7 @@
-pub use {category::*, system_message_channels::*};
+pub use {category::*, member::*, system_message_channels::*};
 
 mod category;
+mod member;
 mod system_message_channels;
 
 use serde::Deserialize;
