@@ -1,6 +1,6 @@
 use serde::Deserialize;
 
-use crate::{entities::Server, Context, Result};
+use crate::{models::Server, Context, Result};
 
 /// A voice channel.
 #[derive(Debug, Deserialize, Clone, PartialEq)]

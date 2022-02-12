@@ -1,6 +1,6 @@
 use {
     super::super::ServerToClientEvent,
-    crate::{entities::Channel, Context, Result},
+    crate::{models::Channel, Context, Result},
 };
 
 /// A message has been deleted.

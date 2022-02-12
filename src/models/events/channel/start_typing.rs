@@ -1,21 +1,21 @@
 use {
     super::super::ServerToClientEvent,
     crate::{
-        entities::{Channel, User},
+        models::{Channel, User},
         Context, Result,
     },
 };
 
-/// A user has stopped typing in a channel.
+/// A user has started typing in a channel.
 #[derive(Debug)]
-pub struct ChannelStopTypingEvent {
+pub struct ChannelStartTypingEvent {
     /// Channel id.
     pub id: String,
     /// User id.
     pub user_id: String,
 }
 
-impl ChannelStopTypingEvent {
+impl ChannelStartTypingEvent {
     /// Get the channel from the API.
     pub async fn fetch_channel(&self, cx: &Context) -> Result<Channel> {
         Channel::fetch(cx, &self.id).await
@@ -27,9 +27,9 @@ impl ChannelStopTypingEvent {
     }
 }
 
-impl From<ServerToClientEvent> for ChannelStopTypingEvent {
+impl From<ServerToClientEvent> for ChannelStartTypingEvent {
     fn from(event: ServerToClientEvent) -> Self {
-        if let ServerToClientEvent::ChannelStopTyping { id, user_id } = event {
+        if let ServerToClientEvent::ChannelStartTyping { id, user_id } = event {
             Self { id, user_id }
         } else {
             panic!("An incorrect event was provided: {:?}", event);

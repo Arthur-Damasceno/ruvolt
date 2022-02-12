@@ -1,28 +1,28 @@
 use {
     super::super::ServerToClientEvent,
-    crate::{entities::Server, Context, Result},
+    crate::{models::Server, Context, Result},
 };
 
-/// A server role has been deleted.
+/// A user has left the group.
 #[derive(Debug)]
-pub struct ServerRoleDeleteEvent {
+pub struct ServerMemberLeaveEvent {
     /// Server id.
     pub id: String,
-    /// Server role id.
-    pub role_id: String,
+    /// Server member id.
+    pub user_id: String,
 }
 
-impl ServerRoleDeleteEvent {
+impl ServerMemberLeaveEvent {
     /// Get the server from the API.
     pub async fn fetch_server(&self, cx: &Context) -> Result<Server> {
         Server::fetch(cx, &self.id).await
     }
 }
 
-impl From<ServerToClientEvent> for ServerRoleDeleteEvent {
+impl From<ServerToClientEvent> for ServerMemberLeaveEvent {
     fn from(event: ServerToClientEvent) -> Self {
-        if let ServerToClientEvent::ServerRoleDelete { id, role_id } = event {
-            Self { id, role_id }
+        if let ServerToClientEvent::ServerMemberLeave { id, user_id } = event {
+            Self { id, user_id }
         } else {
             panic!("An incorrect event was provided: {:?}", event);
         }

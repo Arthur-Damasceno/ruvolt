@@ -18,7 +18,7 @@ tokio = { version = "*", features = ["full"] }
 ```rust
 use {
     async_trait::async_trait,
-    ruvolt::{entities::Message, Client, Context, EventHandler, Result},
+    ruvolt::{models::Message, Client, Context, EventHandler, Result},
     std::env,
 };
 

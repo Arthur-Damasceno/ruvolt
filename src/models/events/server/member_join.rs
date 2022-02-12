@@ -1,27 +1,27 @@
 use {
     super::super::ServerToClientEvent,
-    crate::{entities::Server, Context, Result},
+    crate::{models::Server, Context, Result},
 };
 
-/// A user has left the group.
+/// A user has joined the group.
 #[derive(Debug)]
-pub struct ServerMemberLeaveEvent {
+pub struct ServerMemberJoinEvent {
     /// Server id.
     pub id: String,
     /// Server member id.
     pub user_id: String,
 }
 
-impl ServerMemberLeaveEvent {
+impl ServerMemberJoinEvent {
     /// Get the server from the API.
     pub async fn fetch_server(&self, cx: &Context) -> Result<Server> {
         Server::fetch(cx, &self.id).await
     }
 }
 
-impl From<ServerToClientEvent> for ServerMemberLeaveEvent {
+impl From<ServerToClientEvent> for ServerMemberJoinEvent {
     fn from(event: ServerToClientEvent) -> Self {
-        if let ServerToClientEvent::ServerMemberLeave { id, user_id } = event {
+        if let ServerToClientEvent::ServerMemberJoin { id, user_id } = event {
             Self { id, user_id }
         } else {
             panic!("An incorrect event was provided: {:?}", event);

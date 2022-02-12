@@ -1,8 +1,8 @@
 use {serde::Deserialize, serde_json::Value as Json};
 
 use crate::{
-    entities::{events::*, *},
     error::AuthenticationError,
+    models::{events::*, *},
 };
 
 #[derive(Debug, Deserialize)]

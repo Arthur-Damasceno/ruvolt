@@ -1,8 +1,8 @@
 use {
     async_trait::async_trait,
     ruvolt::{
-        entities::{events::ReadyEvent, Message},
         error::Error,
+        models::{events::ReadyEvent, Message},
         Client, Context, EventHandler, Result,
     },
     std::{env, time::Instant},

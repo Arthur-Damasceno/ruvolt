@@ -7,7 +7,7 @@ use {serde::Deserialize, serde_json::json};
 
 use {
     crate::{
-        entities::{Channel, User},
+        models::{Channel, User},
         Context, Result,
     },
     edited::Edited,

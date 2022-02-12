@@ -9,8 +9,8 @@ use {
 };
 
 use crate::{
-    entities::events::{ClientToServerEvent, ServerToClientEvent},
     error::Error,
+    models::events::{ClientToServerEvent, ServerToClientEvent},
     EventHandler, Result,
 };
 

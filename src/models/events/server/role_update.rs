@@ -2,7 +2,7 @@ use {serde::Deserialize, serde_json::Value as Json};
 
 use {
     super::super::ServerToClientEvent,
-    crate::{entities::Server, Context, Result},
+    crate::{models::Server, Context, Result},
 };
 
 /// Specifies a field to remove on server role update.

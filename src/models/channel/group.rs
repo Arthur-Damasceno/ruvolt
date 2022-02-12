@@ -1,7 +1,7 @@
 use {serde::Deserialize, serde_json::json};
 
 use crate::{
-    entities::{Message, User},
+    models::{Message, User},
     Context, Result,
 };
 

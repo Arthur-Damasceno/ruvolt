@@ -1,7 +1,7 @@
 use {
     super::super::ServerToClientEvent,
     crate::{
-        entities::{Channel, Message, User},
+        models::{Channel, Message, User},
         Context, Result,
     },
 };

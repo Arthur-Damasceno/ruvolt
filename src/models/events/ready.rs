@@ -1,6 +1,6 @@
 use serde::Deserialize;
 
-use crate::entities::{Channel, Server, User};
+use crate::models::{Channel, Server, User};
 
 /// Bot is ready.
 #[allow(missing_docs)]

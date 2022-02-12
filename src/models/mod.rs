@@ -1,4 +1,4 @@
-//! Revolt API entities.
+//! Revolt API models.
 
 #[doc(inline)]
 pub use {channel::*, message::*, server::*, user::*};

@@ -5,7 +5,7 @@ mod system_message_channels;
 
 use serde::Deserialize;
 
-use crate::{entities::User, Context, Result};
+use crate::{models::User, Context, Result};
 
 /// A server.
 #[derive(Debug, Deserialize, Clone, PartialEq)]
