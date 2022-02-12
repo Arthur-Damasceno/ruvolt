@@ -1,9 +1,6 @@
 use serde::Deserialize;
 
-use crate::{
-    models::{Id, Server},
-    Context, Result,
-};
+use crate::models::Id;
 
 /// A user has left the server.
 #[derive(Debug, Deserialize, Clone, PartialEq)]
@@ -14,11 +11,4 @@ pub struct ServerMemberLeaveEvent {
     /// User id.
     #[serde(rename = "user")]
     pub user_id: Id,
-}
-
-impl ServerMemberLeaveEvent {
-    /// Get the server from the API.
-    pub async fn fetch_server(&self, cx: &Context) -> Result<Server> {
-        Server::fetch(cx, &self.server_id).await
-    }
 }

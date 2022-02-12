@@ -1,9 +1,6 @@
 use serde::Deserialize;
 
-use crate::{
-    models::{Channel, Id, Message, User},
-    Context, Result,
-};
+use crate::models::Id;
 
 /// You have acknowledged new messages in the channel up to the message id.
 #[derive(Debug, Deserialize, Clone, PartialEq)]
@@ -16,21 +13,4 @@ pub struct ChannelAckEvent {
     pub user_id: Id,
     /// Message id.
     pub message_id: Id,
-}
-
-impl ChannelAckEvent {
-    /// Get the channel from the API.
-    pub async fn fetch_channel(&self, cx: &Context) -> Result<Channel> {
-        Channel::fetch(cx, &self.channel_id).await
-    }
-
-    /// Get the user from the API.
-    pub async fn fetch_user(&self, cx: &Context) -> Result<User> {
-        User::fetch(cx, &self.user_id).await
-    }
-
-    /// Get the message from the API.
-    pub async fn fetch_msg(&self, cx: &Context) -> Result<Message> {
-        Message::fetch(cx, &self.channel_id, &self.message_id).await
-    }
 }

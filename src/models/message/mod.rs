@@ -6,10 +6,7 @@ mod edited;
 use {serde::Deserialize, serde_json::json};
 
 use {
-    crate::{
-        models::{Channel, Id, User},
-        Context, Result,
-    },
+    crate::{models::Id, Context, Result},
     edited::Edited,
 };
 
@@ -60,16 +57,6 @@ impl Message {
         self.edited.is_some()
     }
 
-    /// Get the message channel from the API.
-    pub async fn fetch_channel(&self, cx: &Context) -> Result<Channel> {
-        Channel::fetch(cx, &self.channel_id).await
-    }
-
-    /// Get the message author from the API.
-    pub async fn fetch_author(&self, cx: &Context) -> Result<User> {
-        User::fetch(cx, &self.author_id).await
-    }
-
     /// Send a message in the same channel.
     pub async fn send_in_channel(&self, cx: &Context, content: &str) -> Result<Self> {
         let path = format!("channels/{}/messages", self.channel_id);
@@ -91,7 +78,7 @@ impl Message {
     }
 
     /// Delete the message.
-    pub async fn delete(self, cx: &Context) -> Result {
+    pub async fn delete(&self, cx: &Context) -> Result {
         let path = format!("channels/{}/messages/{}", self.channel_id, self.id);
         cx.http_client.delete(&path).await?;
 

@@ -6,10 +6,7 @@ mod system_message_channels;
 
 use serde::Deserialize;
 
-use crate::{
-    models::{Id, User},
-    Context, Result,
-};
+use crate::{models::Id, Context, Result};
 
 /// A server.
 #[derive(Debug, Deserialize, Clone, PartialEq)]
@@ -46,10 +43,5 @@ impl Server {
         let server = cx.http_client.get(&path).await?;
 
         Ok(server)
-    }
-
-    /// Get the server owner from the API.
-    pub async fn fetch_owner(&self, cx: &Context) -> Result<User> {
-        User::fetch(cx, &self.owner_id).await
     }
 }

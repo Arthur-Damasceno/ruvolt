@@ -1,9 +1,6 @@
 use serde::Deserialize;
 
-use crate::{
-    models::{Id, Server},
-    Context, Result,
-};
+use crate::models::Id;
 
 /// A voice channel.
 #[derive(Debug, Deserialize, Clone, PartialEq)]
@@ -21,11 +18,4 @@ pub struct VoiceChannel {
     /// Channel is not safe for work.
     #[serde(default)]
     pub nsfw: bool,
-}
-
-impl VoiceChannel {
-    /// Get the server from the API.
-    pub async fn fetch_server(&self, cx: &Context) -> Result<Server> {
-        Server::fetch(cx, &self.server_id).await
-    }
 }

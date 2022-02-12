@@ -1,7 +1,7 @@
 use {serde::Deserialize, serde_json::json};
 
 use crate::{
-    models::{Id, Message, User},
+    models::{Id, Message},
     Context, Result,
 };
 
@@ -26,23 +26,6 @@ pub struct GroupChannel {
 }
 
 impl GroupChannel {
-    /// Get the group owner from the API.
-    pub async fn fetch_owner(&self, cx: &Context) -> Result<User> {
-        User::fetch(cx, &self.owner_id).await
-    }
-
-    /// Get the last message in the channel from the API.
-    pub async fn fetch_last_msg(&self, cx: &Context) -> Result<Option<Message>> {
-        match self.last_message_id {
-            Some(ref msg_id) => {
-                let msg = Message::fetch(cx, &self.id, msg_id).await?;
-
-                Ok(Some(msg))
-            }
-            None => Ok(None),
-        }
-    }
-
     /// Send a message in this channel.
     pub async fn send(&self, cx: &Context, content: &str) -> Result<Message> {
         let path = format!("channels/{}/messages", self.id);
