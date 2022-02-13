@@ -16,4 +16,6 @@ pub use error::Result;
 
 mod client;
 pub mod error;
+pub mod http;
 pub mod models;
+pub(crate) mod websocket;

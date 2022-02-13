@@ -1,12 +1,10 @@
 use {std::sync::Arc, tokio::sync::Mutex};
 
-use {
-    super::websocket::Sender,
-    crate::{
-        http::HttpClient,
-        models::{events::ClientToServerEvent, User},
-        Result,
-    },
+use crate::{
+    http::HttpClient,
+    models::{events::ClientToServerEvent, User},
+    websocket::Sender,
+    Result,
 };
 
 /// A struct for general utilities and wrapper for the http client for fetch entities from the API.
