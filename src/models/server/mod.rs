@@ -1,6 +1,7 @@
-pub use {category::*, member::*, system_message_channels::*};
+pub use {category::*, flags::*, member::*, system_message_channels::*};
 
 mod category;
+mod flags;
 mod member;
 mod system_message_channels;
 
@@ -37,7 +38,8 @@ pub struct Server {
     /// Server banner.
     pub banner: Option<Attachment>,
     /// Server flags.
-    pub flags: Option<u32>,
+    #[serde(default)]
+    pub flags: ServerFlags,
     /// Server is not safe for work.
     #[serde(default)]
     pub nsfw: bool,
