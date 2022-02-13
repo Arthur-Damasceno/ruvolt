@@ -1,5 +1,6 @@
-pub use {group::*, text::*, voice::*};
+pub use {direct_message::*, group::*, text::*, voice::*};
 
+mod direct_message;
 mod group;
 mod text;
 mod voice;
@@ -20,6 +21,8 @@ pub enum Channel {
     Voice(VoiceChannel),
     /// A group channel.
     Group(GroupChannel),
+    /// A DM channel.
+    DirectMessage(DirectMessageChannel),
 }
 
 impl Channel {
@@ -36,7 +39,8 @@ impl Channel {
         match self {
             Self::Text(TextChannel { id, .. })
             | Self::Voice(VoiceChannel { id, .. })
-            | Self::Group(GroupChannel { id, .. }) => id,
+            | Self::Group(GroupChannel { id, .. })
+            | Self::DirectMessage(DirectMessageChannel { id, .. }) => id,
         }
     }
 }
