@@ -1,6 +1,6 @@
 use {
-    futures_util::{SinkExt, StreamExt},
-    tokio::net::TcpStream,
+    futures_util::{select, FutureExt, SinkExt, StreamExt},
+    tokio::{net::TcpStream, time::Interval},
     tokio_tungstenite::{connect_async, tungstenite::Message, MaybeTlsStream, WebSocketStream},
 };
 
@@ -53,5 +53,25 @@ impl WebSocketClient {
             },
             Err(err) => Some(Err(err.into())),
         }
+    }
+
+    pub async fn accept_or_heartbeat(
+        &mut self,
+        heartbeat_interval: &mut Interval,
+    ) -> Option<Result<ServerToClientEvent>> {
+        select! {
+            _ = heartbeat_interval.tick().fuse() => {
+                if let Err(err) = self.heartbeat().await {
+                    return Some(Err(err));
+                }
+
+                self.accept().await
+            }
+            event = self.accept().fuse() => event,
+        }
+    }
+
+    async fn heartbeat(&mut self) -> Result {
+        self.send(ClientToServerEvent::Ping { data: 0 }).await
     }
 }
