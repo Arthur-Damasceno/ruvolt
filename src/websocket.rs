@@ -1,10 +1,14 @@
 use {
-    futures_util::StreamExt,
+    futures_util::{SinkExt, StreamExt},
     tokio::net::TcpStream,
     tokio_tungstenite::{connect_async, tungstenite::Message, MaybeTlsStream, WebSocketStream},
 };
 
-use crate::{error::Error, models::events::ServerToClientEvent, Result};
+use crate::{
+    error::Error,
+    models::events::{ClientToServerEvent, ServerToClientEvent},
+    Result,
+};
 
 const REVOLT_WS_API: &str = "wss://ws.revolt.chat";
 
@@ -18,6 +22,14 @@ impl WebSocketClient {
         let (stream, _) = connect_async(REVOLT_WS_API).await?;
 
         Ok(Self { stream })
+    }
+
+    pub async fn send(&mut self, event: ClientToServerEvent) -> Result {
+        let msg = Message::Text(serde_json::to_string(&event).unwrap());
+
+        self.stream.send(msg).await?;
+
+        Ok(())
     }
 
     pub async fn accept(&mut self) -> Option<Result<ServerToClientEvent>> {
