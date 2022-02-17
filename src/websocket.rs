@@ -55,6 +55,12 @@ impl WebSocketClient {
         }
     }
 
+    pub async fn close(&mut self) -> Result {
+        self.stream.close(None).await?;
+
+        Ok(())
+    }
+
     pub async fn accept_or_heartbeat(
         &mut self,
         heartbeat_interval: &mut Interval,
