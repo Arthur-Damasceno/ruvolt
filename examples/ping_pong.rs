@@ -28,7 +28,7 @@ impl EventHandler for Handler {
 
         let content = msg.content.to_string();
 
-        if content.as_str() == "!ping" {
+        if content == "!ping" {
             let now = Instant::now();
             let mut msg = msg.send_in_channel(&cx, "Pong!").await.unwrap();
 
@@ -46,9 +46,9 @@ impl EventHandler for Handler {
 #[tokio::main]
 async fn main() -> Result {
     let token = env::var("TOKEN").unwrap();
-    let client = Client::new(Handler).await?;
+    let mut client = Client::new(Handler, token).await?;
 
-    if let Err(err) = client.listen(&token).await {
+    if let Err(err) = client.listen().await {
         eprintln!("{}", err);
     }
 
