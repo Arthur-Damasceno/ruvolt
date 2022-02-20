@@ -1,5 +1,6 @@
 use {
     futures_util::{SinkExt, StreamExt},
+    std::time::{Duration, Instant},
     tokio::net::TcpStream,
     tokio_tungstenite::{connect_async, tungstenite::Message, MaybeTlsStream, WebSocketStream},
 };
@@ -15,13 +16,20 @@ const REVOLT_WS_API: &str = "wss://ws.revolt.chat";
 #[derive(Debug)]
 pub struct WebSocketClient {
     stream: WebSocketStream<MaybeTlsStream<TcpStream>>,
+    heartbeat_dur: Duration,
+    last_heartbeat: (Instant, Instant),
 }
 
 impl WebSocketClient {
     pub async fn connect() -> Result<Self> {
         let (stream, _) = connect_async(REVOLT_WS_API).await?;
+        let now = Instant::now();
 
-        Ok(Self { stream })
+        Ok(Self {
+            stream,
+            heartbeat_dur: Duration::from_secs(20),
+            last_heartbeat: (now, now),
+        })
     }
 
     pub async fn send(&mut self, event: ClientToServerEvent) -> Result {
@@ -44,7 +52,11 @@ impl WebSocketClient {
                     });
 
                     match event {
-                        Ok(event) => Some(Ok(event)),
+                        Ok(event) => {
+                            self.check_pong(&event);
+
+                            Some(Ok(event))
+                        }
                         Err(err) => Some(Err(err)),
                     }
                 }
@@ -52,6 +64,38 @@ impl WebSocketClient {
                 _ => todo!(),
             },
             Err(err) => Some(Err(err.into())),
+        }
+    }
+
+    pub fn latency(&self) -> Option<Duration> {
+        if self.last_heartbeat.0 < self.last_heartbeat.1 {
+            Some(self.last_heartbeat.1 - self.last_heartbeat.0);
+        }
+
+        None
+    }
+
+    pub async fn check_heartbeat(&mut self) -> Result {
+        let dur = Instant::now() - self.last_heartbeat.0;
+
+        if dur >= self.heartbeat_dur {
+            self.heartbeat().await?;
+        }
+
+        Ok(())
+    }
+
+    async fn heartbeat(&mut self) -> Result {
+        self.send(ClientToServerEvent::Ping { data: 0 }).await?;
+
+        self.last_heartbeat.0 = Instant::now();
+
+        Ok(())
+    }
+
+    fn check_pong(&mut self, event: &ServerToClientEvent) {
+        if let ServerToClientEvent::Pong { .. } = event {
+            self.last_heartbeat.1 = Instant::now();
         }
     }
 }
