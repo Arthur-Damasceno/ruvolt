@@ -75,6 +75,12 @@ impl WebSocketClient {
         None
     }
 
+    pub async fn close(&mut self) -> Result {
+        self.stream.close(None).await?;
+
+        Ok(())
+    }
+
     pub async fn check_heartbeat(&mut self) -> Result {
         let dur = Instant::now() - self.last_heartbeat.0;
 
