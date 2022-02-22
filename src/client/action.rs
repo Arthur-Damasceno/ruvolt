@@ -10,6 +10,7 @@ type OneshotTx<T = ()> = oneshot::Sender<Result<T>>;
 #[derive(Debug)]
 pub enum Action {
     SendEvent { event: ClientEvent, tx: OneshotTx },
+    Close { tx: OneshotTx },
 }
 
 pub type ActionRx = UnboundedReceiver<Action>;
@@ -28,6 +29,14 @@ impl ActionMessenger {
         let (tx, rx) = oneshot::channel();
 
         self.0.send(Action::SendEvent { event, tx }).unwrap();
+
+        rx.await.unwrap()
+    }
+
+    pub async fn close(&self) -> Result {
+        let (tx, rx) = oneshot::channel();
+
+        self.0.send(Action::Close { tx }).unwrap();
 
         rx.await.unwrap()
     }

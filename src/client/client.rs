@@ -92,6 +92,7 @@ impl<T: EventHandler> Client<T> {
     async fn handle_action(&mut self, action: Action) {
         match action {
             Action::SendEvent { event, tx } => tx.send(self.ws_client.send(event).await).unwrap(),
+            Action::Close { tx } => tx.send(self.ws_client.close().await).unwrap(),
         }
     }
 }

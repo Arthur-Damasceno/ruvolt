@@ -56,4 +56,9 @@ impl Context {
             })
             .await
     }
+
+    /// Close the WebSocket connection.
+    pub async fn close(&self) -> Result {
+        self.messenger.close().await
+    }
 }
