@@ -1,12 +1,12 @@
 //! Revolt API events.
 
-pub(crate) use server_to_client::*;
-pub use {channel::*, client_to_server::*, message::*, ready::*, server::*, user_update::*};
+pub use {channel::*, message::*, ready::*, server::*, user_update::*};
+pub(crate) use {client_event::*, server_event::*};
 
 mod channel;
-mod client_to_server;
+mod client_event;
 mod message;
 mod ready;
 mod server;
-mod server_to_client;
+mod server_event;
 mod user_update;

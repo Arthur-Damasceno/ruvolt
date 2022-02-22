@@ -3,16 +3,13 @@ use tokio::sync::{
     oneshot,
 };
 
-use crate::{models::events::ClientToServerEvent, Result};
+use crate::{models::events::ClientEvent, Result};
 
 type OneshotTx<T = ()> = oneshot::Sender<Result<T>>;
 
 #[derive(Debug)]
 pub enum Action {
-    SendEvent {
-        event: ClientToServerEvent,
-        tx: OneshotTx,
-    },
+    SendEvent { event: ClientEvent, tx: OneshotTx },
 }
 
 pub type ActionRx = UnboundedReceiver<Action>;
@@ -27,7 +24,7 @@ impl ActionMessenger {
         (Self(tx), rx)
     }
 
-    pub async fn send(&self, event: ClientToServerEvent) -> Result {
+    pub async fn send(&self, event: ClientEvent) -> Result {
         let (tx, rx) = oneshot::channel();
 
         self.0.send(Action::SendEvent { event, tx }).unwrap();

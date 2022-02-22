@@ -5,7 +5,7 @@ use {
 
 use crate::{
     error::Error,
-    models::events::{ClientToServerEvent, ServerToClientEvent},
+    models::events::{ClientEvent, ServerEvent},
     websocket::WebSocketClient,
     Action, ActionMessenger, ActionRx, Context, EventHandler, EventHandlerExt, Result,
 };
@@ -58,7 +58,7 @@ impl<T: EventHandler> Client<T> {
 
     async fn authenticate(&mut self) -> Result {
         self.ws_client
-            .send(ClientToServerEvent::Authenticate {
+            .send(ClientEvent::Authenticate {
                 token: self.context.token(),
             })
             .await?;
@@ -68,8 +68,8 @@ impl<T: EventHandler> Client<T> {
         ))??;
 
         match event {
-            ServerToClientEvent::Authenticated => Ok(()),
-            ServerToClientEvent::Error { error } => Err(error.into()),
+            ServerEvent::Authenticated => Ok(()),
+            ServerEvent::Error { error } => Err(error.into()),
             event => Err(Error::Unknown(format!(
                 "Unexpected event after authentication: {:?}",
                 event,
@@ -77,7 +77,7 @@ impl<T: EventHandler> Client<T> {
         }
     }
 
-    fn handle_event(&self, event: Result<ServerToClientEvent>) {
+    fn handle_event(&self, event: Result<ServerEvent>) {
         let event_handler = self.event_handler.clone();
         let context = self.context.clone();
 

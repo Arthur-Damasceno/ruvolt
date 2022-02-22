@@ -2,7 +2,7 @@ use std::sync::Arc;
 
 use crate::{
     http::HttpClient,
-    models::{events::ClientToServerEvent, Id, User},
+    models::{events::ClientEvent, Id, User},
     ActionMessenger, Result,
 };
 
@@ -42,7 +42,7 @@ impl Context {
     /// Tell other users that you have begin typing in a channel.
     pub async fn begin_typing(&self, channel_id: &Id) -> Result {
         self.messenger
-            .send(ClientToServerEvent::BeginTyping {
+            .send(ClientEvent::BeginTyping {
                 channel_id: channel_id.clone(),
             })
             .await
@@ -51,7 +51,7 @@ impl Context {
     /// Tell other users that you have stopped typing in a channel.
     pub async fn end_typing(&self, channel_id: &Id) -> Result {
         self.messenger
-            .send(ClientToServerEvent::EndTyping {
+            .send(ClientEvent::EndTyping {
                 channel_id: channel_id.clone(),
             })
             .await

@@ -7,7 +7,7 @@ use {
 
 use crate::{
     error::Error,
-    models::events::{ClientToServerEvent, ServerToClientEvent},
+    models::events::{ClientEvent, ServerEvent},
     Result,
 };
 
@@ -32,7 +32,7 @@ impl WebSocketClient {
         })
     }
 
-    pub async fn send(&mut self, event: ClientToServerEvent) -> Result {
+    pub async fn send(&mut self, event: ClientEvent) -> Result {
         let msg = Message::Text(serde_json::to_string(&event).unwrap());
 
         self.stream.send(msg).await?;
@@ -40,7 +40,7 @@ impl WebSocketClient {
         Ok(())
     }
 
-    pub async fn accept(&mut self) -> Option<Result<ServerToClientEvent>> {
+    pub async fn accept(&mut self) -> Option<Result<ServerEvent>> {
         match self.stream.next().await? {
             Ok(msg) => match msg {
                 Message::Text(text) => {
@@ -92,15 +92,15 @@ impl WebSocketClient {
     }
 
     async fn heartbeat(&mut self) -> Result {
-        self.send(ClientToServerEvent::Ping { data: 0 }).await?;
+        self.send(ClientEvent::Ping { data: 0 }).await?;
 
         self.last_heartbeat.0 = Instant::now();
 
         Ok(())
     }
 
-    fn check_pong(&mut self, event: &ServerToClientEvent) {
-        if let ServerToClientEvent::Pong { .. } = event {
+    fn check_pong(&mut self, event: &ServerEvent) {
+        if let ServerEvent::Pong { .. } = event {
             self.last_heartbeat.1 = Instant::now();
         }
     }
