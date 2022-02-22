@@ -1,10 +1,13 @@
-use std::sync::Arc;
+use {
+    futures_util::{select, FutureExt},
+    std::sync::Arc,
+};
 
 use crate::{
     error::Error,
     models::events::{ClientToServerEvent, ServerToClientEvent},
     websocket::WebSocketClient,
-    ActionMessenger, ActionRx, Context, EventHandler, EventHandlerExt, Result,
+    Action, ActionMessenger, ActionRx, Context, EventHandler, EventHandlerExt, Result,
 };
 
 /// API wrapper to interact with Revolt.
@@ -40,18 +43,15 @@ impl<T: EventHandler> Client<T> {
                 self.event_handler.error(err).await;
             }
 
-            if let Some(event) = self.ws_client.accept().await {
-                let event_handler = self.event_handler.clone();
-                let context = self.context.clone();
-
-                tokio::spawn(async move {
-                    match event {
-                        Ok(event) => event_handler.handle(context, event).await,
-                        Err(err) => event_handler.error(err).await,
+            select! {
+                event = self.ws_client.accept().fuse() => {
+                    if let Some(event) = event {
+                        self.handle_event(event);
+                    } else {
+                        return Ok(());
                     }
-                });
-            } else {
-                return Ok(());
+                },
+                action = self.action_rx.recv().fuse() => self.handle_action(action.unwrap()).await,
             }
         }
     }
@@ -76,4 +76,18 @@ impl<T: EventHandler> Client<T> {
             ))),
         }
     }
+
+    fn handle_event(&self, event: Result<ServerToClientEvent>) {
+        let event_handler = self.event_handler.clone();
+        let context = self.context.clone();
+
+        tokio::spawn(async move {
+            match event {
+                Ok(event) => event_handler.handle(context, event).await,
+                Err(err) => event_handler.error(err).await,
+            }
+        });
+    }
+
+    async fn handle_action(&mut self, _action: Action) {}
 }
