@@ -1,14 +1,13 @@
 use {
-    std::{sync::Arc, time::Duration},
-    tokio::time::interval,
+    futures_util::{select, FutureExt},
+    std::sync::Arc,
 };
 
 use crate::{
     error::Error,
-    http::HttpClient,
-    models::events::{ClientToServerEvent, ServerToClientEvent},
+    models::events::{ClientEvent, ServerEvent},
     websocket::WebSocketClient,
-    Context, EventHandler, EventHandlerExt, Result,
+    Action, ActionMessenger, ActionRx, Context, EventHandler, EventHandlerExt, Result,
 };
 
 /// API wrapper to interact with Revolt.
@@ -16,22 +15,22 @@ use crate::{
 pub struct Client<T: EventHandler> {
     event_handler: Arc<T>,
     ws_client: WebSocketClient,
-    http_client: Arc<HttpClient>,
-    token: String,
+    action_rx: ActionRx,
+    context: Context,
 }
 
 impl<T: EventHandler> Client<T> {
     /// Create a new client and connect to the server.
     pub async fn new(event_handler: T, token: impl Into<String>) -> Result<Self> {
-        let token = token.into();
         let ws_client = WebSocketClient::connect().await?;
-        let http_client = Arc::new(HttpClient::new(&token));
+        let (messenger, action_rx) = ActionMessenger::new();
+        let context = Context::new(token, messenger);
 
         Ok(Self {
             event_handler: Arc::new(event_handler),
             ws_client,
-            http_client,
-            token,
+            action_rx,
+            context,
         })
     }
 
@@ -39,33 +38,28 @@ impl<T: EventHandler> Client<T> {
     pub async fn listen(&mut self) -> Result {
         self.authenticate().await?;
 
-        let user = self.http_client.get("users/@me").await?;
-        let cx = Context::new(self.http_client.clone(), user);
-        let mut heartbeat_interval = interval(Duration::from_secs(20));
+        loop {
+            if let Err(err) = self.ws_client.check_heartbeat().await {
+                self.event_handler.error(err).await;
+            }
 
-        while let Some(event) = self
-            .ws_client
-            .accept_or_heartbeat(&mut heartbeat_interval)
-            .await
-        {
-            let cx = cx.clone();
-            let event_handler = self.event_handler.clone();
-
-            tokio::spawn(async move {
-                match event {
-                    Ok(event) => event_handler.handle(cx, event).await,
-                    Err(err) => event_handler.error(err).await,
-                }
-            });
+            select! {
+                event = self.ws_client.accept().fuse() => {
+                    if let Some(event) = event {
+                        self.handle_event(event);
+                    } else {
+                        return Ok(());
+                    }
+                },
+                action = self.action_rx.recv().fuse() => self.handle_action(action.unwrap()).await,
+            }
         }
-
-        Ok(())
     }
 
     async fn authenticate(&mut self) -> Result {
         self.ws_client
-            .send(ClientToServerEvent::Authenticate {
-                token: self.token.clone(),
+            .send(ClientEvent::Authenticate {
+                token: self.context.token(),
             })
             .await?;
 
@@ -74,12 +68,32 @@ impl<T: EventHandler> Client<T> {
         ))??;
 
         match event {
-            ServerToClientEvent::Authenticated => Ok(()),
-            ServerToClientEvent::Error { error } => Err(Error::from(error)),
+            ServerEvent::Authenticated => Ok(()),
+            ServerEvent::Error { error } => Err(error.into()),
             event => Err(Error::Unknown(format!(
                 "Unexpected event after authentication: {:?}",
                 event
             ))),
+        }
+    }
+
+    fn handle_event(&self, event: Result<ServerEvent>) {
+        let event_handler = self.event_handler.clone();
+        let context = self.context.clone();
+
+        tokio::spawn(async move {
+            match event {
+                Ok(event) => event_handler.handle(context, event).await,
+                Err(err) => event_handler.error(err).await,
+            }
+        });
+    }
+
+    async fn handle_action(&mut self, action: Action) {
+        match action {
+            Action::SendEvent { event, tx } => tx.send(self.ws_client.send(event).await).unwrap(),
+            Action::GetLatency { tx } => tx.send(self.ws_client.latency()).unwrap(),
+            Action::Close { tx } => tx.send(self.ws_client.close().await).unwrap(),
         }
     }
 }

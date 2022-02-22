@@ -7,7 +7,7 @@ use crate::{
 
 #[derive(Debug, Deserialize, Clone, PartialEq)]
 #[serde(tag = "type")]
-pub enum ServerToClientEvent {
+pub enum ServerEvent {
     Authenticated,
     Error { error: AuthenticationError },
     Pong { data: usize },
