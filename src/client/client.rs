@@ -4,7 +4,7 @@ use crate::{
     error::Error,
     models::events::{ClientToServerEvent, ServerToClientEvent},
     websocket::WebSocketClient,
-    Context, EventHandler, EventHandlerExt, Result,
+    ActionMessenger, ActionRx, Context, EventHandler, EventHandlerExt, Result,
 };
 
 /// API wrapper to interact with Revolt.
@@ -12,6 +12,7 @@ use crate::{
 pub struct Client<T: EventHandler> {
     event_handler: Arc<T>,
     ws_client: WebSocketClient,
+    action_rx: ActionRx,
     context: Context,
 }
 
@@ -19,11 +20,13 @@ impl<T: EventHandler> Client<T> {
     /// Create a new client and connect to the server.
     pub async fn new(event_handler: T, token: impl Into<String>) -> Result<Self> {
         let ws_client = WebSocketClient::connect().await?;
-        let context = Context::new(token);
+        let (messenger, action_rx) = ActionMessenger::new();
+        let context = Context::new(token, messenger);
 
         Ok(Self {
             event_handler: Arc::new(event_handler),
             ws_client,
+            action_rx,
             context,
         })
     }

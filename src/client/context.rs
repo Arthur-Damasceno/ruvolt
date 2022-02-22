@@ -1,6 +1,6 @@
 use std::sync::Arc;
 
-use crate::{http::HttpClient, models::User, Result};
+use crate::{http::HttpClient, models::User, ActionMessenger, Result};
 
 /// A struct for general utilities and wrapper for the http client.
 #[derive(Debug, Clone)]
@@ -8,16 +8,18 @@ pub struct Context {
     /// A http client.
     pub http_client: HttpClient,
     token: Arc<String>,
+    messenger: ActionMessenger,
 }
 
 impl Context {
-    pub(crate) fn new(token: impl Into<String>) -> Self {
+    pub(crate) fn new(token: impl Into<String>, messenger: ActionMessenger) -> Self {
         let token = token.into();
         let http_client = HttpClient::new(&token);
 
         Self {
             http_client,
             token: Arc::new(token),
+            messenger,
         }
     }
 
