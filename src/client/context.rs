@@ -1,4 +1,7 @@
-use std::sync::Arc;
+use {
+    std::sync::Arc,
+    tokio::time::{sleep, Duration},
+};
 
 use crate::{
     http::HttpClient,
@@ -55,6 +58,22 @@ impl Context {
                 channel_id: channel_id.clone(),
             })
             .await
+    }
+
+    /// Get the WebSocket latency.
+    ///
+    /// If the client sent a heartbeat and did not receive it back, the function will sleep
+    /// for `150` milliseconds and try again.
+    pub async fn latency(&self) -> Duration {
+        loop {
+            match self.messenger.latency().await {
+                Some(latency) => return latency,
+                None => {
+                    sleep(Duration::from_millis(150)).await;
+                    continue;
+                }
+            };
+        }
     }
 
     /// Close the WebSocket connection.

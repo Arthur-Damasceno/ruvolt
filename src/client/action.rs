@@ -1,16 +1,25 @@
-use tokio::sync::{
-    mpsc::{unbounded_channel, UnboundedReceiver, UnboundedSender},
-    oneshot,
+use {
+    std::time::Duration,
+    tokio::sync::{
+        mpsc::{unbounded_channel, UnboundedReceiver, UnboundedSender},
+        oneshot::{self, Sender as OneshotTx},
+    },
 };
 
 use crate::{models::events::ClientEvent, Result};
 
-type OneshotTx<T = ()> = oneshot::Sender<Result<T>>;
-
 #[derive(Debug)]
 pub enum Action {
-    SendEvent { event: ClientEvent, tx: OneshotTx },
-    Close { tx: OneshotTx },
+    SendEvent {
+        event: ClientEvent,
+        tx: OneshotTx<Result>,
+    },
+    GetLatency {
+        tx: OneshotTx<Option<Duration>>,
+    },
+    Close {
+        tx: OneshotTx<Result>,
+    },
 }
 
 pub type ActionRx = UnboundedReceiver<Action>;
@@ -29,6 +38,14 @@ impl ActionMessenger {
         let (tx, rx) = oneshot::channel();
 
         self.0.send(Action::SendEvent { event, tx }).unwrap();
+
+        rx.await.unwrap()
+    }
+
+    pub async fn latency(&self) -> Option<Duration> {
+        let (tx, rx) = oneshot::channel();
+
+        self.0.send(Action::GetLatency { tx }).unwrap();
 
         rx.await.unwrap()
     }

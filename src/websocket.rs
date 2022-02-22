@@ -69,7 +69,7 @@ impl WebSocketClient {
 
     pub fn latency(&self) -> Option<Duration> {
         if self.last_heartbeat.0 < self.last_heartbeat.1 {
-            Some(self.last_heartbeat.1 - self.last_heartbeat.0);
+            return Some(self.last_heartbeat.1 - self.last_heartbeat.0);
         }
 
         None
