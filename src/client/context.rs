@@ -1,6 +1,10 @@
 use std::sync::Arc;
 
-use crate::{http::HttpClient, models::User, ActionMessenger, Result};
+use crate::{
+    http::HttpClient,
+    models::{events::ClientToServerEvent, Id, User},
+    ActionMessenger, Result,
+};
 
 /// A struct for general utilities and wrapper for the http client.
 #[derive(Debug, Clone)]
@@ -33,5 +37,23 @@ impl Context {
     /// Returns the given token.
     pub fn token(&self) -> String {
         self.token.as_ref().clone()
+    }
+
+    /// Tell other users that you have begin typing in a channel.
+    pub async fn begin_typing(&self, channel_id: &Id) -> Result {
+        self.messenger
+            .send(ClientToServerEvent::BeginTyping {
+                channel_id: channel_id.clone(),
+            })
+            .await
+    }
+
+    /// Tell other users that you have stopped typing in a channel.
+    pub async fn end_typing(&self, channel_id: &Id) -> Result {
+        self.messenger
+            .send(ClientToServerEvent::EndTyping {
+                channel_id: channel_id.clone(),
+            })
+            .await
     }
 }
