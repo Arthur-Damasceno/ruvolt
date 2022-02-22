@@ -36,8 +36,7 @@ impl<T: EventHandler> Client<T> {
     pub async fn listen(&mut self) -> Result {
         self.authenticate().await?;
 
-        let user = self.http_client.get("users/@me").await?;
-        let cx = Context::new(self.http_client.clone(), user);
+        let cx = Context::new(self.http_client.clone());
 
         loop {
             if let Err(err) = self.ws_client.check_heartbeat().await {

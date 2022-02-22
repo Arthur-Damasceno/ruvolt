@@ -13,7 +13,8 @@ struct Handler;
 #[async_trait]
 impl EventHandler for Handler {
     async fn ready(&self, cx: Context, _: ReadyEvent) {
-        println!("{} is ready!", cx.user.username);
+        let user = cx.user().await.unwrap();
+        println!("{} is ready!", user.username);
     }
 
     async fn message(&self, cx: Context, msg: Message) {
@@ -23,7 +24,7 @@ impl EventHandler for Handler {
             let now = Instant::now();
             let mut msg = msg.send_in_channel(&cx, "Pong!").await.unwrap();
 
-            let latency = (Instant::now() - now).subsec_millis();
+            let latency = (Instant::now() - now).as_millis();
             let content = format!("Pong! The API latency is {}ms", latency);
 
             msg.edit(&cx, &content).await.unwrap();
