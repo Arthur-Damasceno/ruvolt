@@ -1,6 +1,7 @@
 use {
     futures_util::{select, FutureExt},
     std::sync::Arc,
+    tracing::{error, info, warn},
 };
 
 use crate::{
@@ -38,9 +39,11 @@ impl<T: EventHandler> Client<T> {
     pub async fn listen(&mut self) -> Result {
         self.authenticate().await?;
 
+        info!(target: "Client", "Client authenticated successfully. Starting listening for events");
+
         loop {
             if let Err(err) = self.ws_client.check_heartbeat().await {
-                self.event_handler.error(err).await;
+                warn!(target: "Client", "Err heartbeating: {}", err);
             }
 
             select! {
@@ -48,6 +51,7 @@ impl<T: EventHandler> Client<T> {
                     if let Some(event) = event {
                         self.handle_event(event);
                     } else {
+                        info!(target: "Client", "Connection closed");
                         return Ok(());
                     }
                 },
@@ -78,15 +82,15 @@ impl<T: EventHandler> Client<T> {
     }
 
     fn handle_event(&self, event: Result<ServerEvent>) {
-        let event_handler = self.event_handler.clone();
-        let context = self.context.clone();
+        match event {
+            Ok(event) => {
+                let event_handler = self.event_handler.clone();
+                let context = self.context.clone();
 
-        tokio::spawn(async move {
-            match event {
-                Ok(event) => event_handler.handle(context, event).await,
-                Err(err) => event_handler.error(err).await,
+                tokio::spawn(async move { event_handler.handle(context, event).await });
             }
-        });
+            Err(err) => error!(target: "Client", "Err handling event: {}", err),
+        }
     }
 
     async fn handle_action(&mut self, action: Action) {

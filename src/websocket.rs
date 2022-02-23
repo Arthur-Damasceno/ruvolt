@@ -3,6 +3,7 @@ use {
     std::time::{Duration, Instant},
     tokio::net::TcpStream,
     tokio_tungstenite::{connect_async, tungstenite::Message, MaybeTlsStream, WebSocketStream},
+    tracing::info,
 };
 
 use crate::{
@@ -76,6 +77,7 @@ impl WebSocketClient {
     }
 
     pub async fn close(&mut self) -> Result {
+        info!(target: "WebSocketClient", "Closing the connection");
         self.stream.close(None).await?;
 
         Ok(())
