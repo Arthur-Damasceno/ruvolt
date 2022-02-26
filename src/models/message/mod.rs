@@ -8,6 +8,7 @@ use {serde::Deserialize, serde_json::json};
 
 use {
     crate::{
+        builders::CreateMessage,
         models::{Attachment, Id},
         Context, Result,
     },
@@ -54,6 +55,17 @@ impl Message {
         Ok(msg)
     }
 
+    pub(crate) async fn create(
+        cx: &Context,
+        channel_id: &Id,
+        builder: CreateMessage,
+    ) -> Result<Self> {
+        let path = format!("channels/{}/messages", channel_id);
+        let msg = cx.http_client.post(&path, builder).await?;
+
+        Ok(msg)
+    }
+
     /// Returns the message edit date.
     pub fn edited(&self) -> Option<&String> {
         match self.edited {
@@ -67,13 +79,19 @@ impl Message {
         self.edited.is_some()
     }
 
-    /// Send a message in the same channel.
-    pub async fn send_in_channel(&self, cx: &Context, content: &str) -> Result<Self> {
-        let path = format!("channels/{}/messages", self.channel_id);
-        let body = json!({ "content": content });
-        let msg = cx.http_client.post(&path, body).await?;
-
-        Ok(msg)
+    /// Reply the message.
+    pub async fn reply(
+        &self,
+        cx: &Context,
+        builder: impl Into<CreateMessage>,
+        mention: bool,
+    ) -> Result<Self> {
+        Self::create(
+            cx,
+            &self.channel_id,
+            builder.into().reply(&self.id, mention),
+        )
+        .await
     }
 
     /// Edit the message.

@@ -22,7 +22,7 @@ impl EventHandler for Handler {
 
         if content == "!ping" {
             let now = Instant::now();
-            let mut msg = msg.send_in_channel(&cx, "Pong!").await.unwrap();
+            let mut msg = msg.reply(&cx, "Pong!", true).await.unwrap();
 
             let latency = (Instant::now() - now).as_millis();
             let content = format!("Pong! The API latency is {}ms", latency);

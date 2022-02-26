@@ -1,6 +1,7 @@
-use {serde::Deserialize, serde_json::json};
+use serde::Deserialize;
 
 use crate::{
+    builders::CreateMessage,
     models::{Attachment, Id, Message},
     Context, Result,
 };
@@ -29,11 +30,7 @@ pub struct TextChannel {
 
 impl TextChannel {
     /// Send a message in this channel.
-    pub async fn send(&self, cx: &Context, content: &str) -> Result<Message> {
-        let path = format!("channels/{}/messages", self.id);
-        let body = json!({ "content": content });
-        let msg = cx.http_client.post(&path, body).await?;
-
-        Ok(msg)
+    pub async fn send(&self, cx: &Context, builder: impl Into<CreateMessage>) -> Result<Message> {
+        Message::create(cx, &self.id, builder.into()).await
     }
 }

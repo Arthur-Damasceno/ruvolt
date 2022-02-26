@@ -14,6 +14,7 @@ pub use client::*;
 #[doc(hidden)]
 pub use error::Result;
 
+pub mod builders;
 mod client;
 pub mod error;
 pub mod http;

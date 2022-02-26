@@ -4,13 +4,13 @@
 ## Getting started
 
 ### Installation
-To use `ruvolt` we need [ruvolt](https://github.com/Arthur-Damasceno/ruvolt) crate, [async-trait](https://github.com/dtolnay/async-trait) crate and an asynchronous runtime, let's use the [tokio](https://github.com/tokio-rs/tokio).
+To use `ruvolt` we need [ruvolt](https://github.com/Arthur-Damasceno/ruvolt), [async-trait](https://github.com/dtolnay/async-trait) and an asynchronous runtime, let's use the [tokio](https://github.com/tokio-rs/tokio).
 Add this to your `Cargo.toml` *dependencies* section and run `cargo build` to compile dependencies.
 
 ```toml
 ruvolt = "*"
 async-trait = "*"
-tokio = { version = "*", features = ["full"] }
+tokio = { version = "*", features = ["macros", "rt-multi-thread"] }
 ```
 
 ### Example - Ping/Pong bot
@@ -29,8 +29,10 @@ impl EventHandler for Handler {
     async fn message(&self, cx: Context, msg: Message) {
         let content = msg.content.to_string();
 
-        if content.as_str() == "!ping" {
-            msg.send_in_channel(&cx, "Pong!").await.unwrap();
+        if content == "!ping" {
+            if let Err(err) = msg.reply(&cx, "Pong!", false).await {
+                eprintln!("Err replying the message: {}", err);
+            }
         }
     }
 }
@@ -38,11 +40,9 @@ impl EventHandler for Handler {
 #[tokio::main]
 async fn main() -> Result {
     let token = env::var("TOKEN").unwrap();
-    let client = Client::new(Handler).await?;
+    let mut client = Client::new(Handler, token).await?;
 
-    if let Err(err) = client.listen(&token).await {
-        eprintln!("{}", err);
-    }
+    client.listen().await?;
 
     Ok(())
 }

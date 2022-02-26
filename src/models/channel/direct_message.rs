@@ -1,6 +1,10 @@
 use serde::Deserialize;
 
-use crate::models::Id;
+use crate::{
+    builders::CreateMessage,
+    models::{Id, Message},
+    Context, Result,
+};
 
 /// A DM channel.
 #[derive(Debug, Deserialize, Clone, PartialEq)]
@@ -14,4 +18,11 @@ pub struct DirectMessageChannel {
     pub recipients: Vec<Id>,
     /// Id of the last message in the channel.
     pub last_message_id: Option<Id>,
+}
+
+impl DirectMessageChannel {
+    /// Send a message in this channel.
+    pub async fn send(&self, cx: &Context, builder: impl Into<CreateMessage>) -> Result<Message> {
+        Message::create(cx, &self.id, builder.into()).await
+    }
 }
