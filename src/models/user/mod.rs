@@ -1,8 +1,9 @@
-pub use {badges::*, flags::*, status::*};
+pub use {badges::*, flags::*, profile::*, status::*};
 
 mod badges;
 mod bot_info;
 mod flags;
+mod profile;
 mod status;
 
 use serde::Deserialize;
@@ -59,5 +60,13 @@ impl User {
     /// Returns if the user is a bot.
     pub fn is_bot(&self) -> bool {
         self.bot.is_some()
+    }
+
+    /// Get the user profile from the API.
+    pub async fn profile(&self, cx: &Context) -> Result<UserProfile> {
+        let path = format!("users/{}/profile", self.id);
+        let profile = cx.http_client.get(&path).await?;
+
+        Ok(profile)
     }
 }
