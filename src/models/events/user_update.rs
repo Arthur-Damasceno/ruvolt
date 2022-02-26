@@ -1,9 +1,12 @@
-use {serde::Deserialize, serde_json::Value as Json};
+use {
+    serde::{Deserialize, Serialize},
+    serde_json::Value as Json,
+};
 
 use crate::models::Id;
 
 /// Specifies a field to remove on user update.
-#[derive(Debug, Deserialize, Clone, Copy, PartialEq)]
+#[derive(Debug, Clone, Copy, PartialEq, Deserialize, Serialize)]
 pub enum RemoveUserField {
     /// User profile content.
     ProfileContent,

@@ -4,6 +4,7 @@ use {
 };
 
 use crate::{
+    builders::EditUser,
     http::HttpClient,
     models::{events::ClientEvent, Id, User},
     ActionMessenger, Result,
@@ -30,6 +31,11 @@ impl Context {
         }
     }
 
+    /// Returns the given token.
+    pub fn token(&self) -> String {
+        self.token.as_ref().clone()
+    }
+
     /// Returns the current user.
     pub async fn user(&self) -> Result<User> {
         let user = self.http_client.get("users/@me").await?;
@@ -37,9 +43,9 @@ impl Context {
         Ok(user)
     }
 
-    /// Returns the given token.
-    pub fn token(&self) -> String {
-        self.token.as_ref().clone()
+    /// Edit the current user.
+    pub async fn edit(&self, builder: impl Into<EditUser>) -> Result {
+        self.http_client.patch("users/@me", builder.into()).await
     }
 
     /// Tell other users that you have begin typing in a channel.
