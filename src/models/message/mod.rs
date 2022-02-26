@@ -4,11 +4,11 @@ mod content;
 mod edited;
 mod embed;
 
-use {serde::Deserialize, serde_json::json};
+use serde::Deserialize;
 
 use {
     crate::{
-        builders::CreateMessage,
+        builders::{CreateMessage, EditMessage},
         models::{Attachment, Id},
         Context, Result,
     },
@@ -95,12 +95,10 @@ impl Message {
     }
 
     /// Edit the message.
-    pub async fn edit(&mut self, cx: &Context, content: &str) -> Result {
+    pub async fn edit(&mut self, cx: &Context, builder: impl Into<EditMessage>) -> Result {
+        // TODO: Update local message.
         let path = format!("channels/{}/messages/{}", self.channel_id, self.id);
-        let body = json!({ "content": content });
-
-        cx.http_client.patch(&path, body).await?;
-        self.content = Content::Text(content.into());
+        cx.http_client.patch(&path, builder.into()).await?;
 
         Ok(())
     }

@@ -27,7 +27,7 @@ impl EventHandler for Handler {
             let latency = (Instant::now() - now).as_millis();
             let content = format!("Pong! The API latency is {}ms", latency);
 
-            msg.edit(&cx, &content).await.unwrap();
+            msg.edit(&cx, content).await.unwrap();
 
             sleep(Duration::from_secs(3)).await;
             msg.delete(&cx).await.unwrap();

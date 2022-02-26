@@ -58,3 +58,37 @@ impl<T: Into<String>> From<T> for CreateMessage {
         Self::new(content)
     }
 }
+
+/// Builder for edit a message.
+#[derive(Debug, Clone, Default, Serialize)]
+pub struct EditMessage {
+    #[serde(skip_serializing_if = "Option::is_none")]
+    content: Option<String>,
+    #[serde(skip_serializing_if = "Vec::is_empty")]
+    embeds: Vec<CreateEmbed>,
+}
+
+impl EditMessage {
+    /// Creates a new builder.
+    pub fn new() -> Self {
+        Self::default()
+    }
+
+    /// Set the content.
+    pub fn content(mut self, content: impl Into<String>) -> Self {
+        self.content = Some(content.into());
+        self
+    }
+
+    /// Set a embed to include in the message.
+    pub fn embed(mut self, build: impl Fn(CreateEmbed) -> CreateEmbed) -> Self {
+        self.embeds.push(build(CreateEmbed::default()));
+        self
+    }
+}
+
+impl<T: Into<String>> From<T> for EditMessage {
+    fn from(content: T) -> Self {
+        Self::new().content(content)
+    }
+}
