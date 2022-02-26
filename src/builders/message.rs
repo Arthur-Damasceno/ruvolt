@@ -1,6 +1,9 @@
 use serde::Serialize;
 
-use crate::{builders::CreateEmbed, models::Id};
+use crate::{
+    builders::CreateEmbed,
+    models::{Id, Masquerade},
+};
 
 /// Builder for create a message.
 #[derive(Debug, Clone, Serialize)]
@@ -12,6 +15,8 @@ pub struct CreateMessage {
     replies: Vec<Reply>,
     #[serde(skip_serializing_if = "Vec::is_empty")]
     embeds: Vec<CreateEmbed>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    masquerade: Option<Masquerade>,
 }
 
 #[derive(Debug, Clone, Serialize)]
@@ -28,6 +33,7 @@ impl CreateMessage {
             attachments: Vec::new(),
             replies: Vec::new(),
             embeds: Vec::new(),
+            masquerade: None,
         }
     }
 
@@ -49,6 +55,12 @@ impl CreateMessage {
     /// Set a embed to include in the message.
     pub fn embed(mut self, build: impl Fn(CreateEmbed) -> CreateEmbed) -> Self {
         self.embeds.push(build(CreateEmbed::default()));
+        self
+    }
+
+    /// Set the masquerade.
+    pub fn masquerade(mut self, masquerade: Masquerade) -> Self {
+        self.masquerade = Some(masquerade);
         self
     }
 }

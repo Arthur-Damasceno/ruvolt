@@ -1,8 +1,9 @@
-pub use {content::*, embed::*};
+pub use {content::*, embed::*, masquerade::*};
 
 mod content;
 mod edited;
 mod embed;
+mod masquerade;
 
 use serde::Deserialize;
 
@@ -43,6 +44,8 @@ pub struct Message {
     /// Message replies.
     #[serde(default)]
     pub replies: Vec<Id>,
+    /// Message masquerade.
+    pub masquerade: Option<Masquerade>,
     edited: Option<Edited>,
 }
 
