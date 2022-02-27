@@ -1,8 +1,8 @@
 use serde::Deserialize;
 
 use crate::{
-    builders::CreateMessage,
-    models::{Attachment, Id, Message},
+    builders::{CreateMessage, EditChannel},
+    models::{Attachment, Channel, Id, Message},
     Context, Result,
 };
 
@@ -32,5 +32,10 @@ impl TextChannel {
     /// Send a message in this channel.
     pub async fn send(&self, cx: &Context, builder: impl Into<CreateMessage>) -> Result<Message> {
         Message::create(cx, &self.id, builder.into()).await
+    }
+
+    /// Edit the channel.
+    pub async fn edit(&self, cx: &Context, builder: EditChannel) -> Result {
+        Channel::edit(cx, &self.id, builder).await
     }
 }

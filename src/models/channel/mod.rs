@@ -7,7 +7,7 @@ mod voice;
 
 use serde::Deserialize;
 
-use crate::{models::Id, Context, Result};
+use crate::{builders::EditChannel, models::Id, Context, Result};
 
 /// A channel.
 #[derive(Debug, Deserialize, Clone, PartialEq)]
@@ -29,9 +29,7 @@ impl Channel {
     /// Get a channel from the API.
     pub async fn fetch(cx: &Context, id: &Id) -> Result<Self> {
         let path = format!("channels/{}", id);
-        let channel = cx.http_client.get(&path).await?;
-
-        Ok(channel)
+        cx.http_client.get(&path).await
     }
 
     /// Returns the channel id.
@@ -42,5 +40,10 @@ impl Channel {
             | Self::Group(GroupChannel { id, .. })
             | Self::DirectMessage(DirectMessageChannel { id, .. }) => id,
         }
+    }
+
+    async fn edit(cx: &Context, channel_id: &Id, builder: EditChannel) -> Result {
+        let path = format!("channels/{}", channel_id);
+        cx.http_client.patch(&path, builder).await
     }
 }

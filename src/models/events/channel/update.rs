@@ -1,9 +1,12 @@
-use {serde::Deserialize, serde_json::Value as Json};
+use {
+    serde::{Deserialize, Serialize},
+    serde_json::Value as Json,
+};
 
 use crate::models::Id;
 
 /// Specifies a field to remove on channel update.
-#[derive(Debug, Deserialize, Clone, Copy, PartialEq)]
+#[derive(Debug, Clone, Copy, PartialEq, Deserialize, Serialize)]
 pub enum RemoveChannelField {
     /// Channel icon.
     Icon,
@@ -12,7 +15,7 @@ pub enum RemoveChannelField {
 }
 
 /// A channel details were updated.
-#[derive(Debug, Deserialize, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Deserialize)]
 pub struct ChannelUpdateEvent {
     /// Channel id.
     #[serde(rename = "id")]

@@ -1,5 +1,7 @@
 use serde::Serialize;
 
+use crate::models::{events::RemoveChannelField, Id};
+
 /// Builder for create a server channel.
 #[derive(Debug, Clone, Serialize)]
 pub struct CreateChannel {
@@ -46,6 +48,58 @@ impl CreateChannel {
     /// Set whether channel is not safe for work.
     pub fn nsfw(mut self, nsfw: bool) -> Self {
         self.nsfw = nsfw;
+        self
+    }
+}
+
+/// Builder for edit a channel.
+#[derive(Debug, Clone, Default, Serialize)]
+pub struct EditChannel {
+    #[serde(skip_serializing_if = "Option::is_none")]
+    name: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    description: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    icon: Option<Id>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    nsfw: Option<bool>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    remove: Option<RemoveChannelField>,
+}
+
+impl EditChannel {
+    /// Creates a new builder.
+    pub fn new() -> Self {
+        Self::default()
+    }
+
+    /// Set the name.
+    pub fn name(mut self, name: impl Into<String>) -> Self {
+        self.name = Some(name.into());
+        self
+    }
+
+    /// Set the description.
+    pub fn description(mut self, description: impl Into<String>) -> Self {
+        self.description = Some(description.into());
+        self
+    }
+
+    /// Set the icon.
+    pub fn icon(mut self, id: &Id) -> Self {
+        self.icon = Some(id.clone());
+        self
+    }
+
+    /// Set whether channel is not safe for work.
+    pub fn nsfw(mut self, nsfw: bool) -> Self {
+        self.nsfw = Some(nsfw);
+        self
+    }
+
+    /// Set a channel field to remove.
+    pub fn remove(mut self, field: RemoveChannelField) -> Self {
+        self.remove = Some(field);
         self
     }
 }
