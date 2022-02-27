@@ -1,9 +1,12 @@
-use {serde::Deserialize, serde_json::Value as Json};
+use {
+    serde::{Deserialize, Serialize},
+    serde_json::Value as Json,
+};
 
 use crate::models::Id;
 
 /// Specifies a field to remove on server update.
-#[derive(Debug, Deserialize, Clone, Copy, PartialEq)]
+#[derive(Debug, Clone, Copy, PartialEq, Deserialize, Serialize)]
 pub enum RemoveServerField {
     /// Server icon.
     Icon,
@@ -14,7 +17,7 @@ pub enum RemoveServerField {
 }
 
 /// A server details were updated.
-#[derive(Debug, Deserialize, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Deserialize)]
 pub struct ServerUpdateEvent {
     /// Server id.
     #[serde(rename = "id")]

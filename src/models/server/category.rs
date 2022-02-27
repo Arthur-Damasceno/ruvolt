@@ -1,9 +1,9 @@
-use serde::Deserialize;
+use serde::{Deserialize, Serialize};
 
 use crate::models::Id;
 
 /// A server category.
-#[derive(Debug, Deserialize, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Deserialize, Serialize)]
 pub struct Category {
     /// Category id.
     pub id: Id,
@@ -11,4 +11,15 @@ pub struct Category {
     pub title: String,
     /// Category channels ids.
     pub channels: Vec<Id>,
+}
+
+impl Category {
+    /// Creates a new [Category].
+    pub fn new(id: Id, title: impl Into<String>) -> Self {
+        Self {
+            id,
+            title: title.into(),
+            channels: Vec::new(),
+        }
+    }
 }

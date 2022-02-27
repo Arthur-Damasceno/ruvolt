@@ -8,7 +8,7 @@ mod system_message_channels;
 use serde::Deserialize;
 
 use crate::{
-    builders::CreateChannel,
+    builders::{CreateChannel, EditServer},
     models::{Attachment, Channel, Id},
     Context, Result,
 };
@@ -32,8 +32,8 @@ pub struct Server {
     #[serde(default)]
     pub categories: Vec<Category>,
     /// Server system message channels.
-    #[serde(rename = "system_messages")]
-    pub system_message_channels: Option<SystemMessageChannels>,
+    #[serde(default)]
+    pub system_messages: SystemMessageChannels,
     /// Server icon.
     pub icon: Option<Attachment>,
     /// Server banner.
@@ -51,6 +51,12 @@ impl Server {
     pub async fn fetch(cx: &Context, id: &Id) -> Result<Self> {
         let path = format!("servers/{}", id);
         cx.http_client.get(&path).await
+    }
+
+    /// Edit the server.
+    pub async fn edit(&self, cx: &Context, builder: EditServer) -> Result {
+        let path = format!("servers/{}", self.id);
+        cx.http_client.patch(&path, builder).await
     }
 
     /// Create a channel in the server.
