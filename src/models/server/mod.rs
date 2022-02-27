@@ -8,7 +8,8 @@ mod system_message_channels;
 use serde::Deserialize;
 
 use crate::{
-    models::{Attachment, Id},
+    builders::CreateChannel,
+    models::{Attachment, Channel, Id},
     Context, Result,
 };
 
@@ -49,8 +50,12 @@ impl Server {
     /// Get a server from the API.
     pub async fn fetch(cx: &Context, id: &Id) -> Result<Self> {
         let path = format!("servers/{}", id);
-        let server = cx.http_client.get(&path).await?;
+        cx.http_client.get(&path).await
+    }
 
-        Ok(server)
+    /// Create a channel in the server.
+    pub async fn create_channel(&self, cx: &Context, builder: CreateChannel) -> Result<Channel> {
+        let path = format!("servers/{}/channels", self.id);
+        cx.http_client.post(&path, builder).await
     }
 }

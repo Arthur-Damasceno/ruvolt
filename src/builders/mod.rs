@@ -1,7 +1,8 @@
 //! Builders for create and edit Revolt API models.
 
-pub use {embed::*, message::*, user::*};
+pub use {channel::*, embed::*, message::*, user::*};
 
+mod channel;
 mod embed;
 mod message;
 mod user;
