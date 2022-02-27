@@ -1,4 +1,4 @@
-pub use {content::*, embed::*, masquerade::*};
+pub use {content::*, edited::*, embed::*, masquerade::*};
 
 mod content;
 mod edited;
@@ -7,13 +7,10 @@ mod masquerade;
 
 use serde::Deserialize;
 
-use {
-    crate::{
-        builders::{CreateMessage, EditMessage},
-        models::{Attachment, Id},
-        Context, Result,
-    },
-    edited::Edited,
+use crate::{
+    builders::{CreateMessage, EditMessage},
+    models::{Attachment, Id},
+    Context, Result,
 };
 
 /// A message.
@@ -46,7 +43,8 @@ pub struct Message {
     pub replies: Vec<Id>,
     /// Message masquerade.
     pub masquerade: Option<Masquerade>,
-    edited: Option<Edited>,
+    /// Edition date.
+    pub edited: Option<MessageEdited>,
 }
 
 impl Message {
@@ -67,14 +65,6 @@ impl Message {
         let msg = cx.http_client.post(&path, builder).await?;
 
         Ok(msg)
-    }
-
-    /// Returns the message edit date.
-    pub fn edited(&self) -> Option<&String> {
-        match self.edited {
-            Some(Edited { ref date }) => Some(date),
-            None => None,
-        }
     }
 
     /// Returns whether the message has been edited.

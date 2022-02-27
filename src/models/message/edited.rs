@@ -1,7 +1,9 @@
-use serde::Deserialize;
+use serde::{Deserialize, Serialize};
 
-#[derive(Debug, Deserialize, Clone, PartialEq)]
-pub struct Edited {
+/// Message edition date.
+#[derive(Debug, Clone, PartialEq, Deserialize, Serialize)]
+pub struct MessageEdited {
+    /// Edition date.
     #[serde(rename = "$date")]
     pub date: String,
 }

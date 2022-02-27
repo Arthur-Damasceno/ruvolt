@@ -1,6 +1,6 @@
 use serde::Serialize;
 
-use crate::models::{events::RemoveServerField, Category, Id, SystemMessageChannels};
+use crate::models::{events::ServerField, Category, Id, SystemMessageChannels};
 
 /// Builder for edit a server.
 #[derive(Debug, Clone, Default, Serialize)]
@@ -20,7 +20,7 @@ pub struct EditServer {
     #[serde(skip_serializing_if = "Option::is_none")]
     nsfw: Option<bool>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    remove: Option<RemoveServerField>,
+    remove: Option<ServerField>,
 }
 
 impl EditServer {
@@ -75,7 +75,7 @@ impl EditServer {
     }
 
     /// Set a server field to remove.
-    pub fn remove(mut self, field: RemoveServerField) -> Self {
+    pub fn remove(mut self, field: ServerField) -> Self {
         self.remove = Some(field);
         self
     }

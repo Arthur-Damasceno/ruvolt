@@ -1,6 +1,6 @@
 use serde::Serialize;
 
-use crate::models::{events::RemoveUserField, Id, Presence, UserStatus};
+use crate::models::{events::UserField, Id, Presence, UserStatus};
 
 /// Builder for edit the current user.
 #[derive(Debug, Clone, Default, Serialize)]
@@ -12,7 +12,7 @@ pub struct EditUser {
     #[serde(skip_serializing_if = "Option::is_none")]
     avatar: Option<Id>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    remove: Option<RemoveUserField>,
+    remove: Option<UserField>,
 }
 
 impl EditUser {
@@ -40,7 +40,7 @@ impl EditUser {
     }
 
     /// Set a user field to remove.
-    pub fn remove(mut self, field: RemoveUserField) -> Self {
+    pub fn remove(mut self, field: UserField) -> Self {
         self.remove = Some(field);
         self
     }
@@ -64,12 +64,6 @@ impl From<EditUserProfile> for EditUser {
             profile: Some(profile),
             ..Default::default()
         }
-    }
-}
-
-impl From<RemoveUserField> for EditUser {
-    fn from(field: RemoveUserField) -> Self {
-        Self::new().remove(field)
     }
 }
 

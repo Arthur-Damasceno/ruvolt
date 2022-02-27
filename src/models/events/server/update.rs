@@ -1,13 +1,10 @@
-use {
-    serde::{Deserialize, Serialize},
-    serde_json::Value as Json,
-};
+use serde::{Deserialize, Serialize};
 
-use crate::models::Id;
+use crate::models::{Attachment, Category, Id, SystemMessageChannels};
 
 /// Specifies a field to remove on server update.
 #[derive(Debug, Clone, Copy, PartialEq, Deserialize, Serialize)]
-pub enum RemoveServerField {
+pub enum ServerField {
     /// Server icon.
     Icon,
     /// Server banner.
@@ -23,7 +20,27 @@ pub struct ServerUpdateEvent {
     #[serde(rename = "id")]
     pub server_id: Id,
     /// A partial server object.
-    pub data: Json,
+    pub data: PartialServer,
     /// A specified field to remove on server update.
-    pub clear: Option<RemoveServerField>,
+    pub clear: Option<ServerField>,
+}
+
+/// A partial server.
+#[derive(Debug, Clone, PartialEq, Deserialize)]
+pub struct PartialServer {
+    /// Server name.
+    pub name: Option<String>,
+    /// Server description.
+    pub description: Option<String>,
+    /// Server icon.
+    pub icon: Option<Attachment>,
+    /// Server banner.
+    pub banner: Option<Attachment>,
+    /// Server categories.
+    #[serde(default)]
+    pub categories: Vec<Category>,
+    /// Server system message channels.
+    pub system_messages: Option<SystemMessageChannels>,
+    /// Whether server is not safe for work.
+    pub nsfw: Option<bool>,
 }

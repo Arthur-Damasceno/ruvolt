@@ -1,6 +1,6 @@
 use serde::Serialize;
 
-use crate::models::{events::RemoveChannelField, Id};
+use crate::models::{events::ChannelField, Id};
 
 /// Builder for create a server channel.
 #[derive(Debug, Clone, Serialize)]
@@ -64,7 +64,7 @@ pub struct EditChannel {
     #[serde(skip_serializing_if = "Option::is_none")]
     nsfw: Option<bool>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    remove: Option<RemoveChannelField>,
+    remove: Option<ChannelField>,
 }
 
 impl EditChannel {
@@ -98,7 +98,7 @@ impl EditChannel {
     }
 
     /// Set a channel field to remove.
-    pub fn remove(mut self, field: RemoveChannelField) -> Self {
+    pub fn remove(mut self, field: ChannelField) -> Self {
         self.remove = Some(field);
         self
     }

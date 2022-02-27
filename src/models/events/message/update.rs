@@ -1,9 +1,9 @@
-use {serde::Deserialize, serde_json::Value as Json};
+use serde::Deserialize;
 
-use crate::models::Id;
+use crate::models::{Embed, Id, MessageEdited};
 
 /// A message has been edited or otherwise updated.
-#[derive(Debug, Deserialize, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Deserialize)]
 pub struct MessageUpdateEvent {
     /// Message id.
     #[serde(rename = "id")]
@@ -11,6 +11,18 @@ pub struct MessageUpdateEvent {
     /// Message channel id.
     #[serde(rename = "channel")]
     pub channel_id: Id,
-    /// A partial message object.
-    pub data: Json,
+    /// A partial message.
+    pub data: PartialMessage,
+}
+
+/// A partial message.
+#[derive(Debug, Clone, PartialEq, Deserialize)]
+pub struct PartialMessage {
+    /// Message content.
+    pub content: Option<String>,
+    /// Message embeds.
+    #[serde(default)]
+    pub embeds: Vec<Embed>,
+    /// Message edition date.
+    pub edited: MessageEdited,
 }
