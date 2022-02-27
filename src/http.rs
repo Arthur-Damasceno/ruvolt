@@ -8,7 +8,7 @@ use {
     serde::{de::DeserializeOwned, ser::Serialize},
 };
 
-use crate::Result;
+use crate::error::{Error, Result};
 
 /// The url of the Revolt REST API.
 pub const REVOLT_REST_API: &str = "https://api.revolt.chat";
@@ -27,40 +27,63 @@ impl HttpClient {
         Self(client)
     }
 
-    fn make_url(path: &str) -> String {
-        format!("{}/{}", REVOLT_REST_API, path)
+    fn make_url(path: impl AsRef<str>) -> String {
+        format!("{}/{}", REVOLT_REST_API, path.as_ref())
     }
 
-    /// Make a GET request to the API and convert the response body to json.
-    pub async fn get<T: DeserializeOwned>(&self, path: &str) -> Result<T> {
-        let url = Self::make_url(path);
-        let response = self.0.get(url).send().await?;
+    /// Make a `GET` request to the API and convert the response body to json.
+    pub async fn get<T: DeserializeOwned>(&self, path: impl AsRef<str>) -> Result<T> {
+        let response = self.0.get(Self::make_url(path)).send().await?;
+
+        if !response.status().is_success() {
+            return Err(Error::UnsuccessfulRequest(response));
+        }
+
         let body = response.json().await?;
 
         Ok(body)
     }
 
-    /// Make a POST request to the API with a json body and convert the response body to json.
-    pub async fn post<T: DeserializeOwned, U: Serialize>(&self, path: &str, body: U) -> Result<T> {
-        let url = Self::make_url(path);
-        let response = self.0.post(url).json(&body).send().await?;
+    /// Make a `POST` request to the API with a json body and convert the response body to json.
+    pub async fn post<T: DeserializeOwned, U: Serialize>(
+        &self,
+        path: impl AsRef<str>,
+        body: U,
+    ) -> Result<T> {
+        let response = self.0.post(Self::make_url(path)).json(&body).send().await?;
+
+        if !response.status().is_success() {
+            return Err(Error::UnsuccessfulRequest(response));
+        }
+
         let body = response.json().await?;
 
         Ok(body)
     }
 
-    /// Make a PATCH request to the API with a json body.
-    pub async fn patch<T: Serialize>(&self, path: &str, body: T) -> Result {
-        let url = Self::make_url(path);
-        self.0.patch(url).json(&body).send().await?;
+    /// Make a `PATCH` request to the API with a json body.
+    pub async fn patch<T: Serialize>(&self, path: impl AsRef<str>, body: T) -> Result {
+        let response = self
+            .0
+            .patch(Self::make_url(path))
+            .json(&body)
+            .send()
+            .await?;
+
+        if !response.status().is_success() {
+            return Err(Error::UnsuccessfulRequest(response));
+        }
 
         Ok(())
     }
 
-    /// Make a DELETE request to the API.
-    pub async fn delete(&self, path: &str) -> Result {
-        let url = Self::make_url(path);
-        self.0.delete(url).send().await?;
+    /// Make a `DELETE` request to the API.
+    pub async fn delete(&self, path: impl AsRef<str>) -> Result {
+        let response = self.0.delete(Self::make_url(path)).send().await?;
+
+        if !response.status().is_success() {
+            return Err(Error::UnsuccessfulRequest(response));
+        }
 
         Ok(())
     }

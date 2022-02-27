@@ -1,19 +1,25 @@
-//! Module for [Error] and [Result] types.
+//! Module for [enum@Error] and [Result] types.
 
 use {
-    reqwest::Error as HttpError, serde::Deserialize, std::result::Result as StdResult,
-    thiserror::Error as ThisError, tokio_tungstenite::tungstenite::Error as WsError,
+    reqwest::{Error as HttpError, Response},
+    serde::Deserialize,
+    std::result::Result as StdResult,
+    thiserror::Error,
+    tokio_tungstenite::tungstenite::Error as WsError,
 };
 
-/// [Result](StdResult) type for [Error].
+/// [Result](StdResult) type for [enum@Error].
 pub type Result<T = (), E = Error> = StdResult<T, E>;
 
 /// Errors that can happen when using [ruvolt](crate).
-#[derive(ThisError, Debug)]
+#[derive(Error, Debug)]
 pub enum Error {
     /// Http requests error.
     #[error("Http error: {0}")]
     Http(#[from] HttpError),
+    /// Received a response with a status code other than 200-299.
+    #[error("Unsuccessful request: {0:?}")]
+    UnsuccessfulRequest(Response),
     /// WebSocket error.
     #[error("WebSocket error: {0}")]
     Ws(#[from] WsError),
@@ -26,7 +32,7 @@ pub enum Error {
 }
 
 /// Authentication error.
-#[derive(ThisError, Debug, Deserialize, Clone, Copy, PartialEq)]
+#[derive(Error, Debug, Deserialize, Clone, Copy, PartialEq)]
 pub enum AuthenticationError {
     /// Uncategorized error.
     #[error("LabelMe")]
