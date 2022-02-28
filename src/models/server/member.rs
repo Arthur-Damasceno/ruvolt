@@ -1,6 +1,7 @@
 use serde::Deserialize;
 
 use crate::{
+    builders::EditMember,
     models::{Attachment, Id},
     Context, Result,
 };
@@ -23,15 +24,24 @@ pub struct Member {
 impl Member {
     /// Get a member from the API.
     pub async fn fetch(cx: &Context, server_id: &Id, user_id: &Id) -> Result<Self> {
-        let path = format!("servers/{}/members/{}", server_id, user_id);
-        let member = cx.http_client.get(&path).await?;
+        cx.http_client
+            .get(format!("servers/{}/members/{}", server_id, user_id))
+            .await
+    }
 
-        Ok(member)
+    /// Edit the member.
+    pub async fn edit(&self, cx: &Context, builder: EditMember) -> Result {
+        cx.http_client
+            .patch(
+                format!("servers/{}/members/{}", self.id.server_id, self.id.user_id),
+                builder,
+            )
+            .await
     }
 }
 
 /// A server member id.
-#[derive(Debug, Deserialize, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Deserialize)]
 pub struct MemberId {
     /// Server id.
     #[serde(rename = "server")]

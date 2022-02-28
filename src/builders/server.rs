@@ -1,6 +1,9 @@
 use serde::Serialize;
 
-use crate::models::{events::ServerField, Category, Id, SystemMessageChannels};
+use crate::models::{
+    events::{MemberField, ServerField},
+    Category, Id, SystemMessageChannels,
+};
 
 /// Builder for edit a server.
 #[derive(Debug, Clone, Default, Serialize)]
@@ -76,6 +79,50 @@ impl EditServer {
 
     /// Set a server field to remove.
     pub fn remove(mut self, field: ServerField) -> Self {
+        self.remove = Some(field);
+        self
+    }
+}
+
+/// Builder for edit a member.
+#[derive(Debug, Clone, Default, Serialize)]
+pub struct EditMember {
+    #[serde(skip_serializing_if = "Option::is_none")]
+    nickname: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    avatar: Option<Id>,
+    #[serde(skip_serializing_if = "Vec::is_empty")]
+    roles: Vec<Id>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    remove: Option<MemberField>,
+}
+
+impl EditMember {
+    /// Creates a new builder.
+    pub fn new() -> Self {
+        Self::default()
+    }
+
+    /// Set the nickname.
+    pub fn nickname(mut self, nickname: impl Into<String>) -> Self {
+        self.nickname = Some(nickname.into());
+        self
+    }
+
+    /// Set the avatar.
+    pub fn avatar(mut self, id: &Id) -> Self {
+        self.avatar = Some(id.clone());
+        self
+    }
+
+    /// Include a role.
+    pub fn role(mut self, id: &Id) -> Self {
+        self.roles.push(id.clone());
+        self
+    }
+
+    /// Set a member field to remove.
+    pub fn remove(mut self, field: MemberField) -> Self {
         self.remove = Some(field);
         self
     }

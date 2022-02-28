@@ -1,10 +1,10 @@
-use serde::Deserialize;
+use serde::{Deserialize, Serialize};
 
 use crate::models::{Attachment, Id, MemberId};
 
 /// Specifies a field to remove on server member update.
-#[derive(Debug, Clone, Copy, PartialEq, Deserialize)]
-pub enum ServerMemberField {
+#[derive(Debug, Clone, Copy, PartialEq, Deserialize, Serialize)]
+pub enum MemberField {
     /// Server member nickname.
     Nickname,
     /// Server member avatar.
@@ -20,7 +20,7 @@ pub struct ServerMemberUpdateEvent {
     /// A partial server member.
     pub data: PartialMember,
     /// A specified field to remove on server member update.
-    pub clear: Option<ServerMemberField>,
+    pub clear: Option<MemberField>,
 }
 
 /// A partial server member.
