@@ -2,7 +2,7 @@ use serde::Deserialize;
 
 use crate::{
     builders::{CreateMessage, EditChannel},
-    models::{Attachment, Channel, Id, Message},
+    models::{Attachment, Channel, Id, Message, User},
     Context, Result,
 };
 
@@ -19,6 +19,8 @@ pub struct GroupChannel {
     pub name: String,
     /// Group description.
     pub description: Option<String>,
+    /// List of user ids who are participating in this group.
+    pub recipients: Vec<Id>,
     /// Group icon.
     pub icon: Option<Attachment>,
     /// Id of last message in the group.
@@ -29,6 +31,13 @@ pub struct GroupChannel {
 }
 
 impl GroupChannel {
+    /// Fetch users who are part of the group.
+    pub async fn members(&self, cx: &Context) -> Result<Vec<User>> {
+        cx.http_client
+            .get(format!("channels/{}/members", self.id))
+            .await
+    }
+
     /// Send a message in the group.
     pub async fn send(&self, cx: &Context, builder: impl Into<CreateMessage>) -> Result<Message> {
         Message::create(cx, &self.id, builder.into()).await

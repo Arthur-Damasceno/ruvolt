@@ -15,7 +15,7 @@ pub struct DirectMessageChannel {
     /// Whether this DM is active.
     pub active: bool,
     /// List of user ids who are participating in this DM.
-    pub recipients: Vec<Id>,
+    pub recipients: [Id; 2],
     /// Id of the last message in the channel.
     pub last_message_id: Option<Id>,
 }
