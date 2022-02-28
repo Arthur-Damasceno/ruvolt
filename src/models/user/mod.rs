@@ -1,19 +1,16 @@
-pub use {badges::*, flags::*, profile::*, status::*};
+pub use {badges::*, bot_information::*, flags::*, profile::*, status::*};
 
 mod badges;
-mod bot_info;
+mod bot_information;
 mod flags;
 mod profile;
 mod status;
 
 use serde::Deserialize;
 
-use {
-    crate::{
-        models::{Attachment, Id},
-        Context, Result,
-    },
-    bot_info::BotInfo,
+use crate::{
+    models::{Attachment, DirectMessageChannel, Id},
+    Context, Result,
 };
 
 /// A user.
@@ -37,24 +34,14 @@ pub struct User {
     /// User is online.
     #[serde(default)]
     pub online: bool,
-    bot: Option<BotInfo>,
+    /// The bot information.
+    pub bot: Option<BotInformation>,
 }
 
 impl User {
     /// Get a user from the API.
     pub async fn fetch(cx: &Context, id: &Id) -> Result<Self> {
-        let path = format!("users/{}", id);
-        let user = cx.http_client.get(&path).await?;
-
-        Ok(user)
-    }
-
-    /// Returns the owner id of the bot.
-    pub fn owner_id(&self) -> Option<&Id> {
-        match self.bot {
-            Some(BotInfo { ref owner_id }) => Some(owner_id),
-            None => None,
-        }
+        cx.http_client.get(format!("users/{}", id)).await
     }
 
     /// Returns if the user is a bot.
@@ -64,9 +51,13 @@ impl User {
 
     /// Get the user profile from the API.
     pub async fn profile(&self, cx: &Context) -> Result<UserProfile> {
-        let path = format!("users/{}/profile", self.id);
-        let profile = cx.http_client.get(&path).await?;
+        cx.http_client
+            .get(format!("users/{}/profile", self.id))
+            .await
+    }
 
-        Ok(profile)
+    /// Open a DM with the user.
+    pub async fn dm(&self, cx: &Context) -> Result<DirectMessageChannel> {
+        DirectMessageChannel::open(cx, &self.id).await
     }
 }

@@ -6,7 +6,7 @@ use {
 use crate::{
     builders::EditUser,
     http::HttpClient,
-    models::{events::ClientEvent, Id, User},
+    models::{events::ClientEvent, Channel, Id, User},
     ActionMessenger, Result,
 };
 
@@ -85,5 +85,10 @@ impl Context {
     /// Close the WebSocket connection.
     pub async fn close(&self) -> Result {
         self.messenger.close().await
+    }
+
+    /// Fetch your direct messages, including any DM and group conversations.
+    pub async fn dm_channels(&self) -> Result<Vec<Channel>> {
+        self.http_client.get("users/dms").await
     }
 }
