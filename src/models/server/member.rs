@@ -38,6 +38,16 @@ impl Member {
             )
             .await
     }
+
+    /// Kick the member from the server.
+    pub async fn kick(&self, cx: &Context) -> Result {
+        cx.http_client
+            .delete(format!(
+                "servers/{}/members/{}",
+                self.id.server_id, self.id.user_id
+            ))
+            .await
+    }
 }
 
 /// A server member id.
