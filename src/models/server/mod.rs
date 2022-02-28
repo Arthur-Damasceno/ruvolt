@@ -49,19 +49,25 @@ pub struct Server {
 impl Server {
     /// Get a server from the API.
     pub async fn fetch(cx: &Context, id: &Id) -> Result<Self> {
-        let path = format!("servers/{}", id);
-        cx.http_client.get(&path).await
+        cx.http_client.get(format!("servers/{}", id)).await
     }
 
     /// Edit the server.
     pub async fn edit(&self, cx: &Context, builder: EditServer) -> Result {
-        let path = format!("servers/{}", self.id);
-        cx.http_client.patch(&path, builder).await
+        cx.http_client
+            .patch(format!("servers/{}", self.id), builder)
+            .await
     }
 
     /// Create a channel in the server.
     pub async fn create_channel(&self, cx: &Context, builder: CreateChannel) -> Result<Channel> {
-        let path = format!("servers/{}/channels", self.id);
-        cx.http_client.post(&path, builder).await
+        cx.http_client
+            .post(format!("servers/{}/channels", self.id), builder)
+            .await
+    }
+
+    /// Leave the server
+    pub async fn leave(&self, cx: &Context) -> Result {
+        cx.http_client.delete(format!("servers/{}", self.id)).await
     }
 }
