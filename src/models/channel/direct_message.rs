@@ -2,7 +2,7 @@ use serde::Deserialize;
 
 use crate::{
     builders::CreateMessage,
-    models::{Id, Message},
+    models::{Channel, Id, Message},
     Context, Result,
 };
 
@@ -24,5 +24,10 @@ impl DirectMessageChannel {
     /// Send a message in this channel.
     pub async fn send(&self, cx: &Context, builder: impl Into<CreateMessage>) -> Result<Message> {
         Message::create(cx, &self.id, builder.into()).await
+    }
+
+    /// Close the DM.
+    pub async fn close(&self, cx: &Context) -> Result {
+        Channel::delete(cx, &self.id).await
     }
 }

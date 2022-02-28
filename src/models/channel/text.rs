@@ -38,4 +38,9 @@ impl TextChannel {
     pub async fn edit(&self, cx: &Context, builder: EditChannel) -> Result {
         Channel::edit(cx, &self.id, builder).await
     }
+
+    /// Delete the channel.
+    pub async fn delete(&self, cx: &Context) -> Result {
+        Channel::delete(cx, &self.id).await
+    }
 }

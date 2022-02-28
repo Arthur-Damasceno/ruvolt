@@ -28,8 +28,7 @@ pub enum Channel {
 impl Channel {
     /// Get a channel from the API.
     pub async fn fetch(cx: &Context, id: &Id) -> Result<Self> {
-        let path = format!("channels/{}", id);
-        cx.http_client.get(&path).await
+        cx.http_client.get(format!("channels/{}", id)).await
     }
 
     /// Returns the channel id.
@@ -43,7 +42,14 @@ impl Channel {
     }
 
     async fn edit(cx: &Context, channel_id: &Id, builder: EditChannel) -> Result {
-        let path = format!("channels/{}", channel_id);
-        cx.http_client.patch(&path, builder).await
+        cx.http_client
+            .patch(format!("channels/{}", channel_id), builder)
+            .await
+    }
+
+    async fn delete(cx: &Context, channel_id: &Id) -> Result {
+        cx.http_client
+            .delete(format!("channels/{}", channel_id))
+            .await
     }
 }
