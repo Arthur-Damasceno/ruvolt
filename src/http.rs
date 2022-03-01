@@ -61,6 +61,17 @@ impl HttpClient {
         Ok(body)
     }
 
+    /// Make a `PUT` request to the API with a json body.
+    pub async fn put<T: Serialize>(&self, path: impl AsRef<str>, body: T) -> Result {
+        let response = self.0.put(Self::make_url(path)).json(&body).send().await?;
+
+        if !response.status().is_success() {
+            return Err(Error::UnsuccessfulRequest(response));
+        }
+
+        Ok(())
+    }
+
     /// Make a `PATCH` request to the API with a json body.
     pub async fn patch<T: Serialize>(&self, path: impl AsRef<str>, body: T) -> Result {
         let response = self
