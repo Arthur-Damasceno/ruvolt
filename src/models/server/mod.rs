@@ -9,7 +9,7 @@ use serde::Deserialize;
 
 use crate::{
     builders::{CreateChannel, EditServer},
-    models::{Attachment, Channel, Id},
+    models::{Attachment, Channel, Id, User},
     Context, Result,
 };
 
@@ -52,6 +52,16 @@ impl Server {
         cx.http_client.get(format!("servers/{}", id)).await
     }
 
+    /// Fetch all server members.
+    pub async fn members(&self, cx: &Context) -> Result<Vec<(Member, User)>> {
+        let members: ServerMembers = cx
+            .http_client
+            .get(format!("servers/{}/members", self.id))
+            .await?;
+
+        Ok(members.into())
+    }
+
     /// Edit the server.
     pub async fn edit(&self, cx: &Context, builder: EditServer) -> Result {
         cx.http_client
@@ -76,5 +86,17 @@ impl Server {
         cx.http_client
             .delete(format!("servers/{}/bans/{}", self.id, user_id))
             .await
+    }
+}
+
+#[derive(Debug, Deserialize)]
+struct ServerMembers {
+    members: Vec<Member>,
+    users: Vec<User>,
+}
+
+impl Into<Vec<(Member, User)>> for ServerMembers {
+    fn into(self) -> Vec<(Member, User)> {
+        self.members.into_iter().zip(self.users).collect()
     }
 }
