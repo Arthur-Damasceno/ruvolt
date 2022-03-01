@@ -1,10 +1,21 @@
-use serde::Deserialize;
+use serde::{Deserialize, Serialize};
 
 use crate::{
     builders::EditMember,
     models::{Attachment, Id},
     Context, Result,
 };
+
+/// A server member id.
+#[derive(Debug, Clone, PartialEq, Deserialize)]
+pub struct MemberId {
+    /// Server id.
+    #[serde(rename = "server")]
+    pub server_id: Id,
+    /// User id.
+    #[serde(rename = "user")]
+    pub user_id: Id,
+}
 
 /// A server member.
 #[derive(Debug, Deserialize, Clone, PartialEq)]
@@ -48,15 +59,31 @@ impl Member {
             ))
             .await
     }
+
+    /// Ban the member from the server.
+    pub async fn ban(&self, cx: &Context, reason: Option<impl Into<String>>) -> Result {
+        cx.http_client
+            .put(
+                format!("servers/{}/bans/{}", self.id.server_id, self.id.user_id),
+                CreateBan::new(reason),
+            )
+            .await
+    }
 }
 
-/// A server member id.
-#[derive(Debug, Clone, PartialEq, Deserialize)]
-pub struct MemberId {
-    /// Server id.
-    #[serde(rename = "server")]
-    pub server_id: Id,
-    /// User id.
-    #[serde(rename = "user")]
-    pub user_id: Id,
+#[derive(Debug, Serialize)]
+struct CreateBan {
+    #[serde(skip_serializing_if = "Option::is_none")]
+    reason: Option<String>,
+}
+
+impl CreateBan {
+    fn new(reason: Option<impl Into<String>>) -> Self {
+        match reason {
+            Some(reason) => CreateBan {
+                reason: Some(reason.into()),
+            },
+            None => CreateBan { reason: None },
+        }
+    }
 }
