@@ -70,4 +70,11 @@ impl Server {
     pub async fn leave(&self, cx: &Context) -> Result {
         cx.http_client.delete(format!("servers/{}", self.id)).await
     }
+
+    /// Unban a user from the server.
+    pub async fn unban(&self, cx: &Context, user_id: &Id) -> Result {
+        cx.http_client
+            .delete(format!("servers/{}/bans/{}", self.id, user_id))
+            .await
+    }
 }
