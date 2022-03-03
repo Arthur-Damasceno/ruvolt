@@ -1,6 +1,9 @@
 use serde::Deserialize;
 
-use crate::models::{Embed, Id, MessageEdited};
+use crate::{
+    models::{Channel, Embed, Id, Message, MessageEdited},
+    Context, Result,
+};
 
 /// A message has been edited or otherwise updated.
 #[derive(Debug, Clone, PartialEq, Deserialize)]
@@ -13,6 +16,18 @@ pub struct MessageUpdateEvent {
     pub channel_id: Id,
     /// A partial message.
     pub data: PartialMessage,
+}
+
+impl MessageUpdateEvent {
+    /// Fetch the message.
+    pub async fn message(&self, cx: &Context) -> Result<Message> {
+        Message::fetch(cx, &self.channel_id, &self.message_id).await
+    }
+
+    /// Fetch the channel.
+    pub async fn channel(&self, cx: &Context) -> Result<Channel> {
+        Channel::fetch(cx, &self.channel_id).await
+    }
 }
 
 /// A partial message.

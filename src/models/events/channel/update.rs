@@ -1,6 +1,9 @@
 use serde::{Deserialize, Serialize};
 
-use crate::models::{Attachment, Id};
+use crate::{
+    models::{Attachment, Channel, Id},
+    Context, Result,
+};
 
 /// Specifies a field to remove on channel update.
 #[derive(Debug, Clone, Copy, PartialEq, Deserialize, Serialize)]
@@ -21,6 +24,13 @@ pub struct ChannelUpdateEvent {
     pub data: PartialChannel,
     /// A specified field to remove on channel update.
     pub clear: Option<ChannelField>,
+}
+
+impl ChannelUpdateEvent {
+    /// Fetch the channel.
+    pub async fn channel(&self, cx: &Context) -> Result<Channel> {
+        Channel::fetch(cx, &self.channel_id).await
+    }
 }
 
 /// A partial channel.

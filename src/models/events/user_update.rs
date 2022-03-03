@@ -1,6 +1,9 @@
 use serde::{Deserialize, Serialize};
 
-use crate::models::{Id, UserProfile, UserStatus};
+use crate::{
+    models::{Id, User, UserProfile, UserStatus},
+    Context, Result,
+};
 
 /// Specifies a field to remove on user update.
 #[derive(Debug, Clone, Copy, PartialEq, Deserialize, Serialize)]
@@ -27,6 +30,13 @@ pub struct UserUpdateEvent {
     pub clear: Option<UserField>,
 }
 
+impl UserUpdateEvent {
+    /// Fetch the user.
+    pub async fn user(&self, cx: &Context) -> Result<User> {
+        User::fetch(cx, &self.user_id).await
+    }
+}
+
 /// A partial user
 #[derive(Debug, Deserialize, Clone, PartialEq)]
 pub struct PartialUser {
@@ -36,4 +46,6 @@ pub struct PartialUser {
     pub profile: Option<UserProfile>,
     /// User avatar.
     pub avatar: Option<Id>,
+    /// Whether the user is online.
+    pub online: Option<bool>,
 }

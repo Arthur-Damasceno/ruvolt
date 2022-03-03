@@ -1,6 +1,9 @@
 use serde::{Deserialize, Serialize};
 
-use crate::models::{Attachment, Category, Id, SystemMessageChannels};
+use crate::{
+    models::{Attachment, Category, Id, Server, SystemMessageChannels},
+    Context, Result,
+};
 
 /// Specifies a field to remove on server update.
 #[derive(Debug, Clone, Copy, PartialEq, Deserialize, Serialize)]
@@ -23,6 +26,13 @@ pub struct ServerUpdateEvent {
     pub data: PartialServer,
     /// A specified field to remove on server update.
     pub clear: Option<ServerField>,
+}
+
+impl ServerUpdateEvent {
+    /// Fetch the server.
+    pub async fn server(&self, cx: &Context) -> Result<Server> {
+        Server::fetch(cx, &self.server_id).await
+    }
 }
 
 /// A partial server.

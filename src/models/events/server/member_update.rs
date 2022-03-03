@@ -1,6 +1,9 @@
 use serde::{Deserialize, Serialize};
 
-use crate::models::{Attachment, Id, MemberId};
+use crate::{
+    models::{Attachment, Id, Member, MemberId, Server, User},
+    Context, Result,
+};
 
 /// Specifies a field to remove on server member update.
 #[derive(Debug, Clone, Copy, PartialEq, Deserialize, Serialize)]
@@ -21,6 +24,23 @@ pub struct ServerMemberUpdateEvent {
     pub data: PartialMember,
     /// A specified field to remove on server member update.
     pub clear: Option<MemberField>,
+}
+
+impl ServerMemberUpdateEvent {
+    /// Fetch the member.
+    pub async fn member(&self, cx: &Context) -> Result<Member> {
+        Member::fetch(cx, &self.member_id.server_id, &self.member_id.user_id).await
+    }
+
+    /// Fetch the server.
+    pub async fn server(&self, cx: &Context) -> Result<Server> {
+        Server::fetch(cx, &self.member_id.server_id).await
+    }
+
+    /// Fetch the user.
+    pub async fn user(&self, cx: &Context) -> Result<User> {
+        User::fetch(cx, &self.member_id.user_id).await
+    }
 }
 
 /// A partial server member.
