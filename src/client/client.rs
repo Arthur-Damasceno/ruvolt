@@ -87,7 +87,12 @@ impl<T: EventHandler> Client<T> {
                 let event_handler = self.event_handler.clone();
                 let context = self.context.clone();
 
-                tokio::spawn(async move { event_handler.handle(context, event).await });
+                tokio::spawn(async move {
+                    #[cfg(feature = "cache")]
+                    context.cache.update(&event).await;
+
+                    event_handler.handle(context, event).await
+                });
             }
             Err(err) => error!(target: "Client", "Err handling event: {}", err),
         }

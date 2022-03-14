@@ -3,9 +3,9 @@
 //! ## Why use cache?
 //! Using caching reduces latency to access data and allows you to avoid requests to the API.
 
-use {std::collections::HashMap, tokio::sync::RwLock};
+use {async_trait::async_trait, std::collections::HashMap, tokio::sync::RwLock};
 
-use crate::models::{Channel, Id, Member, MemberId, Server, User};
+use crate::models::{events::ServerEvent, Channel, Id, Member, MemberId, Server, User};
 
 /// A cache containing data received from the API.
 #[derive(Debug, Default)]
@@ -17,6 +17,8 @@ pub struct Cache {
 }
 
 impl Cache {
+    pub(crate) async fn update(&self, _event: &ServerEvent) {}
+
     /// Get a user from cache.
     pub async fn user(&self, id: &Id) -> Option<User> {
         self.users.read().await.get(id).cloned()
@@ -129,4 +131,9 @@ impl Cache {
             .cloned()
             .collect()
     }
+}
+
+#[async_trait]
+pub(crate) trait UpdateCache {
+    async fn update(&self, cache: &Cache);
 }
