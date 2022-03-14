@@ -7,7 +7,7 @@ use crate::{
 };
 
 /// A server member id.
-#[derive(Debug, Clone, PartialEq, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Deserialize, Hash, Eq)]
 pub struct MemberId {
     /// Server id.
     #[serde(rename = "server")]

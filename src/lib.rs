@@ -11,12 +11,16 @@
 
 #[doc(inline)]
 pub use client::*;
+mod client;
+
 #[doc(hidden)]
 pub use error::Result;
+pub mod error;
 
 pub mod builders;
-mod client;
-pub mod error;
+#[cfg(feature = "cache")]
+pub mod cache;
 pub mod http;
 pub mod models;
+
 pub(crate) mod websocket;
