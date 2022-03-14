@@ -5,6 +5,9 @@ use crate::{
     Context, Result,
 };
 
+#[cfg(feature = "cache")]
+use crate::cache::{Cache, UpdateCache};
+
 /// A user has left the group.
 #[derive(Debug, Deserialize, Clone, PartialEq)]
 pub struct ChannelGroupLeaveEvent {
@@ -25,5 +28,23 @@ impl ChannelGroupLeaveEvent {
     /// Fetch the user.
     pub async fn user(&self, cx: &Context) -> Result<User> {
         User::fetch(cx, &self.user_id).await
+    }
+}
+
+#[cfg(feature = "cache")]
+#[async_trait::async_trait]
+impl UpdateCache for ChannelGroupLeaveEvent {
+    async fn update(&self, cache: &Cache) {
+        if let Some(Channel::Group(ref mut channel)) =
+            cache.channels.write().await.get_mut(&self.channel_id)
+        {
+            if let Some(index) = channel
+                .recipients
+                .iter()
+                .position(|user_id| *user_id == self.user_id)
+            {
+                channel.recipients.remove(index);
+            }
+        }
     }
 }

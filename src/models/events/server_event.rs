@@ -8,9 +8,9 @@ use crate::{
 #[derive(Debug, Deserialize, Clone, PartialEq)]
 #[serde(tag = "type")]
 pub enum ServerEvent {
+    Pong,
     Authenticated,
     Error { error: AuthenticationError },
-    Pong { data: usize },
     Ready(ReadyEvent),
     Message(Message),
     MessageUpdate(MessageUpdateEvent),
@@ -25,8 +25,8 @@ pub enum ServerEvent {
     ChannelAck(ChannelAckEvent),
     ServerUpdate(ServerUpdateEvent),
     ServerDelete(ServerDeleteEvent),
-    ServerMemberUpdate(ServerMemberUpdateEvent),
     ServerMemberJoin(ServerMemberJoinEvent),
+    ServerMemberUpdate(ServerMemberUpdateEvent),
     ServerMemberLeave(ServerMemberLeaveEvent),
     ServerRoleUpdate(ServerRoleUpdateEvent),
     ServerRoleDelete(ServerRoleDeleteEvent),

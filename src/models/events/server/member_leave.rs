@@ -5,6 +5,9 @@ use crate::{
     Context, Result,
 };
 
+#[cfg(feature = "cache")]
+use crate::cache::{Cache, UpdateCache};
+
 /// A user has left the server.
 #[derive(Debug, Deserialize, Clone, PartialEq)]
 pub struct ServerMemberLeaveEvent {
@@ -25,5 +28,17 @@ impl ServerMemberLeaveEvent {
     /// Fetch the user.
     pub async fn user(&self, cx: &Context) -> Result<User> {
         User::fetch(cx, &self.user_id).await
+    }
+}
+
+#[cfg(feature = "cache")]
+#[async_trait::async_trait]
+impl UpdateCache for ServerMemberLeaveEvent {
+    async fn update(&self, cache: &Cache) {
+        cache
+            .members
+            .write()
+            .await
+            .remove(&(&self.server_id, &self.user_id).into());
     }
 }

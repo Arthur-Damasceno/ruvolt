@@ -17,7 +17,15 @@ pub struct Cache {
 }
 
 impl Cache {
-    pub(crate) async fn update(&self, _event: &ServerEvent) {}
+    pub(crate) async fn update(&self, event: &ServerEvent) {
+        match event {
+            ServerEvent::ChannelDelete(event) => event.update(self).await,
+            ServerEvent::ChannelGroupLeave(event) => event.update(self).await,
+            ServerEvent::ServerDelete(event) => event.update(self).await,
+            ServerEvent::ServerMemberLeave(event) => event.update(self).await,
+            _ => return,
+        }
+    }
 
     /// Get a user from cache.
     pub async fn user(&self, id: &Id) -> Option<User> {
