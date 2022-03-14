@@ -26,8 +26,13 @@ pub enum Channel {
 }
 
 impl Channel {
-    /// Get a channel from the API.
+    /// Get a channel from the cache or API.
     pub async fn fetch(cx: &Context, id: &Id) -> Result<Self> {
+        #[cfg(feature = "cache")]
+        if let Some(channel) = cx.cache.channel(id).await {
+            return Ok(channel);
+        }
+
         cx.http_client.get(format!("channels/{}", id)).await
     }
 

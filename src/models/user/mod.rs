@@ -39,8 +39,13 @@ pub struct User {
 }
 
 impl User {
-    /// Get a user from the API.
+    /// Get a user from the cache or API.
     pub async fn fetch(cx: &Context, id: &Id) -> Result<Self> {
+        #[cfg(feature = "cache")]
+        if let Some(user) = cx.cache.user(id).await {
+            return Ok(user);
+        }
+
         cx.http_client.get(format!("users/{}", id)).await
     }
 

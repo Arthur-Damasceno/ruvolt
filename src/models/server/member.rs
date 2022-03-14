@@ -17,6 +17,15 @@ pub struct MemberId {
     pub user_id: Id,
 }
 
+impl From<(&Id, &Id)> for MemberId {
+    fn from((server_id, user_id): (&Id, &Id)) -> Self {
+        Self {
+            server_id: server_id.clone(),
+            user_id: user_id.clone(),
+        }
+    }
+}
+
 /// A server member.
 #[derive(Debug, Deserialize, Clone, PartialEq)]
 pub struct Member {
@@ -33,8 +42,13 @@ pub struct Member {
 }
 
 impl Member {
-    /// Get a member from the API.
+    /// Get a member from the cache or API.
     pub async fn fetch(cx: &Context, server_id: &Id, user_id: &Id) -> Result<Self> {
+        #[cfg(feature = "cache")]
+        if let Some(member) = cx.cache.member(&(server_id, user_id).into()).await {
+            return Ok(member);
+        }
+
         cx.http_client
             .get(format!("servers/{}/members/{}", server_id, user_id))
             .await
