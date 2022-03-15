@@ -23,13 +23,18 @@ impl Cache {
     pub(crate) async fn update(cx: &Context, event: &ServerEvent) {
         match event {
             ServerEvent::Ready(event) => event.update(cx).await,
+            ServerEvent::Message(event) => event.update(cx).await,
             ServerEvent::ChannelCreate(event) => event.update(cx).await,
+            ServerEvent::ChannelUpdate(event) => event.update(cx).await,
             ServerEvent::ChannelDelete(event) => event.update(cx).await,
             ServerEvent::ChannelGroupJoin(event) => event.update(cx).await,
             ServerEvent::ChannelGroupLeave(event) => event.update(cx).await,
+            ServerEvent::ServerUpdate(event) => event.update(cx).await,
             ServerEvent::ServerDelete(event) => event.update(cx).await,
+            ServerEvent::ServerMemberUpdate(event) => event.update(cx).await,
             ServerEvent::ServerMemberJoin(event) => event.update(cx).await,
             ServerEvent::ServerMemberLeave(event) => event.update(cx).await,
+            ServerEvent::UserUpdate(event) => event.update(cx).await,
             _ => return,
         }
     }

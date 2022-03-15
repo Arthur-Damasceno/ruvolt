@@ -5,6 +5,9 @@ use crate::{
     Context, Result,
 };
 
+#[cfg(feature = "cache")]
+use crate::cache::UpdateCache;
+
 /// Specifies a field to remove on server member update.
 #[derive(Debug, Clone, Copy, PartialEq, Deserialize, Serialize)]
 pub enum MemberField {
@@ -53,4 +56,31 @@ pub struct PartialMember {
     /// Member roles.
     #[serde(default)]
     pub roles: Vec<Id>,
+}
+
+#[cfg(feature = "cache")]
+#[async_trait::async_trait]
+impl UpdateCache for ServerMemberUpdateEvent {
+    async fn update(&self, cx: &Context) {
+        if let Some(member) = cx.cache.members.write().await.get_mut(&self.member_id) {
+            if let Some(field) = self.clear {
+                match field {
+                    MemberField::Nickname => member.nickname = None,
+                    MemberField::Avatar => member.avatar = None,
+                }
+            }
+
+            if let Some(ref nickname) = self.data.nickname {
+                member.nickname = Some(nickname.clone());
+            }
+
+            if let Some(ref avatar) = self.data.avatar {
+                member.avatar = Some(avatar.clone());
+            }
+
+            if !self.data.roles.is_empty() {
+                member.roles = self.data.roles.clone();
+            }
+        }
+    }
 }

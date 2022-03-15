@@ -13,6 +13,9 @@ use crate::{
     Context, Result,
 };
 
+#[cfg(feature = "cache")]
+use crate::{cache::UpdateCache, models::Channel};
+
 /// A message.
 #[derive(Debug, Deserialize, Clone, PartialEq)]
 pub struct Message {
@@ -102,5 +105,20 @@ impl Message {
         cx.http_client.delete(&path).await?;
 
         Ok(())
+    }
+}
+
+#[cfg(feature = "cache")]
+#[async_trait::async_trait]
+impl UpdateCache for Message {
+    async fn update(&self, cx: &Context) {
+        if let Some(channel) = cx.cache.channels.write().await.get_mut(&self.channel_id) {
+            match channel {
+                Channel::Text(channel) => channel.last_message_id = Some(self.id.clone()),
+                Channel::Group(channel) => channel.last_message_id = Some(self.id.clone()),
+                Channel::DirectMessage(channel) => channel.last_message_id = Some(self.id.clone()),
+                _ => {}
+            }
+        }
     }
 }
