@@ -3,7 +3,7 @@ use serde::Deserialize;
 use crate::models::Id;
 
 #[cfg(feature = "cache")]
-use crate::cache::{Cache, UpdateCache};
+use crate::{cache::UpdateCache, Context};
 
 /// A server has been deleted.
 #[derive(Debug, Deserialize, Clone, PartialEq)]
@@ -16,7 +16,7 @@ pub struct ServerDeleteEvent {
 #[cfg(feature = "cache")]
 #[async_trait::async_trait]
 impl UpdateCache for ServerDeleteEvent {
-    async fn update(&self, cache: &Cache) {
-        cache.servers.write().await.remove(&self.server_id);
+    async fn update(&self, cx: &Context) {
+        cx.cache.servers.write().await.remove(&self.server_id);
     }
 }

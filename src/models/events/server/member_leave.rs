@@ -6,7 +6,7 @@ use crate::{
 };
 
 #[cfg(feature = "cache")]
-use crate::cache::{Cache, UpdateCache};
+use crate::cache::UpdateCache;
 
 /// A user has left the server.
 #[derive(Debug, Deserialize, Clone, PartialEq)]
@@ -34,8 +34,8 @@ impl ServerMemberLeaveEvent {
 #[cfg(feature = "cache")]
 #[async_trait::async_trait]
 impl UpdateCache for ServerMemberLeaveEvent {
-    async fn update(&self, cache: &Cache) {
-        cache
+    async fn update(&self, cx: &Context) {
+        cx.cache
             .members
             .write()
             .await

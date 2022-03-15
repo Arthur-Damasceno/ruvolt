@@ -9,6 +9,9 @@ use serde::Deserialize;
 
 use crate::{builders::EditChannel, models::Id, Context, Result};
 
+#[cfg(feature = "cache")]
+use crate::cache::UpdateCache;
+
 /// A channel.
 #[derive(Debug, Deserialize, Clone, PartialEq)]
 #[serde(tag = "channel_type")]
@@ -56,5 +59,17 @@ impl Channel {
         cx.http_client
             .delete(format!("channels/{}", channel_id))
             .await
+    }
+}
+
+#[cfg(feature = "cache")]
+#[async_trait::async_trait]
+impl UpdateCache for Channel {
+    async fn update(&self, cx: &Context) {
+        cx.cache
+            .channels
+            .write()
+            .await
+            .insert(self.id().clone(), self.clone());
     }
 }

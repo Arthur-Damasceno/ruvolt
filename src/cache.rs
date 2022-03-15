@@ -5,7 +5,10 @@
 
 use {async_trait::async_trait, std::collections::HashMap, tokio::sync::RwLock};
 
-use crate::models::{events::ServerEvent, Channel, Id, Member, MemberId, Server, User};
+use crate::{
+    models::{events::ServerEvent, Channel, Id, Member, MemberId, Server, User},
+    Context,
+};
 
 /// A cache containing data received from the API.
 #[derive(Debug, Default)]
@@ -17,12 +20,16 @@ pub struct Cache {
 }
 
 impl Cache {
-    pub(crate) async fn update(&self, event: &ServerEvent) {
+    pub(crate) async fn update(cx: &Context, event: &ServerEvent) {
         match event {
-            ServerEvent::ChannelDelete(event) => event.update(self).await,
-            ServerEvent::ChannelGroupLeave(event) => event.update(self).await,
-            ServerEvent::ServerDelete(event) => event.update(self).await,
-            ServerEvent::ServerMemberLeave(event) => event.update(self).await,
+            ServerEvent::Ready(event) => event.update(cx).await,
+            ServerEvent::ChannelCreate(event) => event.update(cx).await,
+            ServerEvent::ChannelDelete(event) => event.update(cx).await,
+            ServerEvent::ChannelGroupJoin(event) => event.update(cx).await,
+            ServerEvent::ChannelGroupLeave(event) => event.update(cx).await,
+            ServerEvent::ServerDelete(event) => event.update(cx).await,
+            ServerEvent::ServerMemberJoin(event) => event.update(cx).await,
+            ServerEvent::ServerMemberLeave(event) => event.update(cx).await,
             _ => return,
         }
     }
@@ -143,5 +150,5 @@ impl Cache {
 
 #[async_trait]
 pub(crate) trait UpdateCache {
-    async fn update(&self, cache: &Cache);
+    async fn update(&self, cx: &Context);
 }
