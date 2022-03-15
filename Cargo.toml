@@ -7,6 +7,10 @@ repository = "https://github.com/Arthur-Damasceno/ruvolt"
 license = "MIT"
 edition = "2021"
 
+[features]
+default = ["cache"]
+cache = []
+
 [dependencies]
 # Async
 tokio = { version = "1.17", features = ["time", "rt-multi-thread", "sync"] }

@@ -47,8 +47,13 @@ pub struct Server {
 }
 
 impl Server {
-    /// Get a server from the API.
+    /// Get a server from the cache or API.
     pub async fn fetch(cx: &Context, id: &Id) -> Result<Self> {
+        #[cfg(feature = "cache")]
+        if let Some(server) = cx.cache.server(id).await {
+            return Ok(server);
+        }
+
         cx.http_client.get(format!("servers/{}", id)).await
     }
 

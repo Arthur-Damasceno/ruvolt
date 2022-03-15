@@ -1,9 +1,12 @@
 use serde::{Deserialize, Serialize};
 
 use crate::{
-    models::{Id, User, UserProfile, UserStatus},
+    models::{Attachment, Id, User, UserProfile, UserStatus},
     Context, Result,
 };
+
+#[cfg(feature = "cache")]
+use crate::cache::UpdateCache;
 
 /// Specifies a field to remove on user update.
 #[derive(Debug, Clone, Copy, PartialEq, Deserialize, Serialize)]
@@ -45,7 +48,39 @@ pub struct PartialUser {
     /// User profile.
     pub profile: Option<UserProfile>,
     /// User avatar.
-    pub avatar: Option<Id>,
+    pub avatar: Option<Attachment>,
     /// Whether the user is online.
     pub online: Option<bool>,
+}
+
+#[cfg(feature = "cache")]
+#[async_trait::async_trait]
+impl UpdateCache for UserUpdateEvent {
+    async fn update(&self, cx: &Context) {
+        if let Some(user) = cx.cache.users.write().await.get_mut(&self.user_id) {
+            if let Some(field) = self.clear {
+                match field {
+                    UserField::StatusText => {
+                        if let Some(ref mut status) = user.status {
+                            status.text = None;
+                        }
+                    }
+                    UserField::Avatar => user.avatar = None,
+                    _ => {}
+                }
+            }
+
+            if let Some(ref status) = self.data.status {
+                user.status = Some(status.clone());
+            }
+
+            if let Some(ref avatar) = self.data.avatar {
+                user.avatar = Some(avatar.clone());
+            }
+
+            if let Some(online) = self.data.online {
+                user.online = online;
+            }
+        }
+    }
 }

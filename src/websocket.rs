@@ -102,7 +102,7 @@ impl WebSocketClient {
     }
 
     fn check_pong(&mut self, event: &ServerEvent) {
-        if let ServerEvent::Pong { .. } = event {
+        if let ServerEvent::Pong = event {
             self.last_heartbeat.1 = Instant::now();
         }
     }

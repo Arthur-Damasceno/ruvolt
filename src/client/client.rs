@@ -11,6 +11,9 @@ use crate::{
     Action, ActionMessenger, ActionRx, Context, EventHandler, EventHandlerExt, Result,
 };
 
+#[cfg(feature = "cache")]
+use crate::cache::Cache;
+
 /// API wrapper to interact with Revolt.
 #[derive(Debug)]
 pub struct Client<T: EventHandler> {
@@ -87,7 +90,12 @@ impl<T: EventHandler> Client<T> {
                 let event_handler = self.event_handler.clone();
                 let context = self.context.clone();
 
-                tokio::spawn(async move { event_handler.handle(context, event).await });
+                tokio::spawn(async move {
+                    #[cfg(feature = "cache")]
+                    Cache::update(&context, &event).await;
+
+                    event_handler.handle(context, event).await
+                });
             }
             Err(err) => error!(target: "Client", "Err handling event: {}", err),
         }

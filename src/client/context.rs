@@ -10,11 +10,17 @@ use crate::{
     ActionMessenger, Result,
 };
 
+#[cfg(feature = "cache")]
+use crate::cache::Cache;
+
 /// A struct for general utilities and wrapper for the http client.
 #[derive(Debug, Clone)]
 pub struct Context {
     /// A http client.
     pub http_client: HttpClient,
+    /// A cache.
+    #[cfg(feature = "cache")]
+    pub cache: Arc<Cache>,
     token: Arc<String>,
     messenger: ActionMessenger,
 }
@@ -26,6 +32,8 @@ impl Context {
 
         Self {
             http_client,
+            #[cfg(feature = "cache")]
+            cache: Default::default(),
             token: Arc::new(token),
             messenger,
         }
