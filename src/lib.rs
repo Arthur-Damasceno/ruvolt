@@ -22,5 +22,7 @@ pub mod builders;
 pub mod cache;
 pub mod http;
 pub mod models;
+#[cfg(feature = "state")]
+pub mod state;
 
 pub(crate) mod websocket;

@@ -12,6 +12,8 @@ use crate::{
 
 #[cfg(feature = "cache")]
 use crate::cache::Cache;
+#[cfg(feature = "state")]
+use crate::state::State;
 
 /// A struct for general utilities and wrapper for the http client.
 #[derive(Debug, Clone)]
@@ -21,6 +23,9 @@ pub struct Context {
     /// A cache.
     #[cfg(feature = "cache")]
     pub cache: Arc<Cache>,
+    /// A state.
+    #[cfg(feature = "state")]
+    pub state: State,
     token: Arc<String>,
     messenger: ActionMessenger,
 }
@@ -34,6 +39,8 @@ impl Context {
             http_client,
             #[cfg(feature = "cache")]
             cache: Default::default(),
+            #[cfg(feature = "state")]
+            state: Default::default(),
             token: Arc::new(token),
             messenger,
         }
@@ -46,9 +53,7 @@ impl Context {
 
     /// Returns the current user.
     pub async fn user(&self) -> Result<User> {
-        let user = self.http_client.get("users/@me").await?;
-
-        Ok(user)
+        self.http_client.get("users/@me").await
     }
 
     /// Edit the current user.
