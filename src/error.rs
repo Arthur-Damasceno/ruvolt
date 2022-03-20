@@ -1,80 +1,49 @@
-//! Module for [Error] and [Result] types.
+//! Module for [enum@Error] and [Result] types.
 
 use {
-    reqwest::Error as HttpError,
+    reqwest::{Error as HttpError, Response},
     serde::Deserialize,
-    std::{
-        error::Error as StdError,
-        fmt::{Display, Formatter, Result as FmtResult},
-        result::Result as StdResult,
-    },
+    std::result::Result as StdResult,
+    thiserror::Error,
     tokio_tungstenite::tungstenite::Error as WsError,
 };
 
-/// [Result](StdResult) type for [Error].
+/// [Result](StdResult) type for [enum@Error].
 pub type Result<T = (), E = Error> = StdResult<T, E>;
 
 /// Errors that can happen when using [ruvolt](crate).
-#[derive(Debug)]
+#[derive(Error, Debug)]
 pub enum Error {
     /// Http requests error.
-    Http(HttpError),
+    #[error("Http error: {0}")]
+    Http(#[from] HttpError),
+    /// Received a response with a status code other than 200-299.
+    #[error("Unsuccessful request: {0:?}")]
+    UnsuccessfulRequest(Response),
     /// WebSocket error.
-    Ws(WsError),
+    #[error("WebSocket error: {0}")]
+    Ws(#[from] WsError),
     /// Could not authenticate due to an error.
-    Authentication(AuthenticationError),
+    #[error("Authentication error: {0}")]
+    Authentication(#[from] AuthenticationError),
     /// Unknown or unexpected error.
+    #[error("Unknown error: {0}")]
     Unknown(String),
 }
 
 /// Authentication error.
-#[derive(Debug, Deserialize, Clone, Copy, PartialEq)]
+#[derive(Error, Debug, Deserialize, Clone, Copy, PartialEq)]
 pub enum AuthenticationError {
     /// Uncategorized error.
+    #[error("LabelMe")]
     LabelMe,
     /// The Revolt server ran into an issue.
+    #[error("InternalError")]
     InternalError,
     /// The token provided is incorrect.
+    #[error("InvalidSession")]
     InvalidSession,
     /// The bot is already authenticated.
+    #[error("AlreadyAuthenticated")]
     AlreadyAuthenticated,
-}
-
-impl Display for Error {
-    fn fmt(&self, f: &mut Formatter<'_>) -> FmtResult {
-        match *self {
-            Self::Http(ref err) => err.fmt(f),
-            Self::Ws(ref err) => err.fmt(f),
-            Self::Authentication(ref err) => write!(f, "Authentication error: {:?}", err),
-            Self::Unknown(ref msg) => write!(f, "Unknown error: {}", msg),
-        }
-    }
-}
-
-impl StdError for Error {
-    fn source(&self) -> Option<&(dyn StdError + 'static)> {
-        match *self {
-            Self::Http(ref err) => Some(err),
-            Self::Ws(ref err) => Some(err),
-            _ => None,
-        }
-    }
-}
-
-impl From<HttpError> for Error {
-    fn from(err: HttpError) -> Self {
-        Self::Http(err)
-    }
-}
-
-impl From<WsError> for Error {
-    fn from(err: WsError) -> Self {
-        Self::Ws(err)
-    }
-}
-
-impl From<AuthenticationError> for Error {
-    fn from(err: AuthenticationError) -> Self {
-        Self::Authentication(err)
-    }
 }

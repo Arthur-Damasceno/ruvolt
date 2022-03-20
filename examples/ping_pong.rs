@@ -1,8 +1,7 @@
 use {
     async_trait::async_trait,
     ruvolt::{
-        entities::{events::ReadyEvent, Message},
-        error::Error,
+        models::{events::ReadyEvent, Message, User},
         Client, Context, EventHandler, Result,
     },
     std::{env, time::Instant},
@@ -13,32 +12,34 @@ struct Handler;
 
 #[async_trait]
 impl EventHandler for Handler {
-    async fn error(&self, err: Error) {
-        eprintln!("{}", err);
-    }
-
     async fn ready(&self, cx: Context, _: ReadyEvent) {
-        println!("{} is ready!", cx.user.username);
+        if let Ok(User { username, .. }) = cx.user().await {
+            println!("@{username} is ready!");
+        }
     }
 
     async fn message(&self, cx: Context, msg: Message) {
-        if msg.author_id == cx.user.id {
-            return;
-        }
-
         let content = msg.content.to_string();
 
-        if content.as_str() == "!ping" {
-            let now = Instant::now();
-            let mut msg = msg.send_in_channel(&cx, "Pong!").await.unwrap();
+        if content == "!ping" {
+            let start = Instant::now();
 
-            let latency = (Instant::now() - now).subsec_millis();
-            let content = format!("Pong! The API latency is {}ms", latency);
+            if let Ok(mut msg) = msg.reply(&cx, "Pong!", true).await {
+                let delta_latency = (Instant::now() - start).as_millis();
+                let bonfire_latency = cx.latency().await.as_millis();
 
-            msg.edit(&cx, &content).await.unwrap();
+                let content = format!(
+                    "### Pong!\
+                    \n#### The Delta API latency is `{delta_latency}ms`\
+                    \n#### The Bonfire API latency is `{bonfire_latency}ms`"
+                );
 
-            sleep(Duration::from_secs(3)).await;
-            msg.delete(&cx).await.unwrap();
+                msg.edit(&cx, content).await.ok();
+
+                sleep(Duration::from_secs(5)).await;
+
+                msg.delete(&cx).await.ok();
+            }
         }
     }
 }
@@ -46,11 +47,7 @@ impl EventHandler for Handler {
 #[tokio::main]
 async fn main() -> Result {
     let token = env::var("TOKEN").unwrap();
-    let client = Client::new(Handler).await?;
+    let mut client = Client::new(Handler, token).await?;
 
-    if let Err(err) = client.listen(&token).await {
-        eprintln!("{}", err);
-    }
-
-    Ok(())
+    client.listen().await
 }

@@ -1,68 +1,107 @@
-use {std::sync::Arc, tokio::sync::Mutex};
-
 use {
-    super::websocket::Sender,
-    crate::{
-        entities::{events::ClientToServerEvent, User},
-        http::HttpClient,
-        Result,
-    },
+    std::sync::Arc,
+    tokio::time::{sleep, Duration},
 };
 
-/// A struct for general utilities and wrapper for the http client for fetch entities from the API.
-#[derive(Debug)]
+use crate::{
+    builders::EditUser,
+    http::HttpClient,
+    models::{events::ClientEvent, Channel, Id, User},
+    ActionMessenger, Result,
+};
+
+#[cfg(feature = "cache")]
+use crate::cache::Cache;
+#[cfg(feature = "state")]
+use crate::state::State;
+
+/// A struct for general utilities and wrapper for the http client.
+#[derive(Debug, Clone)]
 pub struct Context {
-    pub(crate) tx: Arc<Mutex<Sender>>,
     /// A http client.
-    pub http_client: Arc<HttpClient>,
-    /// The current user.
-    pub user: User,
+    pub http_client: HttpClient,
+    /// A cache.
+    #[cfg(feature = "cache")]
+    pub cache: Arc<Cache>,
+    /// A state.
+    #[cfg(feature = "state")]
+    pub state: State,
+    token: Arc<String>,
+    messenger: ActionMessenger,
 }
 
 impl Context {
-    pub(crate) fn new(http_client: Arc<HttpClient>, tx: Arc<Mutex<Sender>>, user: User) -> Self {
+    pub(crate) fn new(token: impl Into<String>, messenger: ActionMessenger) -> Self {
+        let token = token.into();
+        let http_client = HttpClient::new(&token);
+
         Self {
             http_client,
-            tx,
-            user,
+            #[cfg(feature = "cache")]
+            cache: Default::default(),
+            #[cfg(feature = "state")]
+            state: Default::default(),
+            token: Arc::new(token),
+            messenger,
         }
     }
 
-    /// Send an event to the server.
+    /// Returns the given token.
+    pub fn token(&self) -> String {
+        self.token.as_ref().clone()
+    }
+
+    /// Returns the current user.
+    pub async fn user(&self) -> Result<User> {
+        self.http_client.get("users/@me").await
+    }
+
+    /// Edit the current user.
+    pub async fn edit(&self, builder: impl Into<EditUser>) -> Result {
+        self.http_client.patch("users/@me", builder.into()).await
+    }
+
+    /// Tell other users that you have begin typing in a channel.
+    pub async fn begin_typing(&self, channel_id: &Id) -> Result {
+        self.messenger
+            .send(ClientEvent::BeginTyping {
+                channel_id: channel_id.clone(),
+            })
+            .await
+    }
+
+    /// Tell other users that you have stopped typing in a channel.
+    pub async fn end_typing(&self, channel_id: &Id) -> Result {
+        self.messenger
+            .send(ClientEvent::EndTyping {
+                channel_id: channel_id.clone(),
+            })
+            .await
+    }
+
+    /// Get the WebSocket latency.
     ///
-    /// # Panics
-    ///
-    /// Panics if the event is [Ping](ClientToServerEvent::Ping) or [Authenticate](ClientToServerEvent::Authenticate).
-    pub async fn send(&self, event: ClientToServerEvent) -> Result {
-        match event {
-            ClientToServerEvent::Ping { .. } | ClientToServerEvent::Authenticate { .. } => {
-                panic!("{:?} event is handled by the client", event);
-            }
-            event => self.tx.lock().await.send(event).await,
-        }
-    }
-}
-
-pub(crate) struct ContextFactory {
-    http_client: Arc<HttpClient>,
-    tx: Arc<Mutex<Sender>>,
-    user: User,
-}
-
-impl ContextFactory {
-    pub fn new(http_client: HttpClient, tx: Arc<Mutex<Sender>>, user: User) -> Self {
-        Self {
-            http_client: Arc::new(http_client),
-            tx,
-            user,
+    /// If the client sent a heartbeat and did not receive it back, the function will sleep
+    /// for `150` milliseconds and try again.
+    pub async fn latency(&self) -> Duration {
+        loop {
+            match self.messenger.latency().await {
+                Some(latency) => return latency,
+                None => {
+                    sleep(Duration::from_millis(150)).await;
+                    continue;
+                }
+            };
         }
     }
 
-    pub fn make(&self) -> Context {
-        let http_client = self.http_client.clone();
-        let tx = self.tx.clone();
-        let user = self.user.clone();
+    /// Close the WebSocket connection.
+    pub async fn close(&self) -> Result {
+        self.messenger.close().await
+    }
 
-        Context::new(http_client, tx, user)
+    /// Fetch your direct messages, including any DM and group conversations.
+    pub async fn dm_channels(&self) -> Result<Vec<Channel>> {
+        self.http_client.get("users/dms").await
     }
 }

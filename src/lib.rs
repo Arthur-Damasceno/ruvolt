@@ -11,9 +11,18 @@
 
 #[doc(inline)]
 pub use client::*;
+mod client;
+
 #[doc(hidden)]
 pub use error::Result;
-
-mod client;
-pub mod entities;
 pub mod error;
+
+pub mod builders;
+#[cfg(feature = "cache")]
+pub mod cache;
+pub mod http;
+pub mod models;
+#[cfg(feature = "state")]
+pub mod state;
+
+pub(crate) mod websocket;
