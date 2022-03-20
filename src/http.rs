@@ -11,7 +11,7 @@ use {
 use crate::error::{Error, Result};
 
 /// The url of the Revolt REST API.
-pub const REVOLT_REST_API: &str = "https://api.revolt.chat";
+pub const DELTA_API: &str = "https://api.revolt.chat";
 
 /// A struct to execute requests to the [Revolt REST API](https://developers.revolt.chat/api/).
 #[derive(Debug, Clone)]
@@ -28,7 +28,7 @@ impl HttpClient {
     }
 
     fn make_url(path: impl AsRef<str>) -> String {
-        format!("{}/{}", REVOLT_REST_API, path.as_ref())
+        format!("{}/{}", DELTA_API, path.as_ref())
     }
 
     /// Make a `GET` request to the API and convert the response body to json.

@@ -12,7 +12,10 @@ use crate::{
     Result,
 };
 
-const REVOLT_WS_API: &str = "wss://ws.revolt.chat";
+#[cfg(not(feature = "msgpack"))]
+const BONFIRE_API: &str = "wss://ws.revolt.chat";
+#[cfg(feature = "msgpack")]
+const BONFIRE_API: &str = "wss://ws.revolt.chat/?format=msgpack";
 
 #[derive(Debug)]
 pub struct WebSocketClient {
@@ -23,18 +26,21 @@ pub struct WebSocketClient {
 
 impl WebSocketClient {
     pub async fn connect() -> Result<Self> {
-        let (stream, _) = connect_async(REVOLT_WS_API).await?;
+        let (stream, _) = connect_async(BONFIRE_API).await?;
         let now = Instant::now();
 
         Ok(Self {
             stream,
-            heartbeat_dur: Duration::from_secs(20),
+            heartbeat_dur: Duration::from_secs(25),
             last_heartbeat: (now, now),
         })
     }
 
     pub async fn send(&mut self, event: ClientEvent) -> Result {
+        #[cfg(not(feature = "msgpack"))]
         let msg = Message::Text(serde_json::to_string(&event).unwrap());
+        #[cfg(feature = "msgpack")]
+        let msg = Message::Binary(rmp_serde::to_vec(&event).unwrap());
 
         self.stream.send(msg).await?;
 
@@ -44,6 +50,7 @@ impl WebSocketClient {
     pub async fn accept(&mut self) -> Option<Result<ServerEvent>> {
         match self.stream.next().await? {
             Ok(msg) => match msg {
+                #[cfg(not(feature = "msgpack"))]
                 Message::Text(text) => {
                     let event = serde_json::from_str(&text).map_err(|_| {
                         Error::Unknown(format!(
@@ -61,8 +68,23 @@ impl WebSocketClient {
                         Err(err) => Some(Err(err)),
                     }
                 }
+                #[cfg(feature = "msgpack")]
+                Message::Binary(buf) => {
+                    let event = rmp_serde::from_read_ref(&buf).map_err(|_| {
+                        Error::Unknown("Cannot deserialize a binary websocket message".into())
+                    });
+
+                    match event {
+                        Ok(event) => {
+                            self.check_pong(&event);
+
+                            Some(Ok(event))
+                        }
+                        Err(err) => Some(Err(err)),
+                    }
+                }
                 Message::Close(_) => None,
-                _ => todo!(),
+                _ => unreachable!(),
             },
             Err(err) => Some(Err(err.into())),
         }
