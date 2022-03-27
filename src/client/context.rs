@@ -5,7 +5,7 @@ use {
 
 use crate::{
     builders::EditUser,
-    http::HttpClient,
+    http::{Authentication, HttpClient},
     models::{events::ClientEvent, Channel, Id, User},
     ActionMessenger, Result,
 };
@@ -26,29 +26,19 @@ pub struct Context {
     /// A state.
     #[cfg(feature = "state")]
     pub state: State,
-    token: Arc<String>,
     messenger: ActionMessenger,
 }
 
 impl Context {
-    pub(crate) fn new(token: impl Into<String>, messenger: ActionMessenger) -> Self {
-        let token = token.into();
-        let http_client = HttpClient::new(&token);
-
+    pub(crate) fn new(authentication: Authentication, messenger: ActionMessenger) -> Self {
         Self {
-            http_client,
+            http_client: HttpClient::new(authentication),
             #[cfg(feature = "cache")]
             cache: Default::default(),
             #[cfg(feature = "state")]
             state: Default::default(),
-            token: Arc::new(token),
             messenger,
         }
-    }
-
-    /// Returns the given token.
-    pub fn token(&self) -> String {
-        self.token.as_ref().clone()
     }
 
     /// Returns the current user.

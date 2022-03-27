@@ -1,11 +1,9 @@
 //! A module for the http client that makes requests to the Revolt REST API.
 
 use {
-    reqwest::{
-        header::{HeaderMap, HeaderValue},
-        Client,
-    },
+    reqwest::{Client as ReqwestClient, RequestBuilder, Response},
     serde::{de::DeserializeOwned, ser::Serialize},
+    std::sync::Arc,
 };
 
 use crate::error::{Error, Result};
@@ -13,89 +11,97 @@ use crate::error::{Error, Result};
 /// The url of the Revolt REST API.
 pub const DELTA_API: &str = "https://api.revolt.chat";
 
+#[derive(Debug)]
+pub(crate) enum Authentication {
+    Bot(String),
+    Session(String),
+}
+
 /// A struct to execute requests to the [Revolt REST API](https://developers.revolt.chat/api/).
 #[derive(Debug, Clone)]
-pub struct HttpClient(Client);
+pub struct HttpClient(ReqwestClient, Arc<Authentication>);
 
 impl HttpClient {
-    pub(crate) fn new(token: &str) -> Self {
-        let mut headers = HeaderMap::new();
-        headers.insert("x-bot-token", HeaderValue::from_str(token).unwrap());
+    pub(crate) fn new(authentication: Authentication) -> Self {
+        let client = ReqwestClient::new();
 
-        let client = Client::builder().default_headers(headers).build().unwrap();
-
-        Self(client)
+        Self(client, Arc::new(authentication))
     }
 
-    fn make_url(path: impl AsRef<str>) -> String {
-        format!("{}/{}", DELTA_API, path.as_ref())
+    /// Returns the given token.
+    pub fn token(&self) -> String {
+        match self.1.as_ref() {
+            Authentication::Bot(token) | Authentication::Session(token) => token.clone(),
+        }
     }
 
     /// Make a `GET` request to the API and convert the response body to json.
     pub async fn get<T: DeserializeOwned>(&self, path: impl AsRef<str>) -> Result<T> {
-        let response = self.0.get(Self::make_url(path)).send().await?;
-
-        if !response.status().is_success() {
-            return Err(Error::UnsuccessfulRequest(response));
-        }
-
-        let body = response.json().await?;
-
-        Ok(body)
+        Ok(self
+            .request(self.0.get(Self::make_url(path)))
+            .await?
+            .json()
+            .await?)
     }
 
     /// Make a `POST` request to the API with a json body and convert the response body to json.
-    pub async fn post<T: DeserializeOwned, U: Serialize>(
+    pub async fn post<T: DeserializeOwned>(
         &self,
         path: impl AsRef<str>,
-        body: U,
+        body: impl Serialize,
     ) -> Result<T> {
-        let response = self.0.post(Self::make_url(path)).json(&body).send().await?;
-
-        if !response.status().is_success() {
-            return Err(Error::UnsuccessfulRequest(response));
-        }
-
-        let body = response.json().await?;
-
-        Ok(body)
+        Ok(self
+            .request(self.0.post(Self::make_url(path)).json(&body))
+            .await?
+            .json()
+            .await?)
     }
 
     /// Make a `PUT` request to the API with a json body.
-    pub async fn put<T: Serialize>(&self, path: impl AsRef<str>, body: T) -> Result {
-        let response = self.0.put(Self::make_url(path)).json(&body).send().await?;
-
-        if !response.status().is_success() {
-            return Err(Error::UnsuccessfulRequest(response));
-        }
+    pub async fn put(&self, path: impl AsRef<str>, body: impl Serialize) -> Result {
+        self.request(self.0.put(Self::make_url(path)).json(&body))
+            .await?;
 
         Ok(())
     }
 
     /// Make a `PATCH` request to the API with a json body.
-    pub async fn patch<T: Serialize>(&self, path: impl AsRef<str>, body: T) -> Result {
-        let response = self
-            .0
-            .patch(Self::make_url(path))
-            .json(&body)
-            .send()
+    pub async fn patch(&self, path: impl AsRef<str>, body: impl Serialize) -> Result {
+        self.request(self.0.patch(Self::make_url(path)).json(&body))
             .await?;
-
-        if !response.status().is_success() {
-            return Err(Error::UnsuccessfulRequest(response));
-        }
 
         Ok(())
     }
 
     /// Make a `DELETE` request to the API.
     pub async fn delete(&self, path: impl AsRef<str>) -> Result {
-        let response = self.0.delete(Self::make_url(path)).send().await?;
+        self.request(self.0.delete(Self::make_url(path))).await?;
+
+        Ok(())
+    }
+
+    fn make_url(path: impl AsRef<str>) -> String {
+        format!("{}/{}", DELTA_API, path.as_ref())
+    }
+
+    async fn request(&self, builder: RequestBuilder) -> Result<Response> {
+        let response = match self.1.as_ref() {
+            Authentication::Bot(token) => builder.header("x-bot-token", token),
+            Authentication::Session(token) => builder.header("x-session-token", token),
+        }
+        .send()
+        .await?;
 
         if !response.status().is_success() {
             return Err(Error::UnsuccessfulRequest(response));
         }
 
-        Ok(())
+        Ok(response)
+    }
+}
+
+impl AsRef<ReqwestClient> for HttpClient {
+    fn as_ref(&self) -> &ReqwestClient {
+        &self.0
     }
 }

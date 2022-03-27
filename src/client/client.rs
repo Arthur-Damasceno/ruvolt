@@ -5,6 +5,7 @@ use {
 
 use crate::{
     error::Error,
+    http::Authentication,
     models::events::{ClientEvent, ServerEvent},
     websocket::WebSocketClient,
     Action, ActionMessenger, ActionRx, Context, EventHandler, EventHandlerExt, Result,
@@ -22,11 +23,20 @@ pub struct Client {
 }
 
 impl Client {
-    /// Create a new client and connect to the server.
+    /// Create a new client (Bot) and connect to the server.
     pub async fn new(token: impl Into<String>) -> Result<Self> {
+        Self::with_authentication(Authentication::Bot(token.into())).await
+    }
+
+    /// Create a new client (Self-bot) and connect to the server.
+    pub async fn session(token: impl Into<String>) -> Result<Self> {
+        Self::with_authentication(Authentication::Session(token.into())).await
+    }
+
+    async fn with_authentication(authentication: Authentication) -> Result<Self> {
         let ws_client = WebSocketClient::connect().await?;
         let (messenger, action_rx) = ActionMessenger::new();
-        let context = Context::new(token, messenger);
+        let context = Context::new(authentication, messenger);
 
         Ok(Self {
             ws_client,
@@ -63,7 +73,7 @@ impl Client {
     async fn authenticate(&mut self) -> Result {
         self.ws_client
             .send(ClientEvent::Authenticate {
-                token: self.context.token(),
+                token: self.context.http_client.token(),
             })
             .await?;
 
