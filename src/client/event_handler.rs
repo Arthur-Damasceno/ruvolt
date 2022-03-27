@@ -9,90 +9,90 @@ use crate::{
 #[async_trait]
 pub trait EventHandler: Send + Sync + 'static {
     /// Bot is ready.
-    async fn ready(&self, _cx: Context, _data: ReadyEvent) {}
+    async fn ready(_cx: Context, _data: ReadyEvent) {}
 
     /// A new message received.
-    async fn message(&self, _cx: Context, _data: Message) {}
+    async fn message(_cx: Context, _data: Message) {}
 
     /// A message has been edited or otherwise updated.
-    async fn message_update(&self, _cx: Context, _data: MessageUpdateEvent) {}
+    async fn message_update(_cx: Context, _data: MessageUpdateEvent) {}
 
     /// A message has been deleted.
-    async fn message_delete(&self, _cx: Context, _data: MessageDeleteEvent) {}
+    async fn message_delete(_cx: Context, _data: MessageDeleteEvent) {}
 
     /// A channel has been created.
-    async fn channel_create(&self, _cx: Context, _data: Channel) {}
+    async fn channel_create(_cx: Context, _data: Channel) {}
 
     /// A channel details were updated.
-    async fn channel_update(&self, _cx: Context, _data: ChannelUpdateEvent) {}
+    async fn channel_update(_cx: Context, _data: ChannelUpdateEvent) {}
 
     /// A channel has been deleted.
-    async fn channel_delete(&self, _cx: Context, _data: ChannelDeleteEvent) {}
+    async fn channel_delete(_cx: Context, _data: ChannelDeleteEvent) {}
 
     /// A user has joined the group.
-    async fn channel_group_join(&self, _cx: Context, _data: ChannelGroupJoinEvent) {}
+    async fn channel_group_join(_cx: Context, _data: ChannelGroupJoinEvent) {}
 
     /// A user has left the group.
-    async fn channel_group_leave(&self, _cx: Context, _data: ChannelGroupLeaveEvent) {}
+    async fn channel_group_leave(_cx: Context, _data: ChannelGroupLeaveEvent) {}
 
     /// A user has started typing in a channel.
-    async fn channel_start_typing(&self, _cx: Context, _data: ChannelStartTypingEvent) {}
+    async fn channel_start_typing(_cx: Context, _data: ChannelStartTypingEvent) {}
 
     /// A user has stopped typing in a channel.
-    async fn channel_stop_typing(&self, _cx: Context, _data: ChannelStopTypingEvent) {}
+    async fn channel_stop_typing(_cx: Context, _data: ChannelStopTypingEvent) {}
 
     /// You have acknowledged new messages in the channel up to the message id.
-    async fn channel_ack(&self, _cx: Context, _data: ChannelAckEvent) {}
+    async fn channel_ack(_cx: Context, _data: ChannelAckEvent) {}
 
     /// A server details were updated.
-    async fn server_update(&self, _cx: Context, _data: ServerUpdateEvent) {}
+    async fn server_update(_cx: Context, _data: ServerUpdateEvent) {}
 
     /// A server has been deleted.
-    async fn server_delete(&self, _cx: Context, _data: ServerDeleteEvent) {}
+    async fn server_delete(_cx: Context, _data: ServerDeleteEvent) {}
 
     /// A server member details were updated.
-    async fn server_member_update(&self, _cx: Context, _data: ServerMemberUpdateEvent) {}
+    async fn server_member_update(_cx: Context, _data: ServerMemberUpdateEvent) {}
 
     /// A user has joined the group.
-    async fn server_member_join(&self, _cx: Context, _data: ServerMemberJoinEvent) {}
+    async fn server_member_join(_cx: Context, _data: ServerMemberJoinEvent) {}
 
     /// A user has left the group.
-    async fn server_member_leave(&self, _cx: Context, _data: ServerMemberLeaveEvent) {}
+    async fn server_member_leave(_cx: Context, _data: ServerMemberLeaveEvent) {}
 
     /// A server role details were updated.
-    async fn server_role_update(&self, _cx: Context, _data: ServerRoleUpdateEvent) {}
+    async fn server_role_update(_cx: Context, _data: ServerRoleUpdateEvent) {}
 
     /// A server role has been deleted.
-    async fn server_role_delete(&self, _cx: Context, _data: ServerRoleDeleteEvent) {}
+    async fn server_role_delete(_cx: Context, _data: ServerRoleDeleteEvent) {}
 
     /// A user has been updated.
-    async fn user_update(&self, _cx: Context, _data: UserUpdateEvent) {}
+    async fn user_update(_cx: Context, _data: UserUpdateEvent) {}
 }
 
 #[async_trait]
 pub(crate) trait EventHandlerExt: EventHandler {
-    async fn handle(&self, cx: Context, event: ServerEvent) {
+    async fn handle(cx: Context, event: ServerEvent) {
         match event {
-            ServerEvent::Ready(data) => self.ready(cx, data).await,
-            ServerEvent::Message(msg) => self.message(cx, msg).await,
-            ServerEvent::MessageUpdate(data) => self.message_update(cx, data).await,
-            ServerEvent::MessageDelete(data) => self.message_delete(cx, data).await,
-            ServerEvent::ChannelCreate(channel) => self.channel_create(cx, channel).await,
-            ServerEvent::ChannelUpdate(data) => self.channel_update(cx, data).await,
-            ServerEvent::ChannelDelete(data) => self.channel_delete(cx, data).await,
-            ServerEvent::ChannelGroupJoin(data) => self.channel_group_join(cx, data).await,
-            ServerEvent::ChannelGroupLeave(data) => self.channel_group_leave(cx, data).await,
-            ServerEvent::ChannelStartTyping(data) => self.channel_start_typing(cx, data).await,
-            ServerEvent::ChannelStopTyping(data) => self.channel_stop_typing(cx, data).await,
-            ServerEvent::ChannelAck(data) => self.channel_ack(cx, data).await,
-            ServerEvent::ServerUpdate(data) => self.server_update(cx, data).await,
-            ServerEvent::ServerDelete(data) => self.server_delete(cx, data).await,
-            ServerEvent::ServerMemberUpdate(data) => self.server_member_update(cx, data).await,
-            ServerEvent::ServerMemberJoin(data) => self.server_member_join(cx, data).await,
-            ServerEvent::ServerMemberLeave(data) => self.server_member_leave(cx, data).await,
-            ServerEvent::ServerRoleUpdate(data) => self.server_role_update(cx, data).await,
-            ServerEvent::ServerRoleDelete(data) => self.server_role_delete(cx, data).await,
-            ServerEvent::UserUpdate(data) => self.user_update(cx, data).await,
+            ServerEvent::Ready(data) => Self::ready(cx, data).await,
+            ServerEvent::Message(data) => Self::message(cx, data).await,
+            ServerEvent::MessageUpdate(data) => Self::message_update(cx, data).await,
+            ServerEvent::MessageDelete(data) => Self::message_delete(cx, data).await,
+            ServerEvent::ChannelCreate(data) => Self::channel_create(cx, data).await,
+            ServerEvent::ChannelUpdate(data) => Self::channel_update(cx, data).await,
+            ServerEvent::ChannelDelete(data) => Self::channel_delete(cx, data).await,
+            ServerEvent::ChannelGroupJoin(data) => Self::channel_group_join(cx, data).await,
+            ServerEvent::ChannelGroupLeave(data) => Self::channel_group_leave(cx, data).await,
+            ServerEvent::ChannelStartTyping(data) => Self::channel_start_typing(cx, data).await,
+            ServerEvent::ChannelStopTyping(data) => Self::channel_stop_typing(cx, data).await,
+            ServerEvent::ChannelAck(data) => Self::channel_ack(cx, data).await,
+            ServerEvent::ServerUpdate(data) => Self::server_update(cx, data).await,
+            ServerEvent::ServerDelete(data) => Self::server_delete(cx, data).await,
+            ServerEvent::ServerMemberUpdate(data) => Self::server_member_update(cx, data).await,
+            ServerEvent::ServerMemberJoin(data) => Self::server_member_join(cx, data).await,
+            ServerEvent::ServerMemberLeave(data) => Self::server_member_leave(cx, data).await,
+            ServerEvent::ServerRoleUpdate(data) => Self::server_role_update(cx, data).await,
+            ServerEvent::ServerRoleDelete(data) => Self::server_role_delete(cx, data).await,
+            ServerEvent::UserUpdate(data) => Self::user_update(cx, data).await,
             _ => return,
         }
     }

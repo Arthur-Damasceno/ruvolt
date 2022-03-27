@@ -12,13 +12,13 @@ struct Handler;
 
 #[async_trait]
 impl EventHandler for Handler {
-    async fn ready(&self, cx: Context, _: ReadyEvent) {
+    async fn ready(cx: Context, _: ReadyEvent) {
         if let Ok(User { username, .. }) = cx.user().await {
             println!("@{username} is ready!");
         }
     }
 
-    async fn message(&self, cx: Context, msg: Message) {
+    async fn message(cx: Context, msg: Message) {
         let content = msg.content.to_string();
 
         if content == "!ping" {
@@ -47,7 +47,7 @@ impl EventHandler for Handler {
 #[tokio::main]
 async fn main() -> Result {
     let token = env::var("TOKEN").unwrap();
-    let mut client = Client::new(Handler, token).await?;
+    let mut client = Client::new(token).await?;
 
-    client.listen().await
+    client.listen::<Handler>().await
 }

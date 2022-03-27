@@ -1,6 +1,5 @@
 use {
     futures_util::{select, FutureExt},
-    std::sync::Arc,
     tracing::{error, info, warn},
 };
 
@@ -16,22 +15,20 @@ use crate::cache::Cache;
 
 /// API wrapper to interact with Revolt.
 #[derive(Debug)]
-pub struct Client<T: EventHandler> {
-    event_handler: Arc<T>,
+pub struct Client {
     ws_client: WebSocketClient,
     action_rx: ActionRx,
     context: Context,
 }
 
-impl<T: EventHandler> Client<T> {
+impl Client {
     /// Create a new client and connect to the server.
-    pub async fn new(event_handler: T, token: impl Into<String>) -> Result<Self> {
+    pub async fn new(token: impl Into<String>) -> Result<Self> {
         let ws_client = WebSocketClient::connect().await?;
         let (messenger, action_rx) = ActionMessenger::new();
         let context = Context::new(token, messenger);
 
         Ok(Self {
-            event_handler: Arc::new(event_handler),
             ws_client,
             action_rx,
             context,
@@ -39,7 +36,7 @@ impl<T: EventHandler> Client<T> {
     }
 
     /// Start listening for server events.
-    pub async fn listen(&mut self) -> Result {
+    pub async fn listen<T: EventHandler>(&mut self) -> Result {
         self.authenticate().await?;
 
         info!(target: "Client", "Client authenticated successfully. Starting listening for events");
@@ -52,7 +49,7 @@ impl<T: EventHandler> Client<T> {
             select! {
                 event = self.ws_client.accept().fuse() => {
                     if let Some(event) = event {
-                        self.handle_event(event);
+                        self.handle_event::<T>(event);
                     } else {
                         info!(target: "Client", "Connection closed");
                         return Ok(());
@@ -84,17 +81,16 @@ impl<T: EventHandler> Client<T> {
         }
     }
 
-    fn handle_event(&self, event: Result<ServerEvent>) {
+    fn handle_event<T: EventHandler>(&self, event: Result<ServerEvent>) {
         match event {
             Ok(event) => {
-                let event_handler = self.event_handler.clone();
                 let context = self.context.clone();
 
                 tokio::spawn(async move {
                     #[cfg(feature = "cache")]
                     Cache::update(&context, &event).await;
 
-                    event_handler.handle(context, event).await
+                    T::handle(context, event).await;
                 });
             }
             Err(err) => error!(target: "Client", "Err handling event: {}", err),
