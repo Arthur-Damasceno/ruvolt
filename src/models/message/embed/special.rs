@@ -1,10 +1,9 @@
 #![allow(missing_docs)]
 
-use serde::Deserialize;
-
 /// A special 3rd party embed.
 #[derive(Debug, Deserialize, Clone, PartialEq)]
 #[serde(tag = "type")]
+#[non_exhaustive]
 pub enum EmbedSpecial {
     /// Youtube type.
     Youtube {
@@ -31,6 +30,7 @@ pub enum EmbedSpecial {
 
 /// Twitch content type.
 #[derive(Debug, Deserialize, Clone, Copy, PartialEq)]
+#[non_exhaustive]
 pub enum TwitchContentType {
     Channel,
     Video,
@@ -39,6 +39,7 @@ pub enum TwitchContentType {
 
 /// Bandcamp content type.
 #[derive(Debug, Deserialize, Clone, Copy, PartialEq)]
+#[non_exhaustive]
 pub enum BandcampContentType {
     Album,
     Track,

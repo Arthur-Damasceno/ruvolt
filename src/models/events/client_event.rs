@@ -1,5 +1,3 @@
-use serde::Serialize;
-
 use crate::models::Id;
 
 #[derive(Debug, Serialize, Clone, PartialEq)]

@@ -5,8 +5,6 @@ mod group;
 mod text;
 mod voice;
 
-use serde::Deserialize;
-
 use crate::{builders::EditChannel, models::Id, Context, Result};
 
 #[cfg(feature = "cache")]
@@ -15,6 +13,7 @@ use crate::cache::UpdateCache;
 /// A channel.
 #[derive(Debug, Deserialize, Clone, PartialEq)]
 #[serde(tag = "channel_type")]
+#[non_exhaustive]
 pub enum Channel {
     /// A text channel.
     #[serde(rename = "TextChannel")]
@@ -63,7 +62,7 @@ impl Channel {
 }
 
 #[cfg(feature = "cache")]
-#[async_trait::async_trait]
+#[async_trait]
 impl UpdateCache for Channel {
     async fn update(&self, cx: &Context) {
         cx.cache

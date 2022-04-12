@@ -1,9 +1,8 @@
-use serde::{Deserialize, Serialize};
-
 use crate::models::Id;
 
 /// A server category.
 #[derive(Debug, Clone, PartialEq, Deserialize, Serialize)]
+#[non_exhaustive]
 pub struct Category {
     /// Category id.
     pub id: Id,

@@ -1,5 +1,3 @@
-use serde::Deserialize;
-
 use crate::{
     models::{Channel, Id},
     Context, Result,
@@ -7,6 +5,7 @@ use crate::{
 
 /// A message has been deleted.
 #[derive(Debug, Deserialize, Clone, PartialEq)]
+#[non_exhaustive]
 pub struct MessageDeleteEvent {
     /// Message id.
     #[serde(rename = "id")]

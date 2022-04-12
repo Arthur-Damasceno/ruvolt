@@ -1,5 +1,3 @@
-use serde::Deserialize;
-
 use crate::{
     models::{Channel, Embed, Id, Message, MessageEdited},
     Context, Result,
@@ -7,6 +5,7 @@ use crate::{
 
 /// A message has been edited or otherwise updated.
 #[derive(Debug, Clone, PartialEq, Deserialize)]
+#[non_exhaustive]
 pub struct MessageUpdateEvent {
     /// Message id.
     #[serde(rename = "id")]

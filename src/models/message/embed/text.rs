@@ -1,9 +1,8 @@
-use serde::Deserialize;
-
 use crate::models::Attachment;
 
 /// A text embed.
 #[derive(Debug, Deserialize, Clone, PartialEq)]
+#[non_exhaustive]
 pub struct TextEmbed {
     /// Embed icon url.
     pub icon_url: Option<String>,

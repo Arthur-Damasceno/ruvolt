@@ -1,5 +1,3 @@
-use serde::Deserialize;
-
 use crate::{
     models::{Channel, Id, User},
     Context, Result,
@@ -7,6 +5,7 @@ use crate::{
 
 /// A user has started typing in a channel.
 #[derive(Debug, Deserialize, Clone, PartialEq)]
+#[non_exhaustive]
 pub struct ChannelStartTypingEvent {
     /// Channel id.
     #[serde(rename = "id")]

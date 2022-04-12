@@ -1,9 +1,8 @@
-use serde::Deserialize;
-
 use crate::models::Id;
 
 /// An attachment like icons, avatars, banners or message attachments.
 #[derive(Debug, Deserialize, Clone, PartialEq)]
+#[non_exhaustive]
 pub struct Attachment {
     /// Attachment id.
     #[serde(rename = "_id")]
@@ -23,6 +22,7 @@ pub struct Attachment {
 /// Attachment tag.
 #[derive(Debug, Deserialize, Clone, Copy, PartialEq)]
 #[serde(rename_all = "lowercase")]
+#[non_exhaustive]
 pub enum AttachmentTag {
     /// Attachments tag.
     Attachments,
@@ -39,6 +39,7 @@ pub enum AttachmentTag {
 /// Attachment metadata.
 #[derive(Debug, Deserialize, Clone, Copy, PartialEq)]
 #[serde(tag = "type")]
+#[non_exhaustive]
 pub enum AttachmentMetadata {
     /// File type.
     File,

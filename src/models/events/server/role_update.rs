@@ -1,4 +1,4 @@
-use {serde::Deserialize, serde_json::Value as Json};
+use serde_json::Value as Json;
 
 use crate::{
     models::{Id, Server},
@@ -7,6 +7,7 @@ use crate::{
 
 /// Specifies a field to remove on server role update.
 #[derive(Debug, Deserialize, Clone, Copy, PartialEq)]
+#[non_exhaustive]
 pub enum RoleField {
     /// Role color.
     #[serde(rename = "Colour")]
@@ -15,6 +16,7 @@ pub enum RoleField {
 
 /// A server role details were updated.
 #[derive(Debug, Deserialize, Clone, PartialEq)]
+#[non_exhaustive]
 pub struct ServerRoleUpdateEvent {
     /// Server id.
     #[serde(rename = "id")]

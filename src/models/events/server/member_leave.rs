@@ -1,5 +1,3 @@
-use serde::Deserialize;
-
 use crate::{
     models::{Id, Server, User},
     Context, Result,
@@ -10,6 +8,7 @@ use crate::cache::UpdateCache;
 
 /// A user has left the server.
 #[derive(Debug, Deserialize, Clone, PartialEq)]
+#[non_exhaustive]
 pub struct ServerMemberLeaveEvent {
     /// Server id.
     #[serde(rename = "id")]
@@ -32,7 +31,7 @@ impl ServerMemberLeaveEvent {
 }
 
 #[cfg(feature = "cache")]
-#[async_trait::async_trait]
+#[async_trait]
 impl UpdateCache for ServerMemberLeaveEvent {
     async fn update(&self, cx: &Context) {
         cx.cache

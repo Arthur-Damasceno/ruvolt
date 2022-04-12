@@ -1,5 +1,3 @@
-use serde::{Deserialize, Serialize};
-
 use crate::{
     builders::EditMember,
     models::{Attachment, Id},
@@ -8,6 +6,7 @@ use crate::{
 
 /// A server member id.
 #[derive(Debug, Clone, PartialEq, Deserialize, Hash, Eq)]
+#[non_exhaustive]
 pub struct MemberId {
     /// Server id.
     #[serde(rename = "server")]
@@ -28,6 +27,7 @@ impl From<(&Id, &Id)> for MemberId {
 
 /// A server member.
 #[derive(Debug, Deserialize, Clone, PartialEq)]
+#[non_exhaustive]
 pub struct Member {
     /// Member id.
     #[serde(rename = "_id")]

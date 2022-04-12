@@ -1,7 +1,6 @@
-use serde::{Deserialize, Serialize};
-
 /// User status.
 #[derive(Debug, Clone, PartialEq, Deserialize, Serialize)]
+#[non_exhaustive]
 pub struct UserStatus {
     /// User status text.
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -39,6 +38,7 @@ impl UserStatus {
 
 /// User presence.
 #[derive(Debug, Clone, Copy, PartialEq, Deserialize, Serialize)]
+#[non_exhaustive]
 pub enum Presence {
     /// `Online` presence.
     Online,

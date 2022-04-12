@@ -1,5 +1,3 @@
-use serde::Deserialize;
-
 use crate::{
     models::{Channel, Id, User},
     Context, Result,
@@ -10,6 +8,7 @@ use crate::cache::UpdateCache;
 
 /// A user has joined the group.
 #[derive(Debug, Deserialize, Clone, PartialEq)]
+#[non_exhaustive]
 pub struct ChannelGroupJoinEvent {
     /// Channel id.
     #[serde(rename = "id")]
@@ -32,7 +31,7 @@ impl ChannelGroupJoinEvent {
 }
 
 #[cfg(feature = "cache")]
-#[async_trait::async_trait]
+#[async_trait]
 impl UpdateCache for ChannelGroupJoinEvent {
     async fn update(&self, cx: &Context) {
         if let Some(Channel::Group(ref mut group)) =

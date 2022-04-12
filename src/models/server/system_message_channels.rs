@@ -1,9 +1,8 @@
-use serde::{Deserialize, Serialize};
-
 use crate::models::Id;
 
 /// Server system message channels.
 #[derive(Debug, Clone, PartialEq, Default, Deserialize, Serialize)]
+#[non_exhaustive]
 pub struct SystemMessageChannels {
     /// User joined channel id.
     #[serde(skip_serializing_if = "Option::is_none")]

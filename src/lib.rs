@@ -9,6 +9,13 @@
 //! # [Ruvolt](crate)
 //! ## An API wrapper for Revolt written in Rust.
 
+#[macro_use]
+extern crate serde;
+#[macro_use]
+extern crate bitflags;
+#[macro_use]
+extern crate async_trait;
+
 #[doc(inline)]
 pub use client::*;
 mod client;

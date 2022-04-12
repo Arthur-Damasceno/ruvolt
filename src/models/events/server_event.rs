@@ -1,5 +1,3 @@
-use serde::Deserialize;
-
 use crate::{
     error::AuthenticationError,
     models::{events::*, Channel, Message},

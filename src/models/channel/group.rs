@@ -1,5 +1,3 @@
-use serde::Deserialize;
-
 use crate::{
     builders::{CreateMessage, EditChannel},
     models::{Attachment, Channel, Id, Message, User},
@@ -8,6 +6,7 @@ use crate::{
 
 /// A group channel.
 #[derive(Debug, Deserialize, Clone, PartialEq)]
+#[non_exhaustive]
 pub struct GroupChannel {
     /// Group id.
     #[serde(rename = "_id")]

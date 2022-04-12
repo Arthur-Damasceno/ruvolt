@@ -1,5 +1,3 @@
-use serde::Deserialize;
-
 use crate::models::{Channel, Member, Server, User};
 
 #[cfg(feature = "cache")]
@@ -7,6 +5,7 @@ use crate::{cache::UpdateCache, Context};
 
 /// Bot is ready.
 #[derive(Debug, Deserialize, Clone, PartialEq)]
+#[non_exhaustive]
 pub struct ReadyEvent {
     /// Users.
     pub users: Vec<User>,
@@ -19,7 +18,7 @@ pub struct ReadyEvent {
 }
 
 #[cfg(feature = "cache")]
-#[async_trait::async_trait]
+#[async_trait]
 impl UpdateCache for ReadyEvent {
     async fn update(&self, cx: &Context) {
         let mut users = cx.cache.users.write().await;

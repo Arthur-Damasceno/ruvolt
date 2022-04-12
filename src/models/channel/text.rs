@@ -1,5 +1,3 @@
-use serde::Deserialize;
-
 use crate::{
     builders::{CreateMessage, EditChannel},
     models::{Attachment, Channel, Id, Message},
@@ -8,6 +6,7 @@ use crate::{
 
 /// A text channel.
 #[derive(Debug, Deserialize, Clone, PartialEq)]
+#[non_exhaustive]
 pub struct TextChannel {
     /// Channel id.
     #[serde(rename = "_id")]

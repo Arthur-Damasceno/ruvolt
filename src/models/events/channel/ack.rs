@@ -1,5 +1,3 @@
-use serde::Deserialize;
-
 use crate::{
     models::{Channel, Id, Message, User},
     Context, Result,
@@ -7,6 +5,7 @@ use crate::{
 
 /// You have acknowledged new messages in the channel up to the message id.
 #[derive(Debug, Deserialize, Clone, PartialEq)]
+#[non_exhaustive]
 pub struct ChannelAckEvent {
     /// Channel id.
     #[serde(rename = "id")]

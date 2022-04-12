@@ -6,8 +6,6 @@ mod flags;
 mod profile;
 mod status;
 
-use serde::Deserialize;
-
 use crate::{
     models::{Attachment, DirectMessageChannel, Id},
     Context, Result,
@@ -15,6 +13,7 @@ use crate::{
 
 /// A user.
 #[derive(Debug, Deserialize, Clone, PartialEq)]
+#[non_exhaustive]
 pub struct User {
     /// User id.
     #[serde(rename = "_id")]

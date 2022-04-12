@@ -3,7 +3,7 @@
 //! ## Why use cache?
 //! Using caching reduces latency to access data and allows you to avoid requests to the API.
 
-use {async_trait::async_trait, std::collections::HashMap, tokio::sync::RwLock};
+use {std::collections::HashMap, tokio::sync::RwLock};
 
 use crate::{
     models::{events::ServerEvent, Channel, Id, Member, MemberId, Server, User},

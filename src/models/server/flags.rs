@@ -1,5 +1,3 @@
-use {bitflags::bitflags, serde::Deserialize};
-
 bitflags! {
     /// Server flags.
     #[derive(Deserialize, Default)]

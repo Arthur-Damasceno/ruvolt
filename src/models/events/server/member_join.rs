@@ -1,5 +1,3 @@
-use serde::Deserialize;
-
 use crate::{
     models::{Id, Member, Server, User},
     Context, Result,
@@ -10,6 +8,7 @@ use crate::cache::UpdateCache;
 
 /// A user has joined the server.
 #[derive(Debug, Deserialize, Clone, PartialEq)]
+#[non_exhaustive]
 pub struct ServerMemberJoinEvent {
     /// Server id.
     #[serde(rename = "id")]
@@ -37,7 +36,7 @@ impl ServerMemberJoinEvent {
 }
 
 #[cfg(feature = "cache")]
-#[async_trait::async_trait]
+#[async_trait]
 impl UpdateCache for ServerMemberJoinEvent {
     async fn update(&self, cx: &Context) {
         if let Ok(member) = Member::fetch(cx, &self.server_id, &self.user_id).await {

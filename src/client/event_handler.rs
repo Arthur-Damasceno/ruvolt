@@ -1,5 +1,3 @@
-use async_trait::async_trait;
-
 use crate::{
     models::{events::*, *},
     Context,
@@ -72,27 +70,29 @@ pub trait EventHandler: Send + Sync + 'static {
 #[async_trait]
 pub(crate) trait EventHandlerExt: EventHandler {
     async fn handle(cx: Context, event: ServerEvent) {
+        use ServerEvent::*;
+
         match event {
-            ServerEvent::Ready(data) => Self::ready(cx, data).await,
-            ServerEvent::Message(data) => Self::message(cx, data).await,
-            ServerEvent::MessageUpdate(data) => Self::message_update(cx, data).await,
-            ServerEvent::MessageDelete(data) => Self::message_delete(cx, data).await,
-            ServerEvent::ChannelCreate(data) => Self::channel_create(cx, data).await,
-            ServerEvent::ChannelUpdate(data) => Self::channel_update(cx, data).await,
-            ServerEvent::ChannelDelete(data) => Self::channel_delete(cx, data).await,
-            ServerEvent::ChannelGroupJoin(data) => Self::channel_group_join(cx, data).await,
-            ServerEvent::ChannelGroupLeave(data) => Self::channel_group_leave(cx, data).await,
-            ServerEvent::ChannelStartTyping(data) => Self::channel_start_typing(cx, data).await,
-            ServerEvent::ChannelStopTyping(data) => Self::channel_stop_typing(cx, data).await,
-            ServerEvent::ChannelAck(data) => Self::channel_ack(cx, data).await,
-            ServerEvent::ServerUpdate(data) => Self::server_update(cx, data).await,
-            ServerEvent::ServerDelete(data) => Self::server_delete(cx, data).await,
-            ServerEvent::ServerMemberUpdate(data) => Self::server_member_update(cx, data).await,
-            ServerEvent::ServerMemberJoin(data) => Self::server_member_join(cx, data).await,
-            ServerEvent::ServerMemberLeave(data) => Self::server_member_leave(cx, data).await,
-            ServerEvent::ServerRoleUpdate(data) => Self::server_role_update(cx, data).await,
-            ServerEvent::ServerRoleDelete(data) => Self::server_role_delete(cx, data).await,
-            ServerEvent::UserUpdate(data) => Self::user_update(cx, data).await,
+            Ready(data) => Self::ready(cx, data).await,
+            Message(data) => Self::message(cx, data).await,
+            MessageUpdate(data) => Self::message_update(cx, data).await,
+            MessageDelete(data) => Self::message_delete(cx, data).await,
+            ChannelCreate(data) => Self::channel_create(cx, data).await,
+            ChannelUpdate(data) => Self::channel_update(cx, data).await,
+            ChannelDelete(data) => Self::channel_delete(cx, data).await,
+            ChannelGroupJoin(data) => Self::channel_group_join(cx, data).await,
+            ChannelGroupLeave(data) => Self::channel_group_leave(cx, data).await,
+            ChannelStartTyping(data) => Self::channel_start_typing(cx, data).await,
+            ChannelStopTyping(data) => Self::channel_stop_typing(cx, data).await,
+            ChannelAck(data) => Self::channel_ack(cx, data).await,
+            ServerUpdate(data) => Self::server_update(cx, data).await,
+            ServerDelete(data) => Self::server_delete(cx, data).await,
+            ServerMemberUpdate(data) => Self::server_member_update(cx, data).await,
+            ServerMemberJoin(data) => Self::server_member_join(cx, data).await,
+            ServerMemberLeave(data) => Self::server_member_leave(cx, data).await,
+            ServerRoleUpdate(data) => Self::server_role_update(cx, data).await,
+            ServerRoleDelete(data) => Self::server_role_delete(cx, data).await,
+            UserUpdate(data) => Self::user_update(cx, data).await,
             _ => return,
         }
     }

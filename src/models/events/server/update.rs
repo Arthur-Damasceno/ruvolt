@@ -1,5 +1,3 @@
-use serde::{Deserialize, Serialize};
-
 use crate::{
     models::{Attachment, Category, Id, Server, SystemMessageChannels},
     Context, Result,
@@ -10,6 +8,7 @@ use crate::cache::UpdateCache;
 
 /// Specifies a field to remove on server update.
 #[derive(Debug, Clone, Copy, PartialEq, Deserialize, Serialize)]
+#[non_exhaustive]
 pub enum ServerField {
     /// Server icon.
     Icon,
@@ -21,6 +20,7 @@ pub enum ServerField {
 
 /// A server details were updated.
 #[derive(Debug, Clone, PartialEq, Deserialize)]
+#[non_exhaustive]
 pub struct ServerUpdateEvent {
     /// Server id.
     #[serde(rename = "id")]
@@ -40,6 +40,7 @@ impl ServerUpdateEvent {
 
 /// A partial server.
 #[derive(Debug, Clone, PartialEq, Deserialize)]
+#[non_exhaustive]
 pub struct PartialServer {
     /// Server name.
     pub name: Option<String>,
@@ -59,7 +60,7 @@ pub struct PartialServer {
 }
 
 #[cfg(feature = "cache")]
-#[async_trait::async_trait]
+#[async_trait]
 impl UpdateCache for ServerUpdateEvent {
     async fn update(&self, cx: &Context) {
         if let Some(server) = cx.cache.servers.write().await.get_mut(&self.server_id) {

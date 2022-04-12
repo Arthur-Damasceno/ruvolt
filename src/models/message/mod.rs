@@ -5,8 +5,6 @@ mod edited;
 mod embed;
 mod masquerade;
 
-use serde::Deserialize;
-
 use crate::{
     builders::{CreateMessage, EditMessage},
     models::{Attachment, Id},
@@ -18,6 +16,7 @@ use crate::{cache::UpdateCache, models::Channel};
 
 /// A message.
 #[derive(Debug, Deserialize, Clone, PartialEq)]
+#[non_exhaustive]
 pub struct Message {
     /// Message id.
     #[serde(rename = "_id")]
@@ -109,7 +108,7 @@ impl Message {
 }
 
 #[cfg(feature = "cache")]
-#[async_trait::async_trait]
+#[async_trait]
 impl UpdateCache for Message {
     async fn update(&self, cx: &Context) {
         if let Some(channel) = cx.cache.channels.write().await.get_mut(&self.channel_id) {

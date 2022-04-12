@@ -1,7 +1,6 @@
-use serde::{Deserialize, Serialize};
-
 /// Masquerade displayed for a message.
 #[derive(Debug, Clone, PartialEq, Deserialize, Serialize)]
+#[non_exhaustive]
 pub struct Masquerade {
     /// Displayed name.
     #[serde(skip_serializing_if = "Option::is_none")]

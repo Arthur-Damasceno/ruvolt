@@ -1,5 +1,3 @@
-use serde::Deserialize;
-
 use crate::{
     builders::CreateMessage,
     models::{Channel, Id, Message},
@@ -8,6 +6,7 @@ use crate::{
 
 /// A DM channel.
 #[derive(Debug, Deserialize, Clone, PartialEq)]
+#[non_exhaustive]
 pub struct DirectMessageChannel {
     /// Channel id.
     #[serde(rename = "_id")]

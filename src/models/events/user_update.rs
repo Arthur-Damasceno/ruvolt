@@ -1,5 +1,3 @@
-use serde::{Deserialize, Serialize};
-
 use crate::{
     models::{Attachment, Id, User, UserProfile, UserStatus},
     Context, Result,
@@ -10,6 +8,7 @@ use crate::cache::UpdateCache;
 
 /// Specifies a field to remove on user update.
 #[derive(Debug, Clone, Copy, PartialEq, Deserialize, Serialize)]
+#[non_exhaustive]
 pub enum UserField {
     /// User profile content.
     ProfileContent,
@@ -23,6 +22,7 @@ pub enum UserField {
 
 /// A user has been updated.
 #[derive(Debug, Deserialize, Clone, PartialEq)]
+#[non_exhaustive]
 pub struct UserUpdateEvent {
     /// User id.
     #[serde(rename = "id")]
@@ -42,6 +42,7 @@ impl UserUpdateEvent {
 
 /// A partial user
 #[derive(Debug, Deserialize, Clone, PartialEq)]
+#[non_exhaustive]
 pub struct PartialUser {
     /// User status.
     pub status: Option<UserStatus>,
@@ -54,7 +55,7 @@ pub struct PartialUser {
 }
 
 #[cfg(feature = "cache")]
-#[async_trait::async_trait]
+#[async_trait]
 impl UpdateCache for UserUpdateEvent {
     async fn update(&self, cx: &Context) {
         if let Some(user) = cx.cache.users.write().await.get_mut(&self.user_id) {

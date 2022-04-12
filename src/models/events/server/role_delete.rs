@@ -1,5 +1,3 @@
-use serde::Deserialize;
-
 use crate::{
     models::{Id, Server},
     Context, Result,
@@ -7,6 +5,7 @@ use crate::{
 
 /// A server role has been deleted.
 #[derive(Debug, Deserialize, Clone, PartialEq)]
+#[non_exhaustive]
 pub struct ServerRoleDeleteEvent {
     /// Server id.
     #[serde(rename = "id")]

@@ -5,8 +5,6 @@ mod flags;
 mod member;
 mod system_message_channels;
 
-use serde::Deserialize;
-
 use crate::{
     builders::{CreateChannel, EditServer},
     models::{Attachment, Channel, Id, User},
@@ -15,6 +13,7 @@ use crate::{
 
 /// A server.
 #[derive(Debug, Deserialize, Clone, PartialEq)]
+#[non_exhaustive]
 pub struct Server {
     /// Server id.
     #[serde(rename = "_id")]

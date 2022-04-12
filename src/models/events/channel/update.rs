@@ -1,5 +1,3 @@
-use serde::{Deserialize, Serialize};
-
 use crate::{
     models::{Attachment, Channel, Id},
     Context, Result,
@@ -10,6 +8,7 @@ use crate::cache::UpdateCache;
 
 /// Specifies a field to remove on channel update.
 #[derive(Debug, Clone, Copy, PartialEq, Deserialize, Serialize)]
+#[non_exhaustive]
 pub enum ChannelField {
     /// Channel icon.
     Icon,
@@ -19,6 +18,7 @@ pub enum ChannelField {
 
 /// A channel details were updated.
 #[derive(Debug, Clone, PartialEq, Deserialize)]
+#[non_exhaustive]
 pub struct ChannelUpdateEvent {
     /// Channel id.
     #[serde(rename = "id")]
@@ -38,6 +38,7 @@ impl ChannelUpdateEvent {
 
 /// A partial channel.
 #[derive(Debug, Clone, PartialEq, Deserialize)]
+#[non_exhaustive]
 pub struct PartialChannel {
     /// Channel name.
     pub name: Option<String>,
@@ -50,7 +51,7 @@ pub struct PartialChannel {
 }
 
 #[cfg(feature = "cache")]
-#[async_trait::async_trait]
+#[async_trait]
 impl UpdateCache for ChannelUpdateEvent {
     async fn update(&self, cx: &Context) {
         if let Some(channel) = cx.cache.channels.write().await.get_mut(&self.channel_id) {

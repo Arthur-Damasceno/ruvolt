@@ -1,13 +1,11 @@
-use {
-    serde::Deserialize,
-    std::fmt::{self, Display, Formatter},
-};
+use std::fmt::{self, Display, Formatter};
 
 use crate::models::Id;
 
 /// Message content type.
 #[derive(Debug, Deserialize, Clone, PartialEq)]
 #[serde(untagged)]
+#[non_exhaustive]
 pub enum Content {
     /// A user message.
     Text(String),
@@ -44,6 +42,7 @@ impl Display for Content {
 #[allow(missing_docs)]
 #[derive(Debug, Deserialize, Clone, PartialEq)]
 #[serde(tag = "type", rename_all = "snake_case")]
+#[non_exhaustive]
 pub enum SystemMessage {
     Text { content: String },
     UserAdded { id: Id, by: Id },

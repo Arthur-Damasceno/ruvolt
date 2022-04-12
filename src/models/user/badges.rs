@@ -1,5 +1,3 @@
-use {bitflags::bitflags, serde::Deserialize};
-
 bitflags! {
     /// User badges.
     #[derive(Deserialize, Default)]

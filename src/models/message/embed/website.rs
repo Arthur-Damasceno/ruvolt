@@ -1,9 +1,8 @@
-use serde::Deserialize;
-
 use crate::models::EmbedSpecial;
 
 /// A website embed.
 #[derive(Debug, Deserialize, Clone, PartialEq)]
+#[non_exhaustive]
 pub struct WebsiteEmbed {
     /// Embed url.
     pub url: Option<String>,
@@ -28,6 +27,7 @@ pub struct WebsiteEmbed {
 
 /// A embedded video.
 #[derive(Debug, Deserialize, Clone, PartialEq)]
+#[non_exhaustive]
 pub struct EmbedVideo {
     /// Embed video url.
     pub url: String,
@@ -39,6 +39,7 @@ pub struct EmbedVideo {
 
 /// A embedded image.
 #[derive(Debug, Deserialize, Clone, PartialEq)]
+#[non_exhaustive]
 pub struct EmbedImage {
     /// Embed image url.
     pub url: String,
@@ -52,6 +53,7 @@ pub struct EmbedImage {
 
 /// Embed image size.
 #[derive(Debug, Deserialize, Clone, Copy, PartialEq)]
+#[non_exhaustive]
 pub enum EmbedImageSize {
     /// Large size.
     Large,

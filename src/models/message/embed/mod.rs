@@ -4,11 +4,10 @@ mod special;
 mod text;
 mod website;
 
-use serde::Deserialize;
-
 /// A message embed.
 #[derive(Debug, Deserialize, Clone, PartialEq)]
 #[serde(tag = "type")]
+#[non_exhaustive]
 pub enum Embed {
     /// Text type.
     Text(TextEmbed),

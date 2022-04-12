@@ -1,5 +1,3 @@
-use serde::Deserialize;
-
 use crate::{
     builders::EditChannel,
     models::{Attachment, Channel, Id},
@@ -8,6 +6,7 @@ use crate::{
 
 /// A voice channel.
 #[derive(Debug, Deserialize, Clone, PartialEq)]
+#[non_exhaustive]
 pub struct VoiceChannel {
     /// Channel id.
     #[serde(rename = "_id")]

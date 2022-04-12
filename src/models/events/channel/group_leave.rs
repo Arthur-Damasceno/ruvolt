@@ -1,5 +1,3 @@
-use serde::Deserialize;
-
 use crate::{
     models::{Channel, Id, User},
     Context, Result,
@@ -10,6 +8,7 @@ use crate::cache::UpdateCache;
 
 /// A user has left the group.
 #[derive(Debug, Deserialize, Clone, PartialEq)]
+#[non_exhaustive]
 pub struct ChannelGroupLeaveEvent {
     /// Channel id.
     #[serde(rename = "id")]
@@ -32,7 +31,7 @@ impl ChannelGroupLeaveEvent {
 }
 
 #[cfg(feature = "cache")]
-#[async_trait::async_trait]
+#[async_trait]
 impl UpdateCache for ChannelGroupLeaveEvent {
     async fn update(&self, cx: &Context) {
         if let Some(Channel::Group(ref mut channel)) =
