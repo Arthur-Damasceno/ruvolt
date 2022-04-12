@@ -36,7 +36,7 @@ impl Client {
     async fn with_authentication(authentication: Authentication) -> Result<Self> {
         let ws_client = WebSocketClient::connect().await?;
         let (messenger, action_rx) = ActionMessenger::new();
-        let context = Context::new(authentication, messenger);
+        let context = Context::new(authentication, messenger).await?;
 
         Ok(Self {
             ws_client,

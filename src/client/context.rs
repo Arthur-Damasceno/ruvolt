@@ -30,20 +30,34 @@ pub struct Context {
 }
 
 impl Context {
-    pub(crate) fn new(authentication: Authentication, messenger: ActionMessenger) -> Self {
-        Self {
-            http_client: HttpClient::new(authentication),
+    pub(crate) async fn new(
+        authentication: Authentication,
+        messenger: ActionMessenger,
+    ) -> Result<Self> {
+        let http_client = HttpClient::new(authentication);
+        #[cfg(feature = "cache")]
+        let User { id, .. } = http_client.get("users/@me").await?;
+
+        Ok(Self {
+            http_client,
             #[cfg(feature = "cache")]
-            cache: Default::default(),
+            cache: Arc::new(Cache::new(id)),
             #[cfg(feature = "state")]
             state: Default::default(),
             messenger,
-        }
+        })
     }
 
     /// Returns the current user.
+    #[cfg(not(feature = "cache"))]
     pub async fn user(&self) -> Result<User> {
         self.http_client.get("users/@me").await
+    }
+
+    /// Returns the current user.
+    #[cfg(feature = "cache")]
+    pub async fn user(&self) -> User {
+        self.cache.current_user().await
     }
 
     /// Edit the current user.

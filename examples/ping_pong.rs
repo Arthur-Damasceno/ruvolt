@@ -13,9 +13,8 @@ struct Handler;
 #[async_trait]
 impl EventHandler for Handler {
     async fn ready(cx: Context, _: ReadyEvent) {
-        if let Ok(User { username, .. }) = cx.user().await {
-            println!("@{username} is ready!");
-        }
+        let User { username, .. } = cx.user().await;
+        println!("@{username} is ready!");
     }
 
     async fn message(cx: Context, msg: Message) {

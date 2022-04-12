@@ -13,6 +13,8 @@ use crate::{
 /// A cache containing data received from the API.
 #[derive(Debug, Default)]
 pub struct Cache {
+    /// Current user id.
+    pub user_id: String,
     pub(crate) users: RwLock<HashMap<Id, User>>,
     pub(crate) channels: RwLock<HashMap<Id, Channel>>,
     pub(crate) servers: RwLock<HashMap<Id, Server>>,
@@ -20,23 +22,43 @@ pub struct Cache {
 }
 
 impl Cache {
+    pub(crate) fn new(user_id: String) -> Self {
+        Self {
+            user_id,
+            ..Default::default()
+        }
+    }
+
     pub(crate) async fn update(cx: &Context, event: &ServerEvent) {
+        use ServerEvent::*;
+
         match event {
-            ServerEvent::Ready(event) => event.update(cx).await,
-            ServerEvent::Message(event) => event.update(cx).await,
-            ServerEvent::ChannelCreate(event) => event.update(cx).await,
-            ServerEvent::ChannelUpdate(event) => event.update(cx).await,
-            ServerEvent::ChannelDelete(event) => event.update(cx).await,
-            ServerEvent::ChannelGroupJoin(event) => event.update(cx).await,
-            ServerEvent::ChannelGroupLeave(event) => event.update(cx).await,
-            ServerEvent::ServerUpdate(event) => event.update(cx).await,
-            ServerEvent::ServerDelete(event) => event.update(cx).await,
-            ServerEvent::ServerMemberUpdate(event) => event.update(cx).await,
-            ServerEvent::ServerMemberJoin(event) => event.update(cx).await,
-            ServerEvent::ServerMemberLeave(event) => event.update(cx).await,
-            ServerEvent::UserUpdate(event) => event.update(cx).await,
+            Ready(event) => event.update(cx).await,
+            Message(event) => event.update(cx).await,
+            ChannelCreate(event) => event.update(cx).await,
+            ChannelUpdate(event) => event.update(cx).await,
+            ChannelDelete(event) => event.update(cx).await,
+            ChannelGroupJoin(event) => event.update(cx).await,
+            ChannelGroupLeave(event) => event.update(cx).await,
+            ServerUpdate(event) => event.update(cx).await,
+            ServerDelete(event) => event.update(cx).await,
+            ServerMemberUpdate(event) => event.update(cx).await,
+            ServerMemberJoin(event) => event.update(cx).await,
+            ServerMemberLeave(event) => event.update(cx).await,
+            UserUpdate(event) => event.update(cx).await,
             _ => return,
         }
+    }
+
+    /// Get the current user.
+    ///
+    /// # Panics
+    ///
+    /// Will panic if current user is not cached.
+    pub async fn current_user(&self) -> User {
+        self.user(&self.user_id)
+            .await
+            .expect("Current user is not cached")
     }
 
     /// Get a user from cache.
