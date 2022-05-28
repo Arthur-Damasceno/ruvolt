@@ -35,6 +35,12 @@ pub enum HttpError {
     /// A resource was not found.
     #[error("A resource was not found")]
     NotFound,
+    /// Client has reached rate limits.
+    #[error("Rate limits reached, retry after {0}ms")]
+    RetryAfter(
+        /// Milliseconds until calls are replenished.
+        u64,
+    ),
     /// The Revolt server ran into an issue.
     #[error("The Revolt server ran into an issue")]
     Internal,
