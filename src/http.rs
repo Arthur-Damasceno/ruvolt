@@ -6,7 +6,9 @@ use {
     std::sync::Arc,
 };
 
-use crate::error::{Error, Result};
+use crate::error::{Error, HttpError, Result};
+
+pub use reqwest::StatusCode;
 
 /// The url of the Revolt REST API.
 pub const DELTA_API: &str = "https://api.revolt.chat";
@@ -92,11 +94,18 @@ impl HttpClient {
         .send()
         .await?;
 
-        if !response.status().is_success() {
-            return Err(Error::UnsuccessfulRequest(response));
+        match response.status().as_u16() {
+            200..=299 => Ok(response),
+            404 => Err(Error::Http(HttpError::NotFound)),
+            429 => todo!(),
+            400..=499 => todo!(),
+            500 => Err(Error::Http(HttpError::Internal)),
+            _ => Err(Error::Http(HttpError::Other {
+                status: response.status(),
+                url: response.url().to_string(),
+                body: response.text().await.ok(),
+            })),
         }
-
-        Ok(response)
     }
 }
 

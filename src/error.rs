@@ -1,28 +1,17 @@
-//! Module for [enum@Error] and [Result] types.
+//! Module for [Error] and [Result] types.
 
-use {
-    reqwest::{Error as HttpError, Response},
-    serde::Deserialize,
-    std::result::Result as StdResult,
-    thiserror::Error,
-    tokio_tungstenite::tungstenite::Error as WsError,
-};
-
-/// [Result](StdResult) type for [enum@Error].
-pub type Result<T = (), E = Error> = StdResult<T, E>;
+/// [Result](std::result::Result) type alias for [Error].
+pub type Result<T = (), E = Error> = std::result::Result<T, E>;
 
 /// Errors that can happen when using [ruvolt](crate).
-#[derive(Error, Debug)]
+#[derive(Debug, thiserror::Error)]
 pub enum Error {
     /// Http requests error.
     #[error("Http error: {0}")]
     Http(#[from] HttpError),
-    /// Received a response with a status code other than 200-299.
-    #[error("Unsuccessful request: {0:?}")]
-    UnsuccessfulRequest(Response),
-    /// WebSocket error.
-    #[error("WebSocket error: {0}")]
-    Ws(#[from] WsError),
+    /// [Tungstenite](tokio_tungstenite::tungstenite) error.
+    #[error("Tungstenite error: {0}")]
+    Tungstenite(#[from] tokio_tungstenite::tungstenite::Error),
     /// Could not authenticate due to an error.
     #[error("Authentication error: {0}")]
     Authentication(#[from] AuthenticationError),
@@ -31,19 +20,49 @@ pub enum Error {
     Unknown(String),
 }
 
+impl From<reqwest::Error> for Error {
+    fn from(err: reqwest::Error) -> Self {
+        Self::Http(err.into())
+    }
+}
+
+/// Http requests error.
+#[derive(Debug, thiserror::Error)]
+pub enum HttpError {
+    /// [Reqwest](reqwest) error.
+    #[error("Reqwest error: {0}")]
+    Reqwest(#[from] reqwest::Error),
+    /// A resource was not found.
+    #[error("A resource was not found")]
+    NotFound,
+    /// The Revolt server ran into an issue.
+    #[error("The Revolt server ran into an issue")]
+    Internal,
+    /// An unexpected response occurred.
+    #[error("An unexpected response occurred: {status} - {url} with body: {body:?}")]
+    Other {
+        /// Response status code.
+        status: crate::http::StatusCode,
+        /// Requested url.
+        url: String,
+        /// Response body.
+        body: Option<String>,
+    },
+}
+
 /// Authentication error.
-#[derive(Error, Debug, Deserialize, Clone, Copy, PartialEq)]
+#[derive(Debug, Clone, Copy, PartialEq, Deserialize, thiserror::Error)]
 pub enum AuthenticationError {
     /// Uncategorized error.
-    #[error("LabelMe")]
+    #[error("Uncategorized error")]
     LabelMe,
     /// The Revolt server ran into an issue.
-    #[error("InternalError")]
+    #[error("The Revolt server ran into an issuernalError")]
     InternalError,
     /// The token provided is incorrect.
-    #[error("InvalidSession")]
+    #[error("The token provided is incorrect")]
     InvalidSession,
     /// The bot is already authenticated.
-    #[error("AlreadyAuthenticated")]
+    #[error("The bot is already authenticated")]
     AlreadyAuthenticated,
 }
