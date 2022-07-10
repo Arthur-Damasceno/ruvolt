@@ -1,7 +1,7 @@
 #![allow(missing_docs)]
 
 /// A special 3rd party embed.
-#[derive(Debug, Deserialize, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Deserialize)]
 #[serde(tag = "type")]
 #[non_exhaustive]
 pub enum EmbedSpecial {
@@ -29,7 +29,7 @@ pub enum EmbedSpecial {
 }
 
 /// Twitch content type.
-#[derive(Debug, Deserialize, Clone, Copy, PartialEq)]
+#[derive(Debug, Clone, Copy, PartialEq, Deserialize)]
 #[non_exhaustive]
 pub enum TwitchContentType {
     Channel,
@@ -38,7 +38,7 @@ pub enum TwitchContentType {
 }
 
 /// Bandcamp content type.
-#[derive(Debug, Deserialize, Clone, Copy, PartialEq)]
+#[derive(Debug, Clone, Copy, PartialEq, Deserialize)]
 #[non_exhaustive]
 pub enum BandcampContentType {
     Album,

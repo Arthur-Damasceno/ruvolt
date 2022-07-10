@@ -1,33 +1,16 @@
-use crate::{
-    models::{Channel, Id, User},
-    Context, Result,
-};
-
 #[cfg(feature = "cache")]
-use crate::cache::UpdateCache;
+use crate::{cache::UpdateCache, models::Channel, Context};
 
 /// A user has left the group.
-#[derive(Debug, Deserialize, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Deserialize)]
 #[non_exhaustive]
 pub struct ChannelGroupLeaveEvent {
     /// Channel id.
     #[serde(rename = "id")]
-    pub channel_id: Id,
+    pub channel_id: String,
     /// User id.
     #[serde(rename = "user")]
-    pub user_id: Id,
-}
-
-impl ChannelGroupLeaveEvent {
-    /// Fetch the channel.
-    pub async fn channel(&self, cx: &Context) -> Result<Channel> {
-        Channel::fetch(cx, &self.channel_id).await
-    }
-
-    /// Fetch the user.
-    pub async fn user(&self, cx: &Context) -> Result<User> {
-        User::fetch(cx, &self.user_id).await
-    }
+    pub user_id: String,
 }
 
 #[cfg(feature = "cache")]

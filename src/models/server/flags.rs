@@ -1,6 +1,6 @@
 bitflags! {
     /// Server flags.
-    #[derive(Deserialize, Default)]
+    #[derive(Default, Deserialize)]
     #[serde(transparent)]
     pub struct ServerFlags: u32 {
         /// Official Revolt server.

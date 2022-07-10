@@ -1,12 +1,5 @@
-use serde_json::Value as Json;
-
-use crate::{
-    models::{Id, Server},
-    Context, Result,
-};
-
 /// Specifies a field to remove on server role update.
-#[derive(Debug, Deserialize, Clone, Copy, PartialEq)]
+#[derive(Debug, Clone, Copy, PartialEq, Deserialize)]
 #[non_exhaustive]
 pub enum RoleField {
     /// Role color.
@@ -15,23 +8,16 @@ pub enum RoleField {
 }
 
 /// A server role details were updated.
-#[derive(Debug, Deserialize, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Deserialize)]
 #[non_exhaustive]
 pub struct ServerRoleUpdateEvent {
     /// Server id.
     #[serde(rename = "id")]
-    pub server_id: Id,
+    pub server_id: String,
     /// Server role id.
-    pub role_id: Id,
+    pub role_id: String,
     /// A partial server role object.
-    pub data: Json,
+    pub data: serde_json::Value,
     /// A specified field to remove on server role update.
     pub clear: Option<RoleField>,
-}
-
-impl ServerRoleUpdateEvent {
-    /// Fetch the server.
-    pub async fn server(&self, cx: &Context) -> Result<Server> {
-        Server::fetch(cx, &self.server_id).await
-    }
 }

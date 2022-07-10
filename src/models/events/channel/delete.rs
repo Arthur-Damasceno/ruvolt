@@ -1,15 +1,13 @@
-use crate::models::Id;
-
 #[cfg(feature = "cache")]
 use crate::{cache::UpdateCache, Context};
 
 /// A channel has been deleted.
-#[derive(Debug, Deserialize, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Deserialize)]
 #[non_exhaustive]
 pub struct ChannelDeleteEvent {
     /// Channel id.
     #[serde(rename = "id")]
-    pub channel_id: Id,
+    pub channel_id: String,
 }
 
 #[cfg(feature = "cache")]

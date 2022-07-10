@@ -1,19 +1,15 @@
-use crate::{
-    builders::EditChannel,
-    models::{Attachment, Channel, Id},
-    Context, Result,
-};
+use crate::{builders::EditChannel, models::Attachment, Context, Result};
 
 /// A voice channel.
-#[derive(Debug, Deserialize, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Deserialize)]
 #[non_exhaustive]
 pub struct VoiceChannel {
     /// Channel id.
     #[serde(rename = "_id")]
-    pub id: Id,
+    pub id: String,
     /// Channel server id.
     #[serde(rename = "server")]
-    pub server_id: Id,
+    pub server_id: String,
     /// Channel name.
     pub name: String,
     /// Channel description.
@@ -27,12 +23,12 @@ pub struct VoiceChannel {
 
 impl VoiceChannel {
     /// Edit the channel.
-    pub async fn edit(&self, cx: &Context, builder: EditChannel) -> Result {
-        Channel::edit(cx, &self.id, builder).await
+    pub async fn edit(&self, _cx: &Context, _builder: EditChannel) -> Result {
+        todo!()
     }
 
     /// Delete the channel.
-    pub async fn delete(&self, cx: &Context) -> Result {
-        Channel::delete(cx, &self.id).await
+    pub async fn delete(&self, _cx: &Context) -> Result {
+        todo!()
     }
 }

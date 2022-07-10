@@ -3,7 +3,7 @@ use crate::{
     models::{events::*, Channel, Message},
 };
 
-#[derive(Debug, Deserialize, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Deserialize)]
 #[serde(tag = "type")]
 pub enum ServerEvent {
     Pong,

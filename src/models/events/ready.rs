@@ -4,7 +4,7 @@ use crate::models::{Channel, Member, Server, User};
 use crate::{cache::UpdateCache, Context};
 
 /// Bot is ready.
-#[derive(Debug, Deserialize, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Deserialize)]
 #[non_exhaustive]
 pub struct ReadyEvent {
     /// Users.
@@ -30,7 +30,7 @@ impl UpdateCache for ReadyEvent {
         let mut channels = cx.cache.channels.write().await;
 
         for channel in &self.channels {
-            channels.insert(channel.id().clone(), channel.clone());
+            channels.insert(channel.id().into(), channel.clone());
         }
 
         let mut servers = cx.cache.servers.write().await;

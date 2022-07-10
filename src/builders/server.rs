@@ -1,8 +1,6 @@
-use serde::Serialize;
-
 use crate::models::{
     events::{MemberField, ServerField},
-    Category, Id, SystemMessageChannels,
+    Category, SystemMessageChannels,
 };
 
 /// Builder for edit a server.
@@ -13,9 +11,9 @@ pub struct EditServer {
     #[serde(skip_serializing_if = "Option::is_none")]
     description: Option<String>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    icon: Option<Id>,
+    icon: Option<String>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    banner: Option<Id>,
+    banner: Option<String>,
     #[serde(skip_serializing_if = "Vec::is_empty")]
     categories: Vec<Category>,
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -45,14 +43,14 @@ impl EditServer {
     }
 
     /// Set the icon.
-    pub fn icon(mut self, id: &Id) -> Self {
-        self.icon = Some(id.clone());
+    pub fn icon(mut self, id: impl Into<String>) -> Self {
+        self.icon = Some(id.into());
         self
     }
 
     /// Set the banner.
-    pub fn banner(mut self, id: &Id) -> Self {
-        self.banner = Some(id.clone());
+    pub fn banner(mut self, id: impl Into<String>) -> Self {
+        self.banner = Some(id.into());
         self
     }
 
@@ -90,9 +88,9 @@ pub struct EditMember {
     #[serde(skip_serializing_if = "Option::is_none")]
     nickname: Option<String>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    avatar: Option<Id>,
+    avatar: Option<String>,
     #[serde(skip_serializing_if = "Vec::is_empty")]
-    roles: Vec<Id>,
+    roles: Vec<String>,
     #[serde(skip_serializing_if = "Option::is_none")]
     remove: Option<MemberField>,
 }
@@ -110,14 +108,14 @@ impl EditMember {
     }
 
     /// Set the avatar.
-    pub fn avatar(mut self, id: &Id) -> Self {
-        self.avatar = Some(id.clone());
+    pub fn avatar(mut self, id: impl Into<String>) -> Self {
+        self.avatar = Some(id.into());
         self
     }
 
     /// Include a role.
-    pub fn role(mut self, id: &Id) -> Self {
-        self.roles.push(id.clone());
+    pub fn role(mut self, id: impl Into<String>) -> Self {
+        self.roles.push(id.into());
         self
     }
 

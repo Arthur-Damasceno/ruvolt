@@ -1,6 +1,4 @@
-use crate::models::Id;
-
-#[derive(Debug, Serialize, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Serialize)]
 #[serde(tag = "type")]
 pub enum ClientEvent {
     Authenticate {
@@ -8,11 +6,11 @@ pub enum ClientEvent {
     },
     BeginTyping {
         #[serde(rename = "channel")]
-        channel_id: Id,
+        channel_id: String,
     },
     EndTyping {
         #[serde(rename = "channel")]
-        channel_id: Id,
+        channel_id: String,
     },
     Ping {
         data: usize,

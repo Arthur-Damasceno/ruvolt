@@ -1,11 +1,10 @@
-use serde::Serialize;
-
-use crate::models::{events::ChannelField, Id};
+use crate::models::events::ChannelField;
 
 /// Builder for create a server channel.
 #[derive(Debug, Clone, Serialize)]
 pub struct CreateChannel {
-    r#type: ChannelType,
+    #[serde(rename = "type")]
+    kind: ChannelType,
     name: String,
     #[serde(skip_serializing_if = "Option::is_none")]
     description: Option<String>,
@@ -22,7 +21,7 @@ impl CreateChannel {
     /// Creates a new builder with `Text` channel type.
     pub fn text(name: impl Into<String>) -> Self {
         Self {
-            r#type: ChannelType::Text,
+            kind: ChannelType::Text,
             name: name.into(),
             description: None,
             nsfw: false,
@@ -32,7 +31,7 @@ impl CreateChannel {
     /// Creates a new builder with `Voice` channel type.
     pub fn voice(name: impl Into<String>) -> Self {
         Self {
-            r#type: ChannelType::Voice,
+            kind: ChannelType::Voice,
             name: name.into(),
             description: None,
             nsfw: false,
@@ -60,7 +59,7 @@ pub struct EditChannel {
     #[serde(skip_serializing_if = "Option::is_none")]
     description: Option<String>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    icon: Option<Id>,
+    icon: Option<String>,
     #[serde(skip_serializing_if = "Option::is_none")]
     nsfw: Option<bool>,
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -86,8 +85,8 @@ impl EditChannel {
     }
 
     /// Set the icon.
-    pub fn icon(mut self, id: &Id) -> Self {
-        self.icon = Some(id.clone());
+    pub fn icon(mut self, id: impl Into<String>) -> Self {
+        self.icon = Some(id.into());
         self
     }
 

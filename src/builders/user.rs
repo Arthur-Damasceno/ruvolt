@@ -1,6 +1,4 @@
-use serde::Serialize;
-
-use crate::models::{events::UserField, Id, Presence, UserStatus};
+use crate::models::{events::UserField, Presence, UserStatus};
 
 /// Builder for edit the current user.
 #[derive(Debug, Clone, Default, Serialize)]
@@ -10,7 +8,7 @@ pub struct EditUser {
     #[serde(skip_serializing_if = "Option::is_none")]
     profile: Option<EditUserProfile>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    avatar: Option<Id>,
+    avatar: Option<String>,
     #[serde(skip_serializing_if = "Option::is_none")]
     remove: Option<UserField>,
 }
@@ -34,8 +32,8 @@ impl EditUser {
     }
 
     /// Set the avatar.
-    pub fn avatar(mut self, id: &Id) -> Self {
-        self.avatar = Some(id.clone());
+    pub fn avatar(mut self, id: impl Into<String>) -> Self {
+        self.avatar = Some(id.into());
         self
     }
 
@@ -73,7 +71,7 @@ pub struct EditUserProfile {
     #[serde(skip_serializing_if = "Option::is_none")]
     content: Option<String>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    background: Option<Id>,
+    background: Option<String>,
 }
 
 impl EditUserProfile {
@@ -84,8 +82,8 @@ impl EditUserProfile {
     }
 
     /// Set the background.
-    pub fn background(mut self, id: &Id) -> Self {
-        self.background = Some(id.clone());
+    pub fn background(mut self, id: impl Into<String>) -> Self {
+        self.background = Some(id.into());
         self
     }
 }

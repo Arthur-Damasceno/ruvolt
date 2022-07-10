@@ -5,7 +5,7 @@ mod text;
 mod website;
 
 /// A message embed.
-#[derive(Debug, Deserialize, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Deserialize)]
 #[serde(tag = "type")]
 #[non_exhaustive]
 pub enum Embed {

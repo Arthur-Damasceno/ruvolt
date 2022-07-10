@@ -1,10 +1,7 @@
-use crate::{
-    models::{Attachment, Category, Id, Server, SystemMessageChannels},
-    Context, Result,
-};
+use crate::models::{Attachment, Category, SystemMessageChannels};
 
 #[cfg(feature = "cache")]
-use crate::cache::UpdateCache;
+use crate::{cache::UpdateCache, Context};
 
 /// Specifies a field to remove on server update.
 #[derive(Debug, Clone, Copy, PartialEq, Deserialize, Serialize)]
@@ -24,18 +21,11 @@ pub enum ServerField {
 pub struct ServerUpdateEvent {
     /// Server id.
     #[serde(rename = "id")]
-    pub server_id: Id,
+    pub server_id: String,
     /// A partial server object.
     pub data: PartialServer,
     /// A specified field to remove on server update.
     pub clear: Option<ServerField>,
-}
-
-impl ServerUpdateEvent {
-    /// Fetch the server.
-    pub async fn server(&self, cx: &Context) -> Result<Server> {
-        Server::fetch(cx, &self.server_id).await
-    }
 }
 
 /// A partial server.

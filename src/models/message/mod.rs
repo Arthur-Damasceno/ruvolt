@@ -5,30 +5,26 @@ mod edited;
 mod embed;
 mod masquerade;
 
-use crate::{
-    builders::{CreateMessage, EditMessage},
-    models::{Attachment, Id},
-    Context, Result,
-};
+use crate::models::Attachment;
 
 #[cfg(feature = "cache")]
-use crate::{cache::UpdateCache, models::Channel};
+use crate::{cache::UpdateCache, models::Channel, Context};
 
 /// A message.
-#[derive(Debug, Deserialize, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Deserialize)]
 #[non_exhaustive]
 pub struct Message {
     /// Message id.
     #[serde(rename = "_id")]
-    pub id: Id,
+    pub id: String,
     /// Message nonce.
     pub nonce: Option<String>,
     /// Message channel id.
     #[serde(rename = "channel")]
-    pub channel_id: Id,
+    pub channel_id: String,
     /// Message author id.
     #[serde(rename = "author")]
-    pub author_id: Id,
+    pub author_id: String,
     /// Message content.
     pub content: Content,
     /// Message attachments.
@@ -39,72 +35,14 @@ pub struct Message {
     pub embeds: Vec<Embed>,
     /// Message mentions.
     #[serde(default)]
-    pub mentions: Vec<Id>,
+    pub mentions: Vec<String>,
     /// Message replies.
     #[serde(default)]
-    pub replies: Vec<Id>,
+    pub replies: Vec<String>,
     /// Message masquerade.
     pub masquerade: Option<Masquerade>,
     /// Edition date.
     pub edited: Option<MessageEdited>,
-}
-
-impl Message {
-    /// Get a message from the API.
-    pub async fn fetch(cx: &Context, channel_id: &Id, id: &Id) -> Result<Self> {
-        let path = format!("channels/{}/messages/{}", channel_id, id);
-        let msg = cx.http_client.get(&path).await?;
-
-        Ok(msg)
-    }
-
-    pub(crate) async fn create(
-        cx: &Context,
-        channel_id: &Id,
-        builder: CreateMessage,
-    ) -> Result<Self> {
-        let path = format!("channels/{}/messages", channel_id);
-        let msg = cx.http_client.post(&path, builder).await?;
-
-        Ok(msg)
-    }
-
-    /// Returns whether the message has been edited.
-    pub fn is_edited(&self) -> bool {
-        self.edited.is_some()
-    }
-
-    /// Reply the message.
-    pub async fn reply(
-        &self,
-        cx: &Context,
-        builder: impl Into<CreateMessage>,
-        mention: bool,
-    ) -> Result<Self> {
-        Self::create(
-            cx,
-            &self.channel_id,
-            builder.into().reply(&self.id, mention),
-        )
-        .await
-    }
-
-    /// Edit the message.
-    pub async fn edit(&mut self, cx: &Context, builder: impl Into<EditMessage>) -> Result {
-        // TODO: Update local message.
-        let path = format!("channels/{}/messages/{}", self.channel_id, self.id);
-        cx.http_client.patch(&path, builder.into()).await?;
-
-        Ok(())
-    }
-
-    /// Delete the message.
-    pub async fn delete(&self, cx: &Context) -> Result {
-        let path = format!("channels/{}/messages/{}", self.channel_id, self.id);
-        cx.http_client.delete(&path).await?;
-
-        Ok(())
-    }
 }
 
 #[cfg(feature = "cache")]

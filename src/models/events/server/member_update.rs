@@ -1,10 +1,7 @@
-use crate::{
-    models::{Attachment, Id, Member, MemberId, Server, User},
-    Context, Result,
-};
+use crate::models::{Attachment, MemberId};
 
 #[cfg(feature = "cache")]
-use crate::cache::UpdateCache;
+use crate::{cache::UpdateCache, Context};
 
 /// Specifies a field to remove on server member update.
 #[derive(Debug, Clone, Copy, PartialEq, Deserialize, Serialize)]
@@ -29,23 +26,6 @@ pub struct ServerMemberUpdateEvent {
     pub clear: Option<MemberField>,
 }
 
-impl ServerMemberUpdateEvent {
-    /// Fetch the member.
-    pub async fn member(&self, cx: &Context) -> Result<Member> {
-        Member::fetch(cx, &self.member_id.server_id, &self.member_id.user_id).await
-    }
-
-    /// Fetch the server.
-    pub async fn server(&self, cx: &Context) -> Result<Server> {
-        Server::fetch(cx, &self.member_id.server_id).await
-    }
-
-    /// Fetch the user.
-    pub async fn user(&self, cx: &Context) -> Result<User> {
-        User::fetch(cx, &self.member_id.user_id).await
-    }
-}
-
 /// A partial server member.
 #[derive(Debug, Clone, PartialEq, Deserialize)]
 #[non_exhaustive]
@@ -56,7 +36,7 @@ pub struct PartialMember {
     pub avatar: Option<Attachment>,
     /// Member roles.
     #[serde(default)]
-    pub roles: Vec<Id>,
+    pub roles: Vec<String>,
 }
 
 #[cfg(feature = "cache")]

@@ -7,17 +7,17 @@ mod profile;
 mod status;
 
 use crate::{
-    models::{Attachment, DirectMessageChannel, Id},
+    models::{Attachment, DirectMessageChannel},
     Context, Result,
 };
 
 /// A user.
-#[derive(Debug, Deserialize, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Deserialize)]
 #[non_exhaustive]
 pub struct User {
     /// User id.
     #[serde(rename = "_id")]
-    pub id: Id,
+    pub id: String,
     /// User username.
     pub username: String,
     /// User avatar.
@@ -39,13 +39,8 @@ pub struct User {
 
 impl User {
     /// Get a user from the cache or API.
-    pub async fn fetch(cx: &Context, id: &Id) -> Result<Self> {
-        #[cfg(feature = "cache")]
-        if let Some(user) = cx.cache.user(id).await {
-            return Ok(user);
-        }
-
-        cx.http_client.get(format!("users/{}", id)).await
+    pub async fn fetch(_cx: &Context, _id: &str) -> Result<Self> {
+        todo!()
     }
 
     /// Returns if the user is a bot.
@@ -54,14 +49,12 @@ impl User {
     }
 
     /// Get the user profile from the API.
-    pub async fn profile(&self, cx: &Context) -> Result<UserProfile> {
-        cx.http_client
-            .get(format!("users/{}/profile", self.id))
-            .await
+    pub async fn profile(&self, _cx: &Context) -> Result<UserProfile> {
+        todo!()
     }
 
     /// Open a DM with the user.
-    pub async fn dm(&self, cx: &Context) -> Result<DirectMessageChannel> {
-        DirectMessageChannel::open(cx, &self.id).await
+    pub async fn dm(&self, _cx: &Context) -> Result<DirectMessageChannel> {
+        todo!()
     }
 }

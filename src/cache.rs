@@ -6,7 +6,7 @@
 use {std::collections::HashMap, tokio::sync::RwLock};
 
 use crate::{
-    models::{events::ServerEvent, Channel, Id, Member, MemberId, Server, User},
+    models::{events::ServerEvent, Channel, Member, MemberId, Server, User},
     Context,
 };
 
@@ -15,9 +15,9 @@ use crate::{
 pub struct Cache {
     /// Current user id.
     pub user_id: String,
-    pub(crate) users: RwLock<HashMap<Id, User>>,
-    pub(crate) channels: RwLock<HashMap<Id, Channel>>,
-    pub(crate) servers: RwLock<HashMap<Id, Server>>,
+    pub(crate) users: RwLock<HashMap<String, User>>,
+    pub(crate) channels: RwLock<HashMap<String, Channel>>,
+    pub(crate) servers: RwLock<HashMap<String, Server>>,
     pub(crate) members: RwLock<HashMap<MemberId, Member>>,
 }
 
@@ -62,12 +62,12 @@ impl Cache {
     }
 
     /// Get a user from cache.
-    pub async fn user(&self, id: &Id) -> Option<User> {
+    pub async fn user(&self, id: &str) -> Option<User> {
         self.users.read().await.get(id).cloned()
     }
 
     /// Get all users in cache.
-    pub async fn users(&self) -> HashMap<Id, User> {
+    pub async fn users(&self) -> HashMap<String, User> {
         self.users.read().await.clone()
     }
 
@@ -89,12 +89,12 @@ impl Cache {
     }
 
     /// Get a channel from cache.
-    pub async fn channel(&self, id: &Id) -> Option<Channel> {
+    pub async fn channel(&self, id: &str) -> Option<Channel> {
         self.channels.read().await.get(id).cloned()
     }
 
     /// Get all channels in cache.
-    pub async fn channels(&self) -> HashMap<Id, Channel> {
+    pub async fn channels(&self) -> HashMap<String, Channel> {
         self.channels.read().await.clone()
     }
 
@@ -116,12 +116,12 @@ impl Cache {
     }
 
     /// Get a server from cache.
-    pub async fn server(&self, id: &Id) -> Option<Server> {
+    pub async fn server(&self, id: &str) -> Option<Server> {
         self.servers.read().await.get(id).cloned()
     }
 
     /// Get all servers in cache.
-    pub async fn servers(&self) -> HashMap<Id, Server> {
+    pub async fn servers(&self) -> HashMap<String, Server> {
         self.servers.read().await.clone()
     }
 

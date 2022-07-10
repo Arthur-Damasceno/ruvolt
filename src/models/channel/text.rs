@@ -1,19 +1,19 @@
 use crate::{
     builders::{CreateMessage, EditChannel},
-    models::{Attachment, Channel, Id, Message},
+    models::{Attachment, Message},
     Context, Result,
 };
 
 /// A text channel.
-#[derive(Debug, Deserialize, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Deserialize)]
 #[non_exhaustive]
 pub struct TextChannel {
     /// Channel id.
     #[serde(rename = "_id")]
-    pub id: Id,
+    pub id: String,
     /// Channel server id.
     #[serde(rename = "server")]
-    pub server_id: Id,
+    pub server_id: String,
     /// Channel name.
     pub name: String,
     /// Channel description.
@@ -21,7 +21,7 @@ pub struct TextChannel {
     /// Channel icon.
     pub icon: Option<Attachment>,
     /// Id of last message in the channel.
-    pub last_message_id: Option<Id>,
+    pub last_message_id: Option<String>,
     /// Channel is not safe for work.
     #[serde(default)]
     pub nsfw: bool,
@@ -29,17 +29,17 @@ pub struct TextChannel {
 
 impl TextChannel {
     /// Send a message in this channel.
-    pub async fn send(&self, cx: &Context, builder: impl Into<CreateMessage>) -> Result<Message> {
-        Message::create(cx, &self.id, builder.into()).await
+    pub async fn send(&self, _cx: &Context, _builder: impl Into<CreateMessage>) -> Result<Message> {
+        todo!()
     }
 
     /// Edit the channel.
-    pub async fn edit(&self, cx: &Context, builder: EditChannel) -> Result {
-        Channel::edit(cx, &self.id, builder).await
+    pub async fn edit(&self, _cx: &Context, _builder: EditChannel) -> Result {
+        todo!()
     }
 
     /// Delete the channel.
-    pub async fn delete(&self, cx: &Context) -> Result {
-        Channel::delete(cx, &self.id).await
+    pub async fn delete(&self, _cx: &Context) -> Result {
+        todo!()
     }
 }

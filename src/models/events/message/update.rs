@@ -1,7 +1,4 @@
-use crate::{
-    models::{Channel, Embed, Id, Message, MessageEdited},
-    Context, Result,
-};
+use crate::models::{Embed, MessageEdited};
 
 /// A message has been edited or otherwise updated.
 #[derive(Debug, Clone, PartialEq, Deserialize)]
@@ -9,24 +6,12 @@ use crate::{
 pub struct MessageUpdateEvent {
     /// Message id.
     #[serde(rename = "id")]
-    pub message_id: Id,
+    pub message_id: String,
     /// Message channel id.
     #[serde(rename = "channel")]
-    pub channel_id: Id,
+    pub channel_id: String,
     /// A partial message.
     pub data: PartialMessage,
-}
-
-impl MessageUpdateEvent {
-    /// Fetch the message.
-    pub async fn message(&self, cx: &Context) -> Result<Message> {
-        Message::fetch(cx, &self.channel_id, &self.message_id).await
-    }
-
-    /// Fetch the channel.
-    pub async fn channel(&self, cx: &Context) -> Result<Channel> {
-        Channel::fetch(cx, &self.channel_id).await
-    }
 }
 
 /// A partial message.

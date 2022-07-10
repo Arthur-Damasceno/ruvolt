@@ -6,7 +6,7 @@ use {
 use crate::{
     builders::EditUser,
     http::{Authentication, HttpClient},
-    models::{events::ClientEvent, Channel, Id, User},
+    models::{events::ClientEvent, Channel, User},
     ActionMessenger, Result,
 };
 
@@ -66,19 +66,19 @@ impl Context {
     }
 
     /// Tell other users that you have begin typing in a channel.
-    pub async fn begin_typing(&self, channel_id: &Id) -> Result {
+    pub async fn begin_typing(&self, channel_id: &str) -> Result {
         self.messenger
             .send(ClientEvent::BeginTyping {
-                channel_id: channel_id.clone(),
+                channel_id: channel_id.into(),
             })
             .await
     }
 
     /// Tell other users that you have stopped typing in a channel.
-    pub async fn end_typing(&self, channel_id: &Id) -> Result {
+    pub async fn end_typing(&self, channel_id: &str) -> Result {
         self.messenger
             .send(ClientEvent::EndTyping {
-                channel_id: channel_id.clone(),
+                channel_id: channel_id.into(),
             })
             .await
     }

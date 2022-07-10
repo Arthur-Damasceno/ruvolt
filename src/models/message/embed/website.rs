@@ -1,7 +1,7 @@
 use crate::models::EmbedSpecial;
 
 /// A website embed.
-#[derive(Debug, Deserialize, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Deserialize)]
 #[non_exhaustive]
 pub struct WebsiteEmbed {
     /// Embed url.
@@ -26,7 +26,7 @@ pub struct WebsiteEmbed {
 }
 
 /// A embedded video.
-#[derive(Debug, Deserialize, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Deserialize)]
 #[non_exhaustive]
 pub struct EmbedVideo {
     /// Embed video url.
@@ -38,7 +38,7 @@ pub struct EmbedVideo {
 }
 
 /// A embedded image.
-#[derive(Debug, Deserialize, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Deserialize)]
 #[non_exhaustive]
 pub struct EmbedImage {
     /// Embed image url.
@@ -52,7 +52,7 @@ pub struct EmbedImage {
 }
 
 /// Embed image size.
-#[derive(Debug, Deserialize, Clone, Copy, PartialEq)]
+#[derive(Debug, Clone, Copy, PartialEq, Deserialize)]
 #[non_exhaustive]
 pub enum EmbedImageSize {
     /// Large size.

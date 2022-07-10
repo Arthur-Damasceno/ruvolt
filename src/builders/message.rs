@@ -1,16 +1,11 @@
-use serde::Serialize;
-
-use crate::{
-    builders::CreateEmbed,
-    models::{Id, Masquerade},
-};
+use crate::{builders::CreateEmbed, models::Masquerade};
 
 /// Builder for create a message.
 #[derive(Debug, Clone, Serialize)]
 pub struct CreateMessage {
     content: String,
     #[serde(skip_serializing_if = "Vec::is_empty")]
-    attachments: Vec<Id>,
+    attachments: Vec<String>,
     #[serde(skip_serializing_if = "Vec::is_empty")]
     replies: Vec<Reply>,
     #[serde(skip_serializing_if = "Vec::is_empty")]
@@ -21,7 +16,7 @@ pub struct CreateMessage {
 
 #[derive(Debug, Clone, Serialize)]
 struct Reply {
-    id: Id,
+    id: String,
     mention: bool,
 }
 
@@ -38,15 +33,15 @@ impl CreateMessage {
     }
 
     /// Set a attachment to include in the message.
-    pub fn attachment(mut self, id: &Id) -> Self {
-        self.attachments.push(id.clone());
+    pub fn attachment(mut self, id: impl Into<String>) -> Self {
+        self.attachments.push(id.into());
         self
     }
 
     /// Set a message to reply to.
-    pub fn reply(mut self, id: &Id, mention: bool) -> Self {
+    pub fn reply(mut self, id: impl Into<String>, mention: bool) -> Self {
         self.replies.push(Reply {
-            id: id.clone(),
+            id: id.into(),
             mention,
         });
         self

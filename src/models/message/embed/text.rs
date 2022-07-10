@@ -1,7 +1,7 @@
 use crate::models::Attachment;
 
 /// A text embed.
-#[derive(Debug, Deserialize, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Deserialize)]
 #[non_exhaustive]
 pub struct TextEmbed {
     /// Embed icon url.

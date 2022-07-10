@@ -1,35 +1,13 @@
-use crate::{
-    models::{Channel, Id, Message, User},
-    Context, Result,
-};
-
 /// You have acknowledged new messages in the channel up to the message id.
-#[derive(Debug, Deserialize, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Deserialize)]
 #[non_exhaustive]
 pub struct ChannelAckEvent {
     /// Channel id.
     #[serde(rename = "id")]
-    pub channel_id: Id,
+    pub channel_id: String,
     /// User id.
     #[serde(rename = "user")]
-    pub user_id: Id,
+    pub user_id: String,
     /// Message id.
-    pub message_id: Id,
-}
-
-impl ChannelAckEvent {
-    /// Fetch the channel.
-    pub async fn channel(&self, cx: &Context) -> Result<Channel> {
-        Channel::fetch(cx, &self.channel_id).await
-    }
-
-    /// Fetch the user.
-    pub async fn user(&self, cx: &Context) -> Result<User> {
-        User::fetch(cx, &self.user_id).await
-    }
-
-    /// Fetch the message.
-    pub async fn message(&self, cx: &Context) -> Result<Message> {
-        Message::fetch(cx, &self.channel_id, &self.message_id).await
-    }
+    pub message_id: String,
 }

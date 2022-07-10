@@ -1,10 +1,7 @@
-use crate::{
-    models::{Attachment, Id, User, UserProfile, UserStatus},
-    Context, Result,
-};
+use crate::models::{Attachment, UserProfile, UserStatus};
 
 #[cfg(feature = "cache")]
-use crate::cache::UpdateCache;
+use crate::{cache::UpdateCache, Context};
 
 /// Specifies a field to remove on user update.
 #[derive(Debug, Clone, Copy, PartialEq, Deserialize, Serialize)]
@@ -21,27 +18,20 @@ pub enum UserField {
 }
 
 /// A user has been updated.
-#[derive(Debug, Deserialize, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Deserialize)]
 #[non_exhaustive]
 pub struct UserUpdateEvent {
     /// User id.
     #[serde(rename = "id")]
-    pub user_id: Id,
+    pub user_id: String,
     /// A partial user.
     pub data: PartialUser,
     /// A specified field to remove on user update.
     pub clear: Option<UserField>,
 }
 
-impl UserUpdateEvent {
-    /// Fetch the user.
-    pub async fn user(&self, cx: &Context) -> Result<User> {
-        User::fetch(cx, &self.user_id).await
-    }
-}
-
 /// A partial user
-#[derive(Debug, Deserialize, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Deserialize)]
 #[non_exhaustive]
 pub struct PartialUser {
     /// User status.

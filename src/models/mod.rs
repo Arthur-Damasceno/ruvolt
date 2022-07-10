@@ -9,6 +9,3 @@ pub mod events;
 mod message;
 mod server;
 mod user;
-
-/// Models id type.
-pub type Id = String;

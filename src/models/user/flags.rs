@@ -1,6 +1,6 @@
 bitflags! {
     /// User flags.
-    #[derive(Deserialize, Default)]
+    #[derive(Default, Deserialize)]
     #[serde(transparent)]
     pub struct UserFlags: u32 {
         /// User account is suspended.

@@ -1,15 +1,13 @@
-use crate::models::Id;
-
 #[cfg(feature = "cache")]
 use crate::{cache::UpdateCache, Context};
 
 /// A server has been deleted.
-#[derive(Debug, Deserialize, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Deserialize)]
 #[non_exhaustive]
 pub struct ServerDeleteEvent {
     /// Server id.
     #[serde(rename = "id")]
-    pub server_id: Id,
+    pub server_id: String,
 }
 
 #[cfg(feature = "cache")]

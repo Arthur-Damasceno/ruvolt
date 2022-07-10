@@ -1,5 +1,3 @@
-use serde::Serialize;
-
 /// Builder for create a embed.
 #[derive(Debug, Clone, Default, Serialize)]
 pub struct CreateEmbed {

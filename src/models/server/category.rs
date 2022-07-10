@@ -1,22 +1,20 @@
-use crate::models::Id;
-
 /// A server category.
 #[derive(Debug, Clone, PartialEq, Deserialize, Serialize)]
 #[non_exhaustive]
 pub struct Category {
     /// Category id.
-    pub id: Id,
+    pub id: String,
     /// Category title.
     pub title: String,
     /// Category channels ids.
-    pub channels: Vec<Id>,
+    pub channels: Vec<String>,
 }
 
 impl Category {
-    /// Creates a new [Category].
-    pub fn new(id: Id, title: impl Into<String>) -> Self {
+    /// Creates a [Category].
+    pub fn new(id: impl Into<String>, title: impl Into<String>) -> Self {
         Self {
-            id,
+            id: id.into(),
             title: title.into(),
             channels: Vec::new(),
         }

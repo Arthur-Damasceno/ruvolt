@@ -1,6 +1,6 @@
 bitflags! {
     /// User badges.
-    #[derive(Deserialize, Default)]
+    #[derive(Default, Deserialize)]
     #[serde(transparent)]
     pub struct Badges: u32 {
         /// Active or significant contributor to Revolt.
