@@ -48,7 +48,7 @@ pub enum HttpError {
     #[error("An unexpected response occurred: {status} - {url} with body: {body:?}")]
     Other {
         /// Response status code.
-        status: crate::http::StatusCode,
+        status: u16,
         /// Requested url.
         url: String,
         /// Response body.

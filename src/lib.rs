@@ -24,7 +24,6 @@ mod client;
 pub use error::Result;
 pub mod error;
 
-pub mod builders;
 #[cfg(feature = "cache")]
 pub mod cache;
 pub mod http;

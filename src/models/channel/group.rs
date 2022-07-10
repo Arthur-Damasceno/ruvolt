@@ -1,8 +1,4 @@
-use crate::{
-    builders::{CreateMessage, EditChannel},
-    models::{Attachment, Message, User},
-    Context, Result,
-};
+use crate::models::Attachment;
 
 /// A group channel.
 #[derive(Debug, Clone, PartialEq, Deserialize)]
@@ -27,26 +23,4 @@ pub struct GroupChannel {
     /// Group is not safe for work.
     #[serde(default)]
     pub nsfw: bool,
-}
-
-impl GroupChannel {
-    /// Fetch users who are part of the group.
-    pub async fn members(&self, _cx: &Context) -> Result<Vec<User>> {
-        todo!()
-    }
-
-    /// Send a message in the group.
-    pub async fn send(&self, _cx: &Context, _builder: impl Into<CreateMessage>) -> Result<Message> {
-        todo!()
-    }
-
-    /// Edit the group.
-    pub async fn edit(&self, _cx: &Context, _builder: EditChannel) -> Result {
-        todo!()
-    }
-
-    /// Leave the group.
-    pub async fn leave(&self, _cx: &Context) -> Result {
-        todo!()
-    }
 }

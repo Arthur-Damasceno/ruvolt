@@ -1,8 +1,4 @@
-use crate::{
-    builders::{CreateMessage, EditChannel},
-    models::{Attachment, Message},
-    Context, Result,
-};
+use crate::models::Attachment;
 
 /// A text channel.
 #[derive(Debug, Clone, PartialEq, Deserialize)]
@@ -25,21 +21,4 @@ pub struct TextChannel {
     /// Channel is not safe for work.
     #[serde(default)]
     pub nsfw: bool,
-}
-
-impl TextChannel {
-    /// Send a message in this channel.
-    pub async fn send(&self, _cx: &Context, _builder: impl Into<CreateMessage>) -> Result<Message> {
-        todo!()
-    }
-
-    /// Edit the channel.
-    pub async fn edit(&self, _cx: &Context, _builder: EditChannel) -> Result {
-        todo!()
-    }
-
-    /// Delete the channel.
-    pub async fn delete(&self, _cx: &Context) -> Result {
-        todo!()
-    }
 }

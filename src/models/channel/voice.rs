@@ -1,4 +1,4 @@
-use crate::{builders::EditChannel, models::Attachment, Context, Result};
+use crate::models::Attachment;
 
 /// A voice channel.
 #[derive(Debug, Clone, PartialEq, Deserialize)]
@@ -19,16 +19,4 @@ pub struct VoiceChannel {
     /// Channel is not safe for work.
     #[serde(default)]
     pub nsfw: bool,
-}
-
-impl VoiceChannel {
-    /// Edit the channel.
-    pub async fn edit(&self, _cx: &Context, _builder: EditChannel) -> Result {
-        todo!()
-    }
-
-    /// Delete the channel.
-    pub async fn delete(&self, _cx: &Context) -> Result {
-        todo!()
-    }
 }

@@ -4,9 +4,8 @@ use {
 };
 
 use crate::{
-    builders::EditUser,
     http::{Authentication, HttpClient},
-    models::{events::ClientEvent, Channel, User},
+    models::events::ClientEvent,
     state::State,
     ActionMessenger, Result,
 };
@@ -33,33 +32,14 @@ impl Context {
         messenger: ActionMessenger,
     ) -> Result<Self> {
         let http = HttpClient::new(authentication);
-        #[cfg(feature = "cache")]
-        let User { id, .. } = http.get("users/@me").await?;
 
         Ok(Self {
             http,
             #[cfg(feature = "cache")]
-            cache: Arc::new(Cache::new(id)),
+            cache: Arc::new(Cache::new(todo!())),
             state: State::default(),
             messenger,
         })
-    }
-
-    /// Returns the current user.
-    #[cfg(not(feature = "cache"))]
-    pub async fn user(&self) -> Result<User> {
-        self.http.get("users/@me").await
-    }
-
-    /// Returns the current user.
-    #[cfg(feature = "cache")]
-    pub async fn user(&self) -> User {
-        self.cache.current_user().await
-    }
-
-    /// Edit the current user.
-    pub async fn edit(&self, builder: impl Into<EditUser>) -> Result {
-        self.http.patch("users/@me", builder.into()).await
     }
 
     /// Tell other users that you have begin typing in a channel.
@@ -99,10 +79,5 @@ impl Context {
     /// Close the WebSocket connection.
     pub async fn close(&self) -> Result {
         self.messenger.close().await
-    }
-
-    /// Fetch your direct messages, including any DM and group conversations.
-    pub async fn dm_channels(&self) -> Result<Vec<Channel>> {
-        self.http.get("users/dms").await
     }
 }
