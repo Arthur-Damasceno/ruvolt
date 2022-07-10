@@ -7,24 +7,22 @@ use crate::{
     builders::EditUser,
     http::{Authentication, HttpClient},
     models::{events::ClientEvent, Channel, User},
+    state::State,
     ActionMessenger, Result,
 };
 
 #[cfg(feature = "cache")]
 use crate::cache::Cache;
-#[cfg(feature = "state")]
-use crate::state::State;
 
 /// A struct for general utilities and wrapper for the http client.
 #[derive(Debug, Clone)]
 pub struct Context {
     /// A http client.
-    pub http_client: HttpClient,
+    pub http: HttpClient,
     /// A cache.
     #[cfg(feature = "cache")]
     pub cache: Arc<Cache>,
     /// A state.
-    #[cfg(feature = "state")]
     pub state: State,
     messenger: ActionMessenger,
 }
@@ -34,16 +32,15 @@ impl Context {
         authentication: Authentication,
         messenger: ActionMessenger,
     ) -> Result<Self> {
-        let http_client = HttpClient::new(authentication);
+        let http = HttpClient::new(authentication);
         #[cfg(feature = "cache")]
-        let User { id, .. } = http_client.get("users/@me").await?;
+        let User { id, .. } = http.get("users/@me").await?;
 
         Ok(Self {
-            http_client,
+            http,
             #[cfg(feature = "cache")]
             cache: Arc::new(Cache::new(id)),
-            #[cfg(feature = "state")]
-            state: Default::default(),
+            state: State::default(),
             messenger,
         })
     }
@@ -51,7 +48,7 @@ impl Context {
     /// Returns the current user.
     #[cfg(not(feature = "cache"))]
     pub async fn user(&self) -> Result<User> {
-        self.http_client.get("users/@me").await
+        self.http.get("users/@me").await
     }
 
     /// Returns the current user.
@@ -62,7 +59,7 @@ impl Context {
 
     /// Edit the current user.
     pub async fn edit(&self, builder: impl Into<EditUser>) -> Result {
-        self.http_client.patch("users/@me", builder.into()).await
+        self.http.patch("users/@me", builder.into()).await
     }
 
     /// Tell other users that you have begin typing in a channel.
@@ -106,6 +103,6 @@ impl Context {
 
     /// Fetch your direct messages, including any DM and group conversations.
     pub async fn dm_channels(&self) -> Result<Vec<Channel>> {
-        self.http_client.get("users/dms").await
+        self.http.get("users/dms").await
     }
 }

@@ -8,9 +8,8 @@ license = "MIT"
 edition = "2021"
 
 [features]
-default = ["cache", "state"]
+default = ["cache"]
 cache = []
-state = []
 msgpack = ["rmp-serde"]
 
 [dependencies]

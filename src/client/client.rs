@@ -73,7 +73,7 @@ impl Client {
     async fn authenticate(&mut self) -> Result {
         self.ws_client
             .send(ClientEvent::Authenticate {
-                token: self.context.http_client.token(),
+                token: self.context.http.token(),
             })
             .await?;
 
