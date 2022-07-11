@@ -1,6 +1,7 @@
 //! A module for the http client.
 
 pub mod builders;
+mod users;
 
 use {
     reqwest::{Client as ReqwestClient, RequestBuilder, Response},
@@ -10,7 +11,7 @@ use {
 use crate::error::{Error, HttpError, Result};
 
 /// The url of the Revolt REST API.
-pub const DELTA_API: &str = "https://api.revolt.chat";
+pub const DELTA_API: &'static str = "https://api.revolt.chat";
 
 #[derive(Debug)]
 pub(crate) enum Authentication {

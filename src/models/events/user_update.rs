@@ -11,6 +11,8 @@ pub enum UserField {
     ProfileContent,
     /// User profile background.
     ProfileBackground,
+    /// User status presence.
+    StatusPresence,
     /// User status text.
     StatusText,
     /// User avatar.
