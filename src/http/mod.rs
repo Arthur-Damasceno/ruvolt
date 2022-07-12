@@ -1,6 +1,7 @@
 //! A module for the http client.
 
 pub mod builders;
+mod messages;
 mod users;
 
 use {

@@ -1,6 +1,7 @@
-//! Builders for send data on http requests.
+//! Builders for retrieve and send data on http requests.
 
+mod message;
 mod user;
 
 #[doc(inline)]
-pub use user::*;
+pub use {message::*, user::*};
