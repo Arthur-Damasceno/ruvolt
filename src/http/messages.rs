@@ -20,7 +20,7 @@ impl HttpClient {
         .map_err(From::from)
     }
 
-    /// Retrieve multiple messages.
+    /// Fetch multiple messages.
     pub async fn messages(
         &self,
         channel_id: &str,
