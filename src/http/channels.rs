@@ -8,7 +8,7 @@ use crate::{
 };
 
 impl HttpClient {
-    /// Retrieve a channel.
+    /// Fetch a channel.
     pub async fn channel(&self, id: &str) -> Result<Channel> {
         self.request(self.inner.get(format!("{DELTA_API}/channels/{id}")))
             .await?
@@ -37,7 +37,7 @@ impl HttpClient {
             .map(|_| ())
     }
 
-    /// Retrieve all users who are part of a group.
+    /// Fetch all users who are part of a group.
     pub async fn group_members(&self, id: &str) -> Result<Vec<User>> {
         self.request(self.inner.get(format!("{DELTA_API}/channels/{id}/members")))
             .await?

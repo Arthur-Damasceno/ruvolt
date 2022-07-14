@@ -5,9 +5,9 @@ use crate::{
 };
 
 impl HttpClient {
-    /// Retrieve a user's information.
+    /// Fetch a user.
     ///
-    /// **Note**: To retrieve the current user's information, the `id` must be `@me`.
+    /// **Note**: To fetch the current user, the `id` must be `@me`.
     pub async fn user(&self, id: &str) -> Result<User> {
         self.request(self.inner.get(format!("{DELTA_API}/users/{id}")))
             .await?
@@ -16,7 +16,7 @@ impl HttpClient {
             .map_err(From::from)
     }
 
-    /// Retrieve a user's profile data.
+    /// Fetch a user profile.
     pub async fn user_profile(&self, id: &str) -> Result<UserProfile> {
         self.request(self.inner.get(format!("{DELTA_API}/users/{id}/profile")))
             .await?
@@ -57,7 +57,7 @@ impl HttpClient {
         .map_err(From::from)
     }
 
-    /// Retrieves your DM and group channels.
+    /// Fetch your DM and group channels.
     pub async fn direct_message_channels(&self) -> Result<Vec<Channel>> {
         self.request(self.inner.get(format!("{DELTA_API}/users/dms")))
             .await?
@@ -77,7 +77,7 @@ impl HttpClient {
             .map_err(From::from)
     }
 
-    /// Retrieve a list of mutual friends and servers with a user.
+    /// Fetch a list of mutual friends and servers with a user.
     ///
     /// **Note**: The return type consists of a tuple with the ids of users and servers, respectively.
     pub async fn mutual(&self, id: &str) -> Result<(Vec<String>, Vec<String>)> {

@@ -8,7 +8,7 @@ use crate::{
 };
 
 impl HttpClient {
-    /// Retrieve a message.
+    /// Fetch a message.
     pub async fn message(&self, channel_id: &str, id: &str) -> Result<Message> {
         self.request(
             self.inner

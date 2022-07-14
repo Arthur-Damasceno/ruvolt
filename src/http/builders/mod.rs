@@ -1,8 +1,9 @@
-//! Builders for retrieve and send data on http requests.
+//! Builders for fetch and send data on http requests.
 
 mod channel;
 mod message;
+mod server;
 mod user;
 
 #[doc(inline)]
-pub use {channel::*, message::*, user::*};
+pub use {channel::*, message::*, server::*, user::*};
