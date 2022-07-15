@@ -37,3 +37,13 @@ pub struct Member {
     #[serde(default)]
     pub roles: Vec<String>,
 }
+
+/// A server member ban.
+#[derive(Debug, Clone, Deserialize)]
+pub struct ServerBan {
+    /// Member id.
+    #[serde(rename = "_id")]
+    pub member_id: MemberId,
+    /// Reason for the ban.
+    pub reason: Option<String>,
+}

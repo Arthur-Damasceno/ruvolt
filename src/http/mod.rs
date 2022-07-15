@@ -4,6 +4,7 @@ pub mod builders;
 mod channels;
 mod messages;
 mod servers;
+mod members;
 mod users;
 
 use {
