@@ -9,7 +9,10 @@ pub use config::*;
 
 use {
     reqwest::{Client as ReqwestClient, IntoUrl, RequestBuilder, Response},
-    std::fmt::Display,
+    std::{
+        fmt::Display,
+        time::{Duration, Instant},
+    },
 };
 
 use crate::error::{Error, HttpError, Result};
@@ -68,6 +71,15 @@ impl HttpClient {
             config,
             authentication,
         })
+    }
+
+    /// Get the REST API latency.
+    pub async fn ping(&self) -> Result<Duration> {
+        let start = Instant::now();
+
+        self.get("/ping").send().await?;
+
+        Ok(start.elapsed())
     }
 
     fn get(&self, path: impl Display) -> RequestBuilder {
