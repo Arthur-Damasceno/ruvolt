@@ -2,7 +2,7 @@ use crate::{
     error::Result,
     http::{
         builders::{CreateMessage, EditMessage, FetchMessages, SearchMessages},
-        HttpClient, DELTA_API,
+        HttpClient,
     },
     models::{Member, Message, User},
 };
@@ -10,14 +10,11 @@ use crate::{
 impl HttpClient {
     /// Fetch a message.
     pub async fn message(&self, channel_id: &str, id: &str) -> Result<Message> {
-        self.request(
-            self.inner
-                .get(format!("{DELTA_API}/channels/{channel_id}/messages/{id}")),
-        )
-        .await?
-        .json()
-        .await
-        .map_err(From::from)
+        self.request(self.get(format!("/channels/{channel_id}/messages/{id}")))
+            .await?
+            .json()
+            .await
+            .map_err(From::from)
     }
 
     /// Fetch multiple messages.
@@ -27,8 +24,7 @@ impl HttpClient {
         query: &FetchMessages,
     ) -> Result<MessagesAndUsers> {
         self.request(
-            self.inner
-                .get(format!("{DELTA_API}/channels/{channel_id}/messages"))
+            self.get(format!("/channels/{channel_id}/messages"))
                 .query(query),
         )
         .await?
@@ -45,8 +41,7 @@ impl HttpClient {
         query: &SearchMessages,
     ) -> Result<MessagesAndUsers> {
         self.request(
-            self.inner
-                .post(format!("{DELTA_API}/channels/{channel_id}/search"))
+            self.post(format!("/channels/{channel_id}/search"))
                 .json(query),
         )
         .await?
@@ -59,8 +54,7 @@ impl HttpClient {
     /// Send a message on a channel.
     pub async fn send_message(&self, channel_id: &str, data: &CreateMessage) -> Result<Message> {
         self.request(
-            self.inner
-                .post(format!("{DELTA_API}/channels/{channel_id}/messages"))
+            self.post(format!("/channels/{channel_id}/messages"))
                 .json(data),
         )
         .await?
@@ -77,8 +71,7 @@ impl HttpClient {
         data: &EditMessage,
     ) -> Result<Message> {
         self.request(
-            self.inner
-                .patch(format!("{DELTA_API}/channels/{channel_id}/messages/{id}"))
+            self.patch(format!("/channels/{channel_id}/messages/{id}"))
                 .json(data),
         )
         .await?
@@ -89,22 +82,16 @@ impl HttpClient {
 
     /// Acknowledge a message as read.
     pub async fn acknowledge_message(&self, channel_id: &str, id: &str) -> Result {
-        self.request(
-            self.inner
-                .put(format!("{DELTA_API}/channels/{channel_id}/ack/{id}")),
-        )
-        .await
-        .map(|_| ())
+        self.request(self.put(format!("/channels/{channel_id}/ack/{id}")))
+            .await
+            .map(|_| ())
     }
 
     /// Delete a message.
     pub async fn delete_message(&self, channel_id: &str, id: &str) -> Result {
-        self.request(
-            self.inner
-                .delete(format!("{DELTA_API}/channels/{channel_id}/messages/{id}")),
-        )
-        .await
-        .map(|_| ())
+        self.request(self.delete(format!("/channels/{channel_id}/messages/{id}")))
+            .await
+            .map(|_| ())
     }
 
     /// Delete multiple messages.
@@ -115,8 +102,7 @@ impl HttpClient {
         }
 
         self.request(
-            self.inner
-                .delete(format!("{DELTA_API}/channels/{channel_id}/messages/bulk"))
+            self.delete(format!("/channels/{channel_id}/messages/bulk"))
                 .json(&Data { ids }),
         )
         .await

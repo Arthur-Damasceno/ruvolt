@@ -1,20 +1,17 @@
 use crate::{
     error::Result,
-    http::{builders::EditMember, HttpClient, DELTA_API},
+    http::{builders::EditMember, HttpClient},
     models::{Member, ServerBan, User},
 };
 
 impl HttpClient {
     /// Fetch a member.
     pub async fn member(&self, server_id: &str, user_id: &str) -> Result<Member> {
-        self.request(
-            self.inner
-                .get(format!("{DELTA_API}/servers/{server_id}/members/{user_id}")),
-        )
-        .await?
-        .json()
-        .await
-        .map_err(From::from)
+        self.request(self.get(format!("/servers/{server_id}/members/{user_id}")))
+            .await?
+            .json()
+            .await
+            .map_err(From::from)
     }
 
     /// Fetch all server members.
@@ -35,8 +32,7 @@ impl HttpClient {
         }
 
         self.request(
-            self.inner
-                .get(format!("{DELTA_API}/servers/{server_id}/members"))
+            self.get(format!("/servers/{server_id}/members"))
                 .query(&Query { exclude_offline }),
         )
         .await?
@@ -54,8 +50,7 @@ impl HttpClient {
         data: &EditMember,
     ) -> Result<Member> {
         self.request(
-            self.inner
-                .patch(format!("{DELTA_API}/servers/{server_id}/members/{user_id}"))
+            self.patch(format!("/servers/{server_id}/members/{user_id}"))
                 .json(data),
         )
         .await?
@@ -66,12 +61,9 @@ impl HttpClient {
 
     /// Remove a member from a server.
     pub async fn kick(&self, server_id: &str, user_id: &str) -> Result {
-        self.request(
-            self.inner
-                .delete(format!("{DELTA_API}/servers/{server_id}/members/{user_id}")),
-        )
-        .await
-        .map(|_| ())
+        self.request(self.delete(format!("/servers/{server_id}/members/{user_id}")))
+            .await
+            .map(|_| ())
     }
 
     /// Fetch all bans on a server.
@@ -82,15 +74,12 @@ impl HttpClient {
             bans: Vec<ServerBan>,
         }
 
-        self.request(
-            self.inner
-                .get(format!("{DELTA_API}/servers/{server_id}/bans")),
-        )
-        .await?
-        .json()
-        .await
-        .map_err(From::from)
-        .map(|Data { users, bans }| (users, bans))
+        self.request(self.get(format!("/servers/{server_id}/bans")))
+            .await?
+            .json()
+            .await
+            .map_err(From::from)
+            .map(|Data { users, bans }| (users, bans))
     }
 
     /// Ban a user from a server.
@@ -107,8 +96,7 @@ impl HttpClient {
         }
 
         self.request(
-            self.inner
-                .put(format!("{DELTA_API}/servers/{server_id}/bans/{user_id}"))
+            self.put(format!("/servers/{server_id}/bans/{user_id}"))
                 .json(&Data { reason }),
         )
         .await?
@@ -119,11 +107,8 @@ impl HttpClient {
 
     /// Remove a user's ban.
     pub async fn unban(&self, server_id: &str, user_id: &str) -> Result {
-        self.request(
-            self.inner
-                .delete(format!("{DELTA_API}/servers/{server_id}/bans/{user_id}")),
-        )
-        .await
-        .map(|_| ())
+        self.request(self.delete(format!("/servers/{server_id}/bans/{user_id}")))
+            .await
+            .map(|_| ())
     }
 }

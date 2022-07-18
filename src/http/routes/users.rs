@@ -1,15 +1,22 @@
 use crate::{
     error::Result,
-    http::{builders::EditUser, HttpClient, DELTA_API},
+    http::{builders::EditUser, HttpClient},
     models::{Channel, User, UserProfile},
 };
 
 impl HttpClient {
+    /// Fetch the current user.
+    pub async fn current_user(&self) -> Result<User> {
+        self.request(self.get("/users/@me"))
+            .await?
+            .json()
+            .await
+            .map_err(From::from)
+    }
+
     /// Fetch a user.
-    ///
-    /// **Note**: To fetch the current user, the `id` must be `@me`.
     pub async fn user(&self, id: &str) -> Result<User> {
-        self.request(self.inner.get(format!("{DELTA_API}/users/{id}")))
+        self.request(self.get(format!("/users/{id}")))
             .await?
             .json()
             .await
@@ -18,7 +25,7 @@ impl HttpClient {
 
     /// Fetch a user profile.
     pub async fn user_profile(&self, id: &str) -> Result<UserProfile> {
-        self.request(self.inner.get(format!("{DELTA_API}/users/{id}/profile")))
+        self.request(self.get(format!("/users/{id}/profile")))
             .await?
             .json()
             .await
@@ -27,15 +34,11 @@ impl HttpClient {
 
     /// Edit the current user.
     pub async fn edit_user(&self, data: &EditUser) -> Result<User> {
-        self.request(
-            self.inner
-                .patch(format!("{DELTA_API}/users/@me"))
-                .json(data),
-        )
-        .await?
-        .json()
-        .await
-        .map_err(From::from)
+        self.request(self.patch("/users/@me").json(data))
+            .await?
+            .json()
+            .await
+            .map_err(From::from)
     }
 
     /// Change your username.
@@ -47,8 +50,7 @@ impl HttpClient {
         }
 
         self.request(
-            self.inner
-                .patch(format!("{DELTA_API}/users/@me/username"))
+            self.patch("/users/@me/username")
                 .json(&Data { username, password }),
         )
         .await?
@@ -59,7 +61,7 @@ impl HttpClient {
 
     /// Fetch your DM and group channels.
     pub async fn direct_message_channels(&self) -> Result<Vec<Channel>> {
-        self.request(self.inner.get(format!("{DELTA_API}/users/dms")))
+        self.request(self.get("/users/dms"))
             .await?
             .json()
             .await
@@ -70,7 +72,7 @@ impl HttpClient {
     ///
     /// If the `id` is yours, a saved message channel is returned.
     pub async fn open_direct_message(&self, id: &str) -> Result<Channel> {
-        self.request(self.inner.get(format!("{DELTA_API}/users/{id}/dm")))
+        self.request(self.get(format!("/users/{id}/dm")))
             .await?
             .json()
             .await
@@ -87,7 +89,7 @@ impl HttpClient {
             servers: Vec<String>,
         }
 
-        self.request(self.inner.get(format!("{DELTA_API}/users/{id}/mutual")))
+        self.request(self.get(format!("/users/{id}/mutual")))
             .await?
             .json()
             .await
@@ -102,39 +104,35 @@ impl HttpClient {
             username: &'a str,
         }
 
-        self.request(
-            self.inner
-                .post(format!("{DELTA_API}/users/friend"))
-                .json(&Data { username }),
-        )
-        .await
-        .map(|_| ())
+        self.request(self.post("/users/friend").json(&Data { username }))
+            .await
+            .map(|_| ())
     }
 
     /// Accept a user's friend request.
     pub async fn accept_friend(&self, id: &str) -> Result {
-        self.request(self.inner.put(format!("{DELTA_API}/users/{id}/friend")))
+        self.request(self.put(format!("/users/{id}/friend")))
             .await
             .map(|_| ())
     }
 
     /// Denies a user's friend request or removes an existing friend.
     pub async fn remove_friend(&self, id: &str) -> Result {
-        self.request(self.inner.delete(format!("{DELTA_API}/users/{id}/friend")))
+        self.request(self.delete(format!("/users/{id}/friend")))
             .await
             .map(|_| ())
     }
 
     /// Block a user.
     pub async fn block(&self, id: &str) -> Result {
-        self.request(self.inner.put(format!("{DELTA_API}/users/{id}/block")))
+        self.request(self.put(format!("/users/{id}/block")))
             .await
             .map(|_| ())
     }
 
     /// Unblock a user.
     pub async fn unblock(&self, id: &str) -> Result {
-        self.request(self.inner.delete(format!("{DELTA_API}/users/{id}/block")))
+        self.request(self.delete(format!("/users/{id}/block")))
             .await
             .map(|_| ())
     }

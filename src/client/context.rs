@@ -4,7 +4,7 @@ use {
 };
 
 use crate::{
-    http::{Authentication, HttpClient},
+    http::{Authentication, HttpClient, DELTA_API},
     models::events::ClientEvent,
     state::State,
     ActionMessenger, Result,
@@ -31,7 +31,7 @@ impl Context {
         authentication: Authentication,
         messenger: ActionMessenger,
     ) -> Result<Self> {
-        let http = HttpClient::new(authentication);
+        let http = HttpClient::new(DELTA_API, authentication).await?;
 
         Ok(Self {
             http,
