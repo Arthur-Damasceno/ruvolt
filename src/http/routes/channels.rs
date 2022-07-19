@@ -4,7 +4,7 @@ use crate::{
         builders::{CreateGroup, EditChannel},
         HttpClient,
     },
-    models::{Channel, User},
+    models::{user::User, Channel},
 };
 
 impl HttpClient {

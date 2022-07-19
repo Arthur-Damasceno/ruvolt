@@ -6,7 +6,7 @@
 use {std::collections::HashMap, tokio::sync::RwLock};
 
 use crate::{
-    models::{events::ServerEvent, Channel, Member, MemberId, Server, User},
+    models::{events::ServerEvent, user::User, Channel, Member, MemberId, Server},
     Context,
 };
 

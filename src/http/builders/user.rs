@@ -1,4 +1,4 @@
-use crate::models::{events::UserField, UserStatus};
+use crate::models::{events::UserField, user::UserStatus};
 
 /// A builder to edit the current user.
 #[derive(Debug, Clone, Default, Serialize)]

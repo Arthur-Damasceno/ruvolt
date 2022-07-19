@@ -1,7 +1,10 @@
 use crate::{
     error::Result,
     http::{builders::EditUser, HttpClient},
-    models::{Channel, User, UserProfile},
+    models::{
+        user::{User, UserProfile},
+        Channel,
+    },
 };
 
 impl HttpClient {

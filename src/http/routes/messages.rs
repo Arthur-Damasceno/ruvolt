@@ -4,7 +4,7 @@ use crate::{
         builders::{CreateMessage, EditMessage, FetchMessages, SearchMessages},
         HttpClient,
     },
-    models::{Member, Message, User},
+    models::{user::User, Member, Message},
 };
 
 impl HttpClient {

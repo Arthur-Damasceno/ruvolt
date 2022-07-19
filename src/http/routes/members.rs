@@ -1,7 +1,7 @@
 use crate::{
     error::Result,
     http::{builders::EditMember, HttpClient},
-    models::{Member, ServerBan, User},
+    models::{user::User, Member, ServerBan},
 };
 
 impl HttpClient {

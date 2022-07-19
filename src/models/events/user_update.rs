@@ -1,4 +1,7 @@
-use crate::models::{Attachment, UserProfile, UserStatus};
+use crate::models::{
+    user::{UserProfile, UserStatus},
+    Attachment,
+};
 
 #[cfg(feature = "cache")]
 use crate::{cache::UpdateCache, Context};
@@ -20,7 +23,7 @@ pub enum UserField {
 }
 
 /// A user has been updated.
-#[derive(Debug, Clone, PartialEq, Deserialize)]
+#[derive(Debug, Clone, Deserialize)]
 #[non_exhaustive]
 pub struct UserUpdateEvent {
     /// User id.
@@ -33,7 +36,7 @@ pub struct UserUpdateEvent {
 }
 
 /// A partial user
-#[derive(Debug, Clone, PartialEq, Deserialize)]
+#[derive(Debug, Clone, Deserialize)]
 #[non_exhaustive]
 pub struct PartialUser {
     /// User status.

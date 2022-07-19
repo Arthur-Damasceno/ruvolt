@@ -1,10 +1,10 @@
-use crate::models::{Channel, Member, Server, User};
+use crate::models::{user::User, Channel, Member, Server};
 
 #[cfg(feature = "cache")]
 use crate::{cache::UpdateCache, Context};
 
 /// Bot is ready.
-#[derive(Debug, Clone, PartialEq, Deserialize)]
+#[derive(Debug, Clone, Deserialize)]
 #[non_exhaustive]
 pub struct ReadyEvent {
     /// Users.

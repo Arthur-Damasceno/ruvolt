@@ -1,5 +1,5 @@
 /// An attachment like icons, avatars, banners or message attachments.
-#[derive(Debug, Clone, PartialEq, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Deserialize, Serialize)]
 #[non_exhaustive]
 pub struct Attachment {
     /// Attachment id.
@@ -18,7 +18,7 @@ pub struct Attachment {
 }
 
 /// Attachment tag.
-#[derive(Debug, Clone, Copy, PartialEq, Deserialize)]
+#[derive(Debug, Clone, Copy, PartialEq, Deserialize, Serialize)]
 #[serde(rename_all = "lowercase")]
 #[non_exhaustive]
 pub enum AttachmentTag {
@@ -35,7 +35,7 @@ pub enum AttachmentTag {
 }
 
 /// Attachment metadata.
-#[derive(Debug, Clone, Copy, PartialEq, Deserialize)]
+#[derive(Debug, Clone, Copy, PartialEq, Deserialize, Serialize)]
 #[serde(tag = "type")]
 #[non_exhaustive]
 pub enum AttachmentMetadata {
