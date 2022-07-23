@@ -1,7 +1,7 @@
-use crate::models::{Embed, MessageEdited};
+use crate::models::message::Embed;
 
 /// A message has been edited or otherwise updated.
-#[derive(Debug, Clone, PartialEq, Deserialize)]
+#[derive(Debug, Clone, Deserialize)]
 #[non_exhaustive]
 pub struct MessageUpdateEvent {
     /// Message id.
@@ -15,7 +15,7 @@ pub struct MessageUpdateEvent {
 }
 
 /// A partial message.
-#[derive(Debug, Clone, PartialEq, Deserialize)]
+#[derive(Debug, Clone, Deserialize)]
 pub struct PartialMessage {
     /// Message content.
     pub content: Option<String>,
@@ -23,5 +23,5 @@ pub struct PartialMessage {
     #[serde(default)]
     pub embeds: Vec<Embed>,
     /// Message edition date.
-    pub edited: MessageEdited,
+    pub edited: String,
 }

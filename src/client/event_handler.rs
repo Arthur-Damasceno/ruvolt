@@ -1,7 +1,4 @@
-use crate::{
-    models::{events::*, *},
-    Context,
-};
+use crate::{models::prelude::*, Context};
 
 /// Define handlers for supported events.
 #[async_trait]

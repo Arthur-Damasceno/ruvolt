@@ -1,7 +1,4 @@
-use crate::{
-    error::AuthenticationError,
-    models::{events::*, Channel, Message},
-};
+use crate::{error::AuthenticationError, models::prelude::*};
 
 #[derive(Debug, Clone, Deserialize)]
 #[serde(tag = "type")]

@@ -30,6 +30,7 @@ rmp-serde = { version = "1", optional = true }
 thiserror = "1"
 bitflags = "1.3"
 tracing = "0.1"
+chrono = { version = "0.4", features = ["serde"] }
 
 # Http
 [dependencies.reqwest]

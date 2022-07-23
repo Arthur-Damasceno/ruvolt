@@ -1,4 +1,4 @@
-use crate::models::Masquerade;
+use crate::models::message::Masquerade;
 
 /// A builder to create a message.
 #[derive(Debug, Clone, Default, Serialize)]

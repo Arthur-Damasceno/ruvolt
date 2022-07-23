@@ -5,10 +5,7 @@
 
 use {std::collections::HashMap, tokio::sync::RwLock};
 
-use crate::{
-    models::{events::ServerEvent, user::User, Channel, Member, MemberId, Server},
-    Context,
-};
+use crate::{models::prelude::*, Context};
 
 /// A cache containing data received from the API.
 #[derive(Debug, Default)]
@@ -34,7 +31,6 @@ impl Cache {
 
         match event {
             Ready(event) => event.update(cx).await,
-            Message(event) => event.update(cx).await,
             ChannelCreate(event) => event.update(cx).await,
             ChannelUpdate(event) => event.update(cx).await,
             ChannelDelete(event) => event.update(cx).await,
